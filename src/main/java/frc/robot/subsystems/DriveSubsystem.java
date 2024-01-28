@@ -33,10 +33,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
-   this.m_back_left   = new SparkWrapper(1, MotorType.kBrushless);
-   m_back_right  = new SparkWrapper(4, MotorType.kBrushless);
-   m_front_left  = new SparkWrapper(3, MotorType.kBrushless);
-   m_front_right = new SparkWrapper(2, MotorType.kBrushless);
+   this.m_back_left   = new SparkWrapper(12, MotorType.kBrushless);
+   m_back_right  = new SparkWrapper(13, MotorType.kBrushless);
+   m_front_left  = new SparkWrapper(14, MotorType.kBrushless);
+   m_front_right = new SparkWrapper(15, MotorType.kBrushless);
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
   }
