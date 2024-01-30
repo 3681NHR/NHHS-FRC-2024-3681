@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Drive;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.enums.LauncherState;
 import frc.robot.enums.MotionType;
 import frc.robot.interfaces.MotorInterface;
 import frc.robot.wrappers.SparkWrapper;
@@ -29,36 +31,84 @@ public class LauncherSubsystem extends SubsystemBase {
   private final double[] SPEEDS_DROP = {0.1, 0.1, 0.1, 0.1};
 
 
-  /** Creates a new Subsystem. */
+  public LauncherState state;
+
   public LauncherSubsystem() {
    this.m_back_left  = new SparkWrapper(1, MotorType.kBrushless);
    this.m_back_right = new SparkWrapper(1, MotorType.kBrushless);
    this.m_front_left = new SparkWrapper(1, MotorType.kBrushless);
    this.m_front_right= new SparkWrapper(1, MotorType.kBrushless);
+
+
+    this.m_back_left  .setIdleMode(IdleMode.kCoast);
+    this.m_back_right .setIdleMode(IdleMode.kCoast);
+    this.m_front_left .setIdleMode(IdleMode.kCoast);
+    this.m_front_right.setIdleMode(IdleMode.kCoast);
   }
 
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command Startlaunch() {
-    return run(
-        () -> {
-          
-        });
+  public Command toggleLaunch(){
+    return runOnce(() -> {
+      if(state == LauncherState.LANUCHING){
+        state = LauncherState.IDLE;
+      } else{
+        state = LauncherState.LANUCHING;
+      }
+    });
+  }
+  public Command toggleDrop(){
+    return runOnce(() -> {
+      if(state == LauncherState.DROPPING){
+        state = LauncherState.IDLE;
+      } else{
+        state = LauncherState.DROPPING;
+      }
+    });
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
+  public void Startlaunch() {
+    m_back_left  .setVelocity(SPEEDS_LAUNCH[0]);
+    m_back_right .setVelocity(SPEEDS_LAUNCH[1]);
+    m_front_left .setVelocity(SPEEDS_LAUNCH[2]);
+    m_front_right.setVelocity(SPEEDS_LAUNCH[3]);
+  }
+  public void StartDrop() {
+    m_back_left  .setVelocity(SPEEDS_DROP[0]);
+    m_back_right .setVelocity(SPEEDS_DROP[1]);
+    m_front_left .setVelocity(SPEEDS_DROP[2]);
+    m_front_right.setVelocity(SPEEDS_DROP[3]);
+  }
+  public void EndMotion() {
+    
+    m_back_left  .setVelocity(0);
+    m_back_right .setVelocity(0);
+    m_front_left .setVelocity(0);
+    m_front_right.setVelocity(0);
+
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    
+    switch(state){
+      case LANUCHING:
+        m_back_left  .setVelocity(SPEEDS_LAUNCH[0]);
+        m_back_right .setVelocity(SPEEDS_LAUNCH[1]);
+        m_front_left .setVelocity(SPEEDS_LAUNCH[2]);
+        m_front_right.setVelocity(SPEEDS_LAUNCH[3]);
+        break;
+      case DROPPING:
+        m_back_left  .setVelocity(SPEEDS_DROP[0]);
+        m_back_right .setVelocity(SPEEDS_DROP[1]);
+        m_front_left .setVelocity(SPEEDS_DROP[2]);
+        m_front_right.setVelocity(SPEEDS_DROP[3]);
+        break;
+      case IDLE:
+        m_back_left  .setVelocity(0);
+        m_back_right .setVelocity(0);
+        m_front_left .setVelocity(0);
+        m_front_right.setVelocity(0);
+        break;
+    }
   }
 
 }

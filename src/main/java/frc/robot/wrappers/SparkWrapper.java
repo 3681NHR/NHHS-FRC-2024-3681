@@ -3,6 +3,7 @@ package frc.robot.wrappers;
 import frc.robot.interfaces.MotorInterface;
 import frc.robot.enums.MotionType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class SparkWrapper implements MotorInterface{
@@ -36,4 +37,8 @@ public class SparkWrapper implements MotorInterface{
     public double get(){
         return m_spm.get();
     }
+
+    public void setIdleMode(IdleMode mode){
+        m_spm.setIdleMode(mode);
+    };
 }

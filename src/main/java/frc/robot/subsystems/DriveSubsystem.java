@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Drive;
@@ -37,6 +38,13 @@ public class DriveSubsystem extends SubsystemBase {
    m_back_right  = new SparkWrapper(4, MotorType.kBrushless);
    m_front_left  = new SparkWrapper(3, MotorType.kBrushless);
    m_front_right = new SparkWrapper(2, MotorType.kBrushless);
+
+   this.m_back_left  .setIdleMode(IdleMode.kCoast);
+   this.m_back_right .setIdleMode(IdleMode.kCoast);
+   this.m_front_left .setIdleMode(IdleMode.kCoast);
+   this.m_front_right.setIdleMode(IdleMode.kCoast);
+
+
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
   }
@@ -53,7 +61,7 @@ public class DriveSubsystem extends SubsystemBase {
     return run(
         () -> {
           
-          double forward = limit(SPEED_LIM, deadzone(-driverController.getLeftY() , DEADZONE));
+          double forward = limit(SPEED_LIM, deadzone(-driverController.getLeftY(), DEADZONE));
           double right   = limit(SPEED_LIM, deadzone(driverController.getLeftX() , DEADZONE));
           double rotate  = limit(SPEED_LIM, deadzone(driverController.getRightX(), DEADZONE));
           
@@ -63,12 +71,7 @@ public class DriveSubsystem extends SubsystemBase {
 
           drive.driveCartesian(rotate, right, forward);
 
-          //this.setDrive(
-          //  forward - right - rotate, 
-          //  forward + right + rotate, 
-          //  forward - right + rotate, 
-          //  forward + right - rotate
-          //);
+          
         });
   }
 
