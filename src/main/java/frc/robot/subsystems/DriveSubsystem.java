@@ -83,20 +83,6 @@ public class DriveSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void clearDrive(){
-    m_back_left.set  (MotionType.VELOCITY, 0.0);
-    m_back_right.set (MotionType.VELOCITY, 0.0);
-    m_front_left.set (MotionType.VELOCITY, 0.0);
-    m_front_right.set(MotionType.VELOCITY, 0.0);
-  }
-
-  public void setDrive(double front_left, double front_right, double back_left, double back_right){
-    m_front_left .set (MotionType.VELOCITY, front_left );
-    m_front_right.set (MotionType.VELOCITY, front_right);
-    m_back_left  .set (MotionType.VELOCITY, back_left  );
-    m_back_right .set (MotionType.VELOCITY, back_right );
-  }
-
   private double deadzone(double value, double zone)
   {
     double x = value;

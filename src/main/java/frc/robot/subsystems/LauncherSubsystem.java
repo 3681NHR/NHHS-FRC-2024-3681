@@ -25,20 +25,16 @@ public class LauncherSubsystem extends SubsystemBase {
   private SparkWrapper m_front_left;
   private SparkWrapper m_front_right;
 
-  private final double SPEED_LIM = 0.5;
+  private final double[] SPEEDS_LAUNCH = {1, 1, 1, 1};
+  private final double[] SPEEDS_DROP = {0.1, 0.1, 0.1, 0.1};
 
-  private double DEADZONE = 0.15;
-
-  private Drive drive;
 
   /** Creates a new Subsystem. */
-  public Subsystem() {
-   this.m_back_left   = new SparkWrapper(1, MotorType.kBrushless);
-   m_back_right  = new SparkWrapper(4, MotorType.kBrushless);
-   m_front_left  = new SparkWrapper(3, MotorType.kBrushless);
-   m_front_right = new SparkWrapper(2, MotorType.kBrushless);
-   drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
-
+  public LauncherSubsystem() {
+   this.m_back_left  = new SparkWrapper(1, MotorType.kBrushless);
+   this.m_back_right = new SparkWrapper(1, MotorType.kBrushless);
+   this.m_front_left = new SparkWrapper(1, MotorType.kBrushless);
+   this.m_front_right= new SparkWrapper(1, MotorType.kBrushless);
   }
 
 
@@ -47,28 +43,10 @@ public class LauncherSubsystem extends SubsystemBase {
    *
    * @return a command
    */
-  public Command Drive(XboxController driverController) {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
+  public Command Startlaunch() {
     return run(
         () -> {
           
-          double forward = limit(SPEED_LIM, deadzone(-driverController.getLeftY() , DEADZONE));
-          double right   = limit(SPEED_LIM, deadzone(driverController.getLeftX() , DEADZONE));
-          double rotate  = limit(SPEED_LIM, deadzone(driverController.getRightX(), DEADZONE));
-          
-          SmartDashboard.putNumber("forward", forward);
-          SmartDashboard.putNumber("right"  ,   right);
-          SmartDashboard.putNumber("rotate" ,  rotate);
-
-          drive.driveCartesian(rotate, right, forward);
-
-          //this.setDrive(
-          //  forward - right - rotate, 
-          //  forward + right + rotate, 
-          //  forward - right + rotate, 
-          //  forward + right - rotate
-          //);
         });
   }
 
@@ -83,44 +61,4 @@ public class LauncherSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void clearDrive(){
-    m_back_left.set  (MotionType.VELOCITY, 0.0);
-    m_back_right.set (MotionType.VELOCITY, 0.0);
-    m_front_left.set (MotionType.VELOCITY, 0.0);
-    m_front_right.set(MotionType.VELOCITY, 0.0);
-  }
-
-  public void setDrive(double front_left, double front_right, double back_left, double back_right){
-    m_front_left .set (MotionType.VELOCITY, front_left );
-    m_front_right.set (MotionType.VELOCITY, front_right);
-    m_back_left  .set (MotionType.VELOCITY, back_left  );
-    m_back_right .set (MotionType.VELOCITY, back_right );
-  }
-
-  private double deadzone(double value, double zone)
-  {
-    double x = value;
-
-    if(Math.abs(x)<zone){
-      x=0;
-    }
-    return x;
-  }
-  private double limit(double lim, double  value)
-  {
-    if(lim  < 0)
-    {
-      return value;
-    }
-    else
-    {
-      if(Math.abs(value) <= lim){
-        return value;
-      }
-      else
-      {
-        return lim * (Math.abs(value)/value);//multiply lim by normalized value(-1 or 1)
-      }
-    }
-  }
 }
