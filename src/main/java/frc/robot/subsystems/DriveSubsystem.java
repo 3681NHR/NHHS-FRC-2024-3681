@@ -25,6 +25,10 @@ public class DriveSubsystem extends SubsystemBase {
   private SparkWrapper m_front_left;
   private SparkWrapper m_front_right;
 
+  double forward;
+  double right; 
+  double rotate;
+
   private final double SPEED_LIM = 0.5;
 
   private double DEADZONE = 0.15;
@@ -34,28 +38,20 @@ public class DriveSubsystem extends SubsystemBase {
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
    this.m_back_left   = new SparkWrapper(12, MotorType.kBrushless);
-   m_back_right  = new SparkWrapper(13, MotorType.kBrushless);
-   m_front_left  = new SparkWrapper(14, MotorType.kBrushless);
-   m_front_right = new SparkWrapper(15, MotorType.kBrushless);
+   this.m_back_right  = new SparkWrapper(13, MotorType.kBrushless);
+   this.m_front_left  = new SparkWrapper(14, MotorType.kBrushless);
+   this.m_front_right = new SparkWrapper(15, MotorType.kBrushless);
+  
+    
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
   }
-
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
+  
   public Command Drive(XboxController driverController) {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          
-          double forward = limit(SPEED_LIM, deadzone(-driverController.getLeftY() , DEADZONE));
-          double right   = limit(SPEED_LIM, deadzone(driverController.getLeftX() , DEADZONE));
-          double rotate  = limit(SPEED_LIM, deadzone(driverController.getRightX(), DEADZONE));
           
           SmartDashboard.putNumber("forward", forward);
           SmartDashboard.putNumber("right"  ,   right);
@@ -63,39 +59,18 @@ public class DriveSubsystem extends SubsystemBase {
 
           drive.driveCartesian(rotate, right, forward);
 
-          //this.setDrive(
-          //  forward - right - rotate, 
-          //  forward + right + rotate, 
-          //  forward - right + rotate, 
-          //  forward + right - rotate
-          //);
         });
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    forward = limit(SPEED_LIM, deadzone(-driverController.getLeftY(), DEADZONE));
+    right   = limit(SPEED_LIM, deadzone(driverController.getLeftX() , DEADZONE));
+    rotate  = limit(SPEED_LIM, deadzone(driverController.getRightX(), DEADZONE));
   }
 
-  public void clearDrive(){
-    m_back_left.set  (MotionType.VELOCITY, 0.0);
-    m_back_right.set (MotionType.VELOCITY, 0.0);
-    m_front_left.set (MotionType.VELOCITY, 0.0);
-    m_front_right.set(MotionType.VELOCITY, 0.0);
-  }
-
-  public void setDrive(double front_left, double front_right, double back_left, double back_right){
-    m_front_left .set (MotionType.VELOCITY, front_left );
-    m_front_right.set (MotionType.VELOCITY, front_right);
-    m_back_left  .set (MotionType.VELOCITY, back_left  );
-    m_back_right .set (MotionType.VELOCITY, back_right );
-  }
 
   private double deadzone(double value, double zone)
   {
