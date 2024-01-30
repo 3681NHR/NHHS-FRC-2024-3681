@@ -31,7 +31,7 @@ public class LauncherSubsystem extends SubsystemBase {
   private final double[] SPEEDS_DROP = {0.1, 0.1, 0.1, 0.1};
 
 
-  public LauncherState state;
+  public LauncherState state = LauncherState.IDLE;
 
   public LauncherSubsystem() {
    this.m_back_left  = new SparkWrapper(1, MotorType.kBrushless);
@@ -48,10 +48,10 @@ public class LauncherSubsystem extends SubsystemBase {
 
   public Command toggleLaunch(){
     return runOnce(() -> {
-      if(state == LauncherState.LANUCHING){
+      if(state == LauncherState.LAUNCHING){
         state = LauncherState.IDLE;
       } else{
-        state = LauncherState.LANUCHING;
+        state = LauncherState.LAUNCHING;
       }
     });
   }
@@ -90,7 +90,7 @@ public class LauncherSubsystem extends SubsystemBase {
   public void periodic() {
     
     switch(state){
-      case LANUCHING:
+      case LAUNCHING:
         m_back_left  .setVelocity(SPEEDS_LAUNCH[0]);
         m_back_right .setVelocity(SPEEDS_LAUNCH[1]);
         m_front_left .setVelocity(SPEEDS_LAUNCH[2]);
