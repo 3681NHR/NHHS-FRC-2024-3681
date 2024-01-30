@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -23,10 +24,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final LauncherSubsystem m_launcherSubsystem = new LauncherSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController m_driverController = new XboxController(0);
   
+  private final CommandXboxController m_commandDriverController = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -40,11 +43,6 @@ public class RobotContainer {
 
   }
   
-
-
-  
-
-
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -66,6 +64,9 @@ public class RobotContainer {
     //  m_driverController.getLeftX(),
     //  m_driverController.getRightX()
     //));
+
+    m_commandDriverController.a().onTrue(m_launcherSubsystem.toggleLaunch());
+    m_commandDriverController.b().onTrue(m_launcherSubsystem.toggleDrop());
 
   }
 

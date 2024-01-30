@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Drive;
@@ -43,6 +44,11 @@ public class DriveSubsystem extends SubsystemBase {
    this.m_front_right = new SparkWrapper(15, MotorType.kBrushless);
   
     
+   this.m_back_left  .setIdleMode(IdleMode.kCoast);
+   this.m_back_right .setIdleMode(IdleMode.kCoast);
+   this.m_front_left .setIdleMode(IdleMode.kCoast);
+   this.m_front_right.setIdleMode(IdleMode.kCoast);
+
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
   }
@@ -52,10 +58,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          
-          SmartDashboard.putNumber("forward", forward);
-          SmartDashboard.putNumber("right"  ,   right);
-          SmartDashboard.putNumber("rotate" ,  rotate);
 
           drive.driveCartesian(rotate, right, forward);
 
@@ -69,9 +71,13 @@ public class DriveSubsystem extends SubsystemBase {
     forward = limit(SPEED_LIM, deadzone(-driverController.getLeftY(), DEADZONE));
     right   = limit(SPEED_LIM, deadzone(driverController.getLeftX() , DEADZONE));
     rotate  = limit(SPEED_LIM, deadzone(driverController.getRightX(), DEADZONE));
+    
+    SmartDashboard.putNumber("forward", forward);
+    SmartDashboard.putNumber("right"  ,   right);
+    SmartDashboard.putNumber("rotate" ,  rotate);
   }
 
-
+  
   private double deadzone(double value, double zone)
   {
     double x = value;
