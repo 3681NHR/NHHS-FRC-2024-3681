@@ -32,9 +32,22 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   public LauncherState state = LauncherState.IDLE;
 
   public LauncherSwingSubsystem() {
-    //this.swingMotor  = new SparkWrapper(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
 
-    //this.swingMotor.setIdleMode(IdleMode.kBrake);
+    this.swingMotor  = new SparkWrapper(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
+
+    this.swingMotor.setIdleMode(IdleMode.kBrake);
+
+  }
+
+  public Command home(){
+    return run(() -> {
+      if(homingSwitch.get()){
+        swingEncoder.reset();
+        swingMotor.setVelocity(0);
+      } else {
+        swingMotor.setVelocity(Constants.LAUNCHER_SWING_HOMING_SPEED);
+      }
+    });
   }
 
   public Command manualSwingControl(){
@@ -46,9 +59,9 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    //swingMotor.setVelocity(swingPID.calculate(swingEncoder.getDistance(), selectedPosition));
+    swingMotor.setVelocity(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
   }
-
+  
   private double clamp(double val, double min, double max) {
     return Math.max(min, Math.min(max, val));
   }
