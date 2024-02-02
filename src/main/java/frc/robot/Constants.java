@@ -31,6 +31,7 @@ public final class Constants {
   public static final double LAUNCHER_DROP_SPEED              = 0.1;
 
   public static final double LAUNCHER_SWING_SPEED             = 0.1;
+  public static final double LAUNCHER_SWING_HOMING_SPEED      = 0.1;
 
   public static final int LAUNCHER_STOW_POSITION              = 0;
   public static final int LAUNCHER_LAUNCH_POSITION            = 0;

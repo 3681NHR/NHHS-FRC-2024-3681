@@ -20,12 +20,12 @@ public class LauncherSubsystem extends SubsystemBase {
   public LauncherState state = LauncherState.IDLE;
 
   public LauncherSubsystem() {
-   //this.m_left  = new SparkWrapper(Constants.LAUNCHER_LEFT_MOTOR_ID, MotorType.kBrushless);
-   //this.m_right = new SparkWrapper(Constants.LAUNCHER_RIGHT_MOTOR_ID, MotorType.kBrushless);
+   this.m_left  = new SparkWrapper(Constants.LAUNCHER_LEFT_MOTOR_ID, MotorType.kBrushless);
+   this.m_right = new SparkWrapper(Constants.LAUNCHER_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
 
-    //this.m_left  .setIdleMode(IdleMode.kCoast);
-    //this.m_right .setIdleMode(IdleMode.kCoast);
+    this.m_left  .setIdleMode(IdleMode.kCoast);
+    this.m_right .setIdleMode(IdleMode.kCoast);
   }
 
   public Command toggleLaunch(){
@@ -51,16 +51,16 @@ public class LauncherSubsystem extends SubsystemBase {
   public void periodic() {
     switch(state){
       case LAUNCHING:
-        //m_left  .setVelocity(Constants.LAUNCHER_LAUNCH_SPEED);
-        //m_right .setVelocity(Constants.LAUNCHER_LAUNCH_SPEED);
+        m_left  .setVelocity(Constants.LAUNCHER_LAUNCH_SPEED);
+        m_right .setVelocity(Constants.LAUNCHER_LAUNCH_SPEED);
         break;
       case DROPPING:
-        //m_left  .setVelocity(Constants.LAUNCHER_DROP_SPEED);
-        //m_right .setVelocity(Constants.LAUNCHER_DROP_SPEED);
+        m_left  .setVelocity(Constants.LAUNCHER_DROP_SPEED);
+        m_right .setVelocity(Constants.LAUNCHER_DROP_SPEED);
         break;
       case IDLE:
-        //m_left  .setVelocity(0);
-        //m_right .setVelocity(0);
+        m_left  .setVelocity(0);
+        m_right .setVelocity(0);
         break;
     }
   }
