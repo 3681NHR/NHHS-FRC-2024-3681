@@ -3,8 +3,8 @@ package frc.robot.wrappers;
 import frc.robot.interfaces.MotorInterface;
 import frc.robot.enums.MotionType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class SparkWrapper implements MotorInterface{
 
