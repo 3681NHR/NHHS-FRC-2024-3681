@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Drive;
+import frc.robot.enums.IdleState;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.XboxController;
@@ -39,10 +39,10 @@ public class DriveSubsystem extends SubsystemBase {
    this.m_front_right = new SparkWrapper(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
   
     
-   this.m_back_left  .setIdleMode(IdleMode.kCoast);
-   this.m_back_right .setIdleMode(IdleMode.kCoast);
-   this.m_front_left .setIdleMode(IdleMode.kCoast);
-   this.m_front_right.setIdleMode(IdleMode.kCoast);
+   this.m_back_left  .setIdleMode(IdleState.BRAKE);
+   this.m_back_right .setIdleMode(IdleState.BRAKE);
+   this.m_front_left .setIdleMode(IdleState.BRAKE);
+   this.m_front_right.setIdleMode(IdleState.BRAKE);
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 

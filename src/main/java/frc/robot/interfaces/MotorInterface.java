@@ -2,6 +2,7 @@ package frc.robot.interfaces;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import frc.robot.enums.IdleState;
 import frc.robot.enums.MotionType;
 
 public interface MotorInterface {
@@ -14,5 +15,5 @@ public interface MotorInterface {
 
     public void setVelocity(double value);
 
-    public void setIdleMode(IdleMode mode);
+    public void setIdleMode(IdleState mode);
 }

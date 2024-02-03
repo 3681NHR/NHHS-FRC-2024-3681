@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.enums.IdleState;
 import frc.robot.enums.LauncherState;
 import frc.robot.wrappers.SparkWrapper;
 import frc.robot.Constants;
@@ -24,8 +24,8 @@ public class LauncherSubsystem extends SubsystemBase {
    this.m_right = new SparkWrapper(Constants.LAUNCHER_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
 
-    this.m_left  .setIdleMode(IdleMode.kCoast);
-    this.m_right .setIdleMode(IdleMode.kCoast);
+    this.m_left  .setIdleMode(IdleState.BRAKE);
+    this.m_right .setIdleMode(IdleState.BRAKE);
   }
 
   public Command toggleLaunch(){

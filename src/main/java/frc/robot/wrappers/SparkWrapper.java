@@ -1,6 +1,7 @@
 package frc.robot.wrappers;
 
 import frc.robot.interfaces.MotorInterface;
+import frc.robot.enums.IdleState;
 import frc.robot.enums.MotionType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -38,7 +39,10 @@ public class SparkWrapper implements MotorInterface{
         return m_spm.get();
     }
 
-    public void setIdleMode(IdleMode mode){
-        m_spm.setIdleMode(mode);
+    public void setIdleMode(IdleState mode){
+        if(mode == IdleState.BRAKE)
+            m_spm.setIdleMode(IdleMode.kBrake);
+        if(mode == IdleState.BRAKE)
+            m_spm.setIdleMode(IdleMode.kCoast);
     };
 }

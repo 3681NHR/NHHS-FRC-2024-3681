@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -13,6 +12,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.enums.IdleState;
 import frc.robot.enums.LauncherState;
 import frc.robot.wrappers.SparkWrapper;
 import frc.robot.Constants;
@@ -35,7 +35,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     this.swingMotor  = new SparkWrapper(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
 
-    this.swingMotor.setIdleMode(IdleMode.kBrake);
+    this.swingMotor.setIdleMode(IdleState.BRAKE);
 
   }
 
