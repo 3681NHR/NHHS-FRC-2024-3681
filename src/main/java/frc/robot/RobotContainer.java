@@ -15,7 +15,7 @@ public class RobotContainer {
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final LauncherSubsystem m_launcherSubsystem = new LauncherSubsystem();
   
-  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
+  // private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -31,8 +31,8 @@ public class RobotContainer {
   
   private void configureBindings() {
 
-    m_commandDriverController.a().onTrue(m_launcherSubsystem.toggleLaunch());
-    m_commandDriverController.b().onTrue(m_launcherSubsystem.toggleDrop());
+    // m_commandDriverController.a().onTrue(m_launcherSubsystem.toggleLaunch());
+    // m_commandDriverController.b().onTrue(m_launcherSubsystem.toggleDrop());
 
   }
 
