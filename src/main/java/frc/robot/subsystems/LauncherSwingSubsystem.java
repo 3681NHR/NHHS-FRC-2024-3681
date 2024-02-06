@@ -31,7 +31,8 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
   public LauncherState state = LauncherState.IDLE;
 
-  public LauncherSwingSubsystem() {
+  public LauncherSwingSubsystem() 
+  {
 
     this.swingMotor  = new SparkWrapper(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
 
