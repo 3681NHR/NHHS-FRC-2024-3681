@@ -9,7 +9,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants;
+
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
@@ -36,8 +36,8 @@ public class RobotContainer {
     m_commandDriverController.a().onTrue(m_launcherSubsystem.toggleLaunch());
     m_commandDriverController.b().onTrue(m_launcherSubsystem.toggleDrop());
 
-    m_commandDriverController.rightBumper().onTrue(m_intakeSubsystem.toggleSwingUp());
-    m_commandDriverController.leftBumper().onTrue(m_intakeSubsystem.toggleSwingDown());
+    m_commandDriverController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
+    
 
     m_commandDriverController.x().onTrue(m_intakeSubsystem.toggleIntake());
     m_commandDriverController.y().onTrue(m_intakeSubsystem.toggleReverse());

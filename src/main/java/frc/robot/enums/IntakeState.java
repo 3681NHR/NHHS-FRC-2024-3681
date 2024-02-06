@@ -4,6 +4,5 @@ public enum IntakeState {
     INTAKE,
     REVERSE,
     IDLE,
-    SWINGUP,
-    SWINGDOWN,
+
 }
