@@ -1,7 +1,5 @@
 package frc.robot.interfaces;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import frc.robot.enums.IdleState;
 import frc.robot.enums.MotionType;
 

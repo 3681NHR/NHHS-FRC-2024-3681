@@ -7,7 +7,9 @@ package frc.robot;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.LauncherSwingSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -15,7 +17,11 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final LauncherSubsystem m_launcherSubsystem = new LauncherSubsystem();
-    private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+
+  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+
+  private final LauncherSwingSubsystem m_LauncherSwingSubsystem = new LauncherSwingSubsystem();
+
   
   private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
 
@@ -28,6 +34,8 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(
       m_driveSubsystem.Drive()
     );
+
+    CommandScheduler.getInstance().schedule(m_LauncherSwingSubsystem.home());
 
   }
   
