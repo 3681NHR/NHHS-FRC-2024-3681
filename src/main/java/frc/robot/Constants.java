@@ -21,15 +21,8 @@ public final class Constants {
   public static final int DRIVE_BACK_LEFT_MOTOR_ID            = 14;
   public static final int DRIVE_BACK_RIGHT_MOTOR_ID           = 13;
 
-  public static final int LAUNCHER_LEFT_MOTOR_ID              = 17;
-  public static final int LAUNCHER_RIGHT_MOTOR_ID             = 18;
 
-  public static final int LAUNCHER_SWING_MOTOR_ID             = 12;
 
-  public static final int LAUNCHER_SWING_ENCODER_DIO_PIN_A    = 0;
-  public static final int LAUNCHER_SWING_ENCODER_DIO_PIN_B    = 1;
-
-  public static final int LAUNCHER_SWING_LIMIT_SWITCH_DIO_PIN = 2;
 
   public static final double DRIVE_INPUT_LIMITER              = 0.5;
   public static final double DRIVE_INPUT_DEADZONE             = 0.15;
