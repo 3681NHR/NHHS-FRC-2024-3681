@@ -36,6 +36,7 @@ public class RobotContainer {
     );
 
     CommandScheduler.getInstance().schedule(m_LauncherSwingSubsystem.home());
+    CommandScheduler.getInstance().schedule(m_intakeSubsystem.home());
 
   }
   
@@ -46,7 +47,6 @@ public class RobotContainer {
 
     m_commandDriverController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
     
-
     m_commandDriverController.x().onTrue(m_intakeSubsystem.toggleIntake());
     m_commandDriverController.y().onTrue(m_intakeSubsystem.toggleReverse());
 

@@ -36,8 +36,6 @@ public class IntakeSubsystem extends SubsystemBase {
   
   private double selectedPosition;
 
- 
-
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
    this.m_intakeBottom = new VictorWrapper(Constants.INTAKE_BOTTOM_MOTOR_ID);
@@ -103,9 +101,6 @@ public class IntakeSubsystem extends SubsystemBase {
     });
   
     }
-    
-
-
 
   @Override
   public void periodic() {
@@ -115,8 +110,8 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intakeBottom.setVelocity(Constants.INTAKE_SPEED);
     m_intakeTop.setVelocity(Constants.INTAKE_SPEED);
   }else if(state == IntakeState.REVERSE){
-    m_intakeBottom.setVelocity(-Constants.INTAKE_SPEED);
-    m_intakeTop.setVelocity(-Constants.INTAKE_SPEED);    
+    m_intakeBottom.setVelocity(Constants.INTAKE_REVERSE_SPEED);
+    m_intakeTop.setVelocity(Constants.INTAKE_REVERSE_SPEED);    
   } else{
     m_intakeBottom.setVelocity(0);
     m_intakeTop.setVelocity(0);
@@ -125,8 +120,6 @@ public class IntakeSubsystem extends SubsystemBase {
   
   private double clamp(double val, double min, double max)  {
     return Math.max(min, Math.min(max,val));
-
-
   }
 }
 
