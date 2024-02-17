@@ -6,6 +6,8 @@ package frc.robot;
 
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
@@ -15,7 +17,9 @@ public class RobotContainer {
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final LauncherSubsystem m_launcherSubsystem = new LauncherSubsystem();
   
-  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
+  // private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
+
+  private final Field2d m_field = new Field2d();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -27,12 +31,15 @@ public class RobotContainer {
       m_driveSubsystem.Drive()
     );
 
+    // Do this in either robot or subsystem init
+    SmartDashboard.putData("Field", m_field);
+
   }
   
   private void configureBindings() {
 
-    m_commandDriverController.a().onTrue(m_launcherSubsystem.toggleLaunch());
-    m_commandDriverController.b().onTrue(m_launcherSubsystem.toggleDrop());
+    // m_commandDriverController.a().onTrue(m_launcherSubsystem.toggleLaunch());
+    // m_commandDriverController.b().onTrue(m_launcherSubsystem.toggleDrop());
 
   }
 
