@@ -47,7 +47,12 @@ public class SparkWrapper implements MotorInterface{
             m_spm.setIdleMode(IdleMode.kCoast);
     };
 
-public RelativeEncoder getEncoder() {
+    public RelativeEncoder getEncoder() {
         return m_spm.getEncoder(); // TODO: Might want to specify Encoder Type (e.g. Hall Sensor) and countsPerRev. 
+    }
+
+    // TODO: Might want to abstract this some other way; just need this for the simulator now
+    public CANSparkMax getCanSparkMax() {
+        return this.m_spm; 
     }
 }

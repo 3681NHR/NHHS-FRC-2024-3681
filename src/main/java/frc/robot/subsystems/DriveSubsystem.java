@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -16,9 +18,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,6 +42,7 @@ public class DriveSubsystem extends SubsystemBase {
   private Drive drive;
 
   private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
+  private Joystick joystick = new Joystick(0);
 
   // Locations of the wheels relative to the robot center.
   Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381); // TODO: Measure our robot and update these values
@@ -92,6 +97,17 @@ public class DriveSubsystem extends SubsystemBase {
 
   private Pose2d m_pose = new Pose2d(5.0, 13.5, new Rotation2d()); // TODO: Right now, using starting pose from creating m_odometry
 
+  // Simulated Hardware Definitions
+  // These are our EncoderSim objects, which we will only use in
+  // simulation. However, you do not need to comment out these
+  // declarations when you are deploying code to the roboRIO.
+  private EncoderSim m_front_left_encoder_sim; // = new EncoderSim(m_leftEncoder);
+  private EncoderSim m_front_right_encoder_sim; 
+  private EncoderSim m_back_left_encoder_sim; 
+  private EncoderSim m_back_right_encoder_sim; 
+
+  private REVPhysicsSim physicsSim; 
+
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
     // Initialize Motors
@@ -123,6 +139,19 @@ public class DriveSubsystem extends SubsystemBase {
   );
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
+
+   // Initialize Simulated Hardware
+  //  m_front_left_encoder_sim = new EncoderSim();
+  //  m_front_right_encoder = m_front_right.getEncoder();
+  //  m_back_left_encoder = m_back_left.getEncoder();
+  //  m_back_right_encoder = m_back_right.getEncoder();
+
+   // TODO: If "Simulation"
+    // this.physicsSim = REVPhysicsSim.getInstance();
+    // this.physicsSim.addSparkMax(m_front_left.getCanSparkMax(), DCMotor.getNeo550(1));
+    // this.physicsSim.addSparkMax(m_front_right.getCanSparkMax(), DCMotor.getNeo550(1));
+    // this.physicsSim.addSparkMax(m_back_left.getCanSparkMax(), DCMotor.getNeo550(1));
+    // this.physicsSim.addSparkMax(m_back_right.getCanSparkMax(), DCMotor.getNeo550(1));
   }
   
   public Command Drive() {
@@ -160,7 +189,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Update the pose
     m_pose = m_odometry.update(gyroAngle, wheelPositions);
   }
-
   
   private double deadzone(double value, double zone)
   {
@@ -215,5 +243,55 @@ public class DriveSubsystem extends SubsystemBase {
         pose); 
   }
 
+  // Hacking, just to see if the simulator can work
+  public CANSparkMax getFLCanSparkMax() {
+    return this.m_front_left.getCanSparkMax();
+  }
+
+  public CANSparkMax getFRCanSparkMax() {
+    return this.m_front_right.getCanSparkMax();
+  }
+
+  public CANSparkMax getBLCanSparkMax() {
+    return this.m_back_left.getCanSparkMax();
+  }
+
+  public CANSparkMax getBRCanSparkMax() {
+    return this.m_back_right.getCanSparkMax();
+  }
+
+  
+
+  @Override
+  public void simulationPeriodic()  {
+    System.out.println("Doing a simulation thing in the subsystem");
+    System.out.println("driverController: " + m_driverController.getLeftY());
+    System.out.println("driverController: " + m_driverController.getRawAxis(1));
+    System.out.println("Joystick: " + joystick.getRawAxis(1));
+    REVPhysicsSim.getInstance().run();
+
+    // This method will be called once per scheduler run
+    forward = limit(Constants.DRIVE_INPUT_LIMITER, deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE));
+    right   = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE));
+    rotate  = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE));
+    
+    SmartDashboard.putNumber("forward", forward);
+    SmartDashboard.putNumber("right"  ,   right);
+    SmartDashboard.putNumber("rotate" ,  rotate);
+
+    // Update the odometry
+    // Get my wheel positions
+    var wheelPositions = new MecanumDriveWheelPositions(
+      m_front_left_encoder.getPosition(),  // TODO: This is rotations; need to setPositionConversionFactor() and/or convert to Meters
+      m_front_right_encoder.getPosition(), 
+      m_back_left_encoder.getPosition(), 
+      m_back_right_encoder.getPosition());
+
+    // Get the rotation of the robot from the gyro.
+    var gyroAngle = m_gyro.getRotation2d();
+
+    // Update the pose
+    m_pose = m_odometry.update(gyroAngle, wheelPositions);
+  }
 
 }

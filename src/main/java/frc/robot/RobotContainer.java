@@ -6,6 +6,9 @@ package frc.robot;
 
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
+
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,5 +49,21 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return null;//Autos.exampleAuto(m_exampleSubsystem);
+  }
+
+
+  // Adding this in as a helper for testing simulation; 
+  // This breaks our plans but we should refactor once we know how it works. 
+  public CANSparkMax getFLMotor(){
+    return this.m_driveSubsystem.getFLCanSparkMax();
+  }
+  public CANSparkMax getBLMotor(){
+    return this.m_driveSubsystem.getBLCanSparkMax();
+  }
+  public CANSparkMax getFRMotor(){
+    return this.m_driveSubsystem.getFRCanSparkMax();
+  }
+  public CANSparkMax getBRMotor(){
+    return this.m_driveSubsystem.getBRCanSparkMax();
   }
 }
