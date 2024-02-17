@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Drive;
@@ -49,34 +50,16 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
   );
 
-  // The left-side drive encoder
-  private final Encoder m_frontLeftEncoder =
-      new Encoder(
-          Constants.kLeftEncoderPorts[0], // TODO: Add encoder ports and flags to Constants. 
-          Constants.kLeftEncoderPorts[1],
-          Constants.kLeftEncoderReversed);
+  // private final RelativeEncoder m_front_left_encoder = m_front_left.getEncoder();
+  // private final RelativeEncoder m_front_right_encoder = m_front_right.getEncoder();
+  // private final RelativeEncoder m_back_left_encoder = m_back_left.getEncoder();
+  // private final RelativeEncoder m_back_right_encoder = m_back_right.getEncoder();
 
-  // The right-side drive encoder
-  private final Encoder m_frontRightEncoder =
-      new Encoder(
-          Constants.kRightEncoderPorts[0],
-          Constants.kRightEncoderPorts[1],
-          Constants.kRightEncoderReversed);
-
-  // The left-side drive encoder
-  private final Encoder m_backLeftEncoder =
-      new Encoder(
-          Constants.kLeftEncoderPorts[0],
-          Constants.kLeftEncoderPorts[1],
-          Constants.kLeftEncoderReversed);
-
-  // The right-side drive encoder
-  private final Encoder m_backRightEncoder =
-      new Encoder(
-          Constants.kRightEncoderPorts[0],
-          Constants.kRightEncoderPorts[1],
-          Constants.kRightEncoderReversed);
-
+  // TODO: Right now, keeping initialization in the constructor; might want to move it to declaration time. 
+  private RelativeEncoder m_front_left_encoder; 
+  private RelativeEncoder m_front_right_encoder; 
+  private RelativeEncoder m_back_left_encoder; 
+  private RelativeEncoder m_back_right_encoder; 
 
   // The gyro sensor
   private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
@@ -84,33 +67,62 @@ public class DriveSubsystem extends SubsystemBase {
   // Creating my odometry object from the kinematics object and the initial wheel positions.
   // Here, our starting pose is 5 meters along the long end of the field and in the
   // center of the field along the short end, facing the opposing alliance wall.
-  MecanumDriveOdometry m_odometry = new MecanumDriveOdometry(
-    m_kinematics,
-    m_gyro.getRotation2d(),
-    new MecanumDriveWheelPositions(
-      m_frontLeftEncoder.getDistance(), m_frontRightEncoder.getDistance(),
-      m_backLeftEncoder.getDistance(), m_backRightEncoder.getDistance()
-    ),
-    new Pose2d(5.0, 13.5, new Rotation2d())
-  );
+  //
+  // FROM DOCUMENTATION
+  // MecanumDriveOdometry m_odometry = new MecanumDriveOdometry(
+  //   m_kinematics,
+  //   m_gyro.getRotation2d(),
+  //   new MecanumDriveWheelPositions(
+  //     m_frontLeftEncoder.getDistance(), m_frontRightEncoder.getDistance(),
+  //     m_backLeftEncoder.getDistance(), m_backRightEncoder.getDistance()
+  //   ),
+  //   new Pose2d(5.0, 13.5, new Rotation2d())
+  // );
 
-  private final Pose2d m_pose;
+
+  MecanumDriveOdometry m_odometry; // = new MecanumDriveOdometry(
+  //   m_kinematics,
+  //   m_gyro.getRotation2d(),
+  //   new MecanumDriveWheelPositions( // TODO: Check order of arguments
+  //     m_front_left_encoder.getPosition(), m_front_right_encoder.getPosition(),
+  //     m_back_left_encoder.getPosition(), m_back_right_encoder.getPosition()
+  //   ),
+  //   new Pose2d(5.0, 13.5, new Rotation2d()) // TODO: Check/update starting pose
+  // );
+
+  private Pose2d m_pose = new Pose2d(5.0, 13.5, new Rotation2d()); // TODO: Right now, using starting pose from creating m_odometry
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
+    // Initialize Motors
    this.m_back_left   = new SparkWrapper(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
    this.m_back_right  = new SparkWrapper(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
    this.m_front_left  = new SparkWrapper(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
    this.m_front_right = new SparkWrapper(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
   
-    
    this.m_back_left  .setIdleMode(IdleState.BRAKE);
    this.m_back_right .setIdleMode(IdleState.BRAKE);
    this.m_front_left .setIdleMode(IdleState.BRAKE);
    this.m_front_right.setIdleMode(IdleState.BRAKE);
 
-   drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
+   // Initialize Encoders
+   m_front_left_encoder = m_front_left.getEncoder();
+   m_front_right_encoder = m_front_right.getEncoder();
+   m_back_left_encoder = m_back_left.getEncoder();
+   m_back_right_encoder = m_back_right.getEncoder();
 
+   // Initialize Odometry
+   m_odometry = new MecanumDriveOdometry(
+    m_kinematics,
+    m_gyro.getRotation2d(),
+    new MecanumDriveWheelPositions( // TODO: Check order of arguments
+      m_front_left_encoder.getPosition(), m_front_right_encoder.getPosition(),
+      m_back_left_encoder.getPosition(), m_back_right_encoder.getPosition()
+    ),
+    new Pose2d(5.0, 13.5, new Rotation2d()) // TODO: Check/update starting pose
+  );
+
+   drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
   }
   
   public Command Drive() {
@@ -137,8 +149,10 @@ public class DriveSubsystem extends SubsystemBase {
     // Update the odometry
     // Get my wheel positions
     var wheelPositions = new MecanumDriveWheelPositions(
-      m_frontLeftEncoder.getDistance(), m_frontRightEncoder.getDistance(),
-      m_backLeftEncoder.getDistance(), m_backRightEncoder.getDistance());
+      m_front_left_encoder.getPosition(),  // TODO: This is rotations; need to setPositionConversionFactor() and/or convert to Meters
+      m_front_right_encoder.getPosition(), 
+      m_back_left_encoder.getPosition(), 
+      m_back_right_encoder.getPosition());
 
     // Get the rotation of the robot from the gyro.
     var gyroAngle = m_gyro.getRotation2d();
@@ -177,10 +191,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Resets the drive encoders to currently read a position of 0. */
   public void resetEncoders() {
-    m_frontLeftEncoder.reset();
-    m_frontRightEncoder.reset();
-    m_backLeftEncoder.reset();
-    m_backRightEncoder.reset();
+    m_front_left_encoder.setPosition(0.0);
+    m_front_right_encoder.setPosition(0.0);
+    m_back_left_encoder.setPosition(0.0);
+    m_back_right_encoder.setPosition(0.0);
   }
 
   /**
@@ -193,9 +207,11 @@ public class DriveSubsystem extends SubsystemBase {
     m_odometry.resetPosition(
         m_gyro.getRotation2d(), 
         new MecanumDriveWheelPositions(
-          m_frontLeftEncoder.getDistance(), m_frontRightEncoder.getDistance(),
-          m_backLeftEncoder.getDistance(), m_backRightEncoder.getDistance()
-          ), 
+          m_front_left_encoder.getPosition(),  // TODO: This is rotations; need to setPositionConversionFactor() and/or convert to Meters 
+          m_front_right_encoder.getPosition(), 
+          m_back_left_encoder.getPosition(), 
+          m_back_right_encoder.getPosition()
+        ), 
         pose); 
   }
 

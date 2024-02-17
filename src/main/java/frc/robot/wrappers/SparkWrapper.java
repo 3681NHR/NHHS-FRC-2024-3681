@@ -4,6 +4,7 @@ import frc.robot.interfaces.MotorInterface;
 import frc.robot.enums.IdleState;
 import frc.robot.enums.MotionType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -45,4 +46,8 @@ public class SparkWrapper implements MotorInterface{
         if(mode == IdleState.BRAKE)
             m_spm.setIdleMode(IdleMode.kCoast);
     };
+
+public RelativeEncoder getEncoder() {
+        return m_spm.getEncoder(); // TODO: Might want to specify Encoder Type (e.g. Hall Sensor) and countsPerRev. 
+    }
 }
