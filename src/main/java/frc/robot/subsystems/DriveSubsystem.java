@@ -9,7 +9,14 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Drive;
 import frc.robot.enums.IdleState;
 import frc.robot.Constants;
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +37,64 @@ public class DriveSubsystem extends SubsystemBase {
   private Drive drive;
 
   private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
+
+  // Locations of the wheels relative to the robot center.
+  Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381); // TODO: Measure our robot and update these values
+  Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381); // TODO: Measure our robot and update these values
+  Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);   // TODO: Measure our robot and update these values
+  Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);   // TODO: Measure our robot and update these values
+
+  // Creating my kinematics object using the wheel locations.
+  MecanumDriveKinematics m_kinematics = new MecanumDriveKinematics(
+    m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
+  );
+
+  // The left-side drive encoder
+  private final Encoder m_frontLeftEncoder =
+      new Encoder(
+          Constants.kLeftEncoderPorts[0], // TODO: Add encoder ports and flags to Constants. 
+          Constants.kLeftEncoderPorts[1],
+          Constants.kLeftEncoderReversed);
+
+  // The right-side drive encoder
+  private final Encoder m_frontRightEncoder =
+      new Encoder(
+          Constants.kRightEncoderPorts[0],
+          Constants.kRightEncoderPorts[1],
+          Constants.kRightEncoderReversed);
+
+  // The left-side drive encoder
+  private final Encoder m_backLeftEncoder =
+      new Encoder(
+          Constants.kLeftEncoderPorts[0],
+          Constants.kLeftEncoderPorts[1],
+          Constants.kLeftEncoderReversed);
+
+  // The right-side drive encoder
+  private final Encoder m_backRightEncoder =
+      new Encoder(
+          Constants.kRightEncoderPorts[0],
+          Constants.kRightEncoderPorts[1],
+          Constants.kRightEncoderReversed);
+
+
+  // The gyro sensor
+  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+
+  // Creating my odometry object from the kinematics object and the initial wheel positions.
+  // Here, our starting pose is 5 meters along the long end of the field and in the
+  // center of the field along the short end, facing the opposing alliance wall.
+  MecanumDriveOdometry m_odometry = new MecanumDriveOdometry(
+    m_kinematics,
+    m_gyro.getRotation2d(),
+    new MecanumDriveWheelPositions(
+      m_frontLeftEncoder.getDistance(), m_frontRightEncoder.getDistance(),
+      m_backLeftEncoder.getDistance(), m_backRightEncoder.getDistance()
+    ),
+    new Pose2d(5.0, 13.5, new Rotation2d())
+  );
+
+  private final Pose2d m_pose;
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
@@ -68,6 +133,18 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("forward", forward);
     SmartDashboard.putNumber("right"  ,   right);
     SmartDashboard.putNumber("rotate" ,  rotate);
+
+    // Update the odometry
+    // Get my wheel positions
+    var wheelPositions = new MecanumDriveWheelPositions(
+      m_frontLeftEncoder.getDistance(), m_frontRightEncoder.getDistance(),
+      m_backLeftEncoder.getDistance(), m_backRightEncoder.getDistance());
+
+    // Get the rotation of the robot from the gyro.
+    var gyroAngle = m_gyro.getRotation2d();
+
+    // Update the pose
+    m_pose = m_odometry.update(gyroAngle, wheelPositions);
   }
 
   
@@ -97,4 +174,30 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
   }
+
+  /** Resets the drive encoders to currently read a position of 0. */
+  public void resetEncoders() {
+    m_frontLeftEncoder.reset();
+    m_frontRightEncoder.reset();
+    m_backLeftEncoder.reset();
+    m_backRightEncoder.reset();
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    m_odometry.resetPosition(
+        m_gyro.getRotation2d(), 
+        new MecanumDriveWheelPositions(
+          m_frontLeftEncoder.getDistance(), m_frontRightEncoder.getDistance(),
+          m_backLeftEncoder.getDistance(), m_backRightEncoder.getDistance()
+          ), 
+        pose); 
+  }
+
+
 }
