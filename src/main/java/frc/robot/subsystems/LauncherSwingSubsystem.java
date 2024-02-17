@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.enums.IdleState;
@@ -28,8 +29,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private double selectedPosition;
 
   private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
-
-  public LauncherState state = LauncherState.IDLE;
 
   public LauncherSwingSubsystem() 
   {
@@ -51,6 +50,25 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     });
   }
 
+  public Command gotoPosition(int position){
+    return runOnce(() -> {
+      switch(position){
+        case 0:
+          selectedPosition = Constants.LAUNCHER_LAUNCH_POSITION;
+          break;
+        case 1:
+          selectedPosition = Constants.LAUNCHER_RECV_POSITION;
+          break;
+        case 2:
+          selectedPosition = Constants.LAUNCHER_DROP_POSITION;
+          break;
+        default:
+          throw new IndexOutOfBoundsException("launcher swing goto set to bad position index");
+      }
+
+    });
+  }
+
   public Command manualSwingControl(){
     return runOnce(() -> {
       selectedPosition += m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis();
@@ -60,6 +78,11 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   }
   @Override
   public void periodic() {
+
+    SmartDashboard.putNumber("launcher swing selected pos", selectedPosition          );
+    SmartDashboard.putNumber("launcher swing current pos" , swingEncoder.getDistance());
+
+
     swingMotor.setVelocity(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
   }
   

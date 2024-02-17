@@ -13,6 +13,7 @@ import frc.robot.wrappers.VictorWrapper;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,12 +49,36 @@ public class IntakeSubsystem extends SubsystemBase {
    this.m_rotate.setIdleMode(IdleState.BRAKE);
   }
 
+  
+  public Command gotostate(int swing, int intake){
+    return runOnce(() -> {
+      switch(swing){
+        case 0:
+          swingState = IntakeSwingState.UP;
+          break;
+        case 1:
+          swingState = IntakeSwingState.DOWN;
+          break;
+        default:
+          throw new IndexOutOfBoundsException("intake swing goto set to bad position index");
+      }
+      switch(intake){
+        case 0:
+          state = IntakeState.IDLE;
+          break;
+        case 1:
+          state = IntakeState.INTAKE;
+          break;
+        case 2:
+          state = IntakeState.REVERSE;
+          break;
+        default:
+          throw new IndexOutOfBoundsException("intake goto set to bad motion index");
+      }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
+    });
+  }
+
   public Command toggleSwing() {
     return run(
       () -> {
@@ -104,6 +129,20 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putNumber("intake swing selected pos", selectedPosition                );
+    SmartDashboard.putNumber("intake swing current pos" , intakeSwingEncoder.getDistance());
+    SmartDashboard.putString("intake swing state"       , swingState.toString()           );
+    SmartDashboard.putString("intake state"             , state.toString()                );
+
+
+    if(swingState == IntakeSwingState.UP){
+      selectedPosition = Constants.INTAKE_SWING_UP_POSITION;
+    }
+    if(swingState == IntakeSwingState.DOWN){
+      selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
+    }
+
     m_rotate.setVelocity(clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED));
   
   if(state == IntakeState.INTAKE){

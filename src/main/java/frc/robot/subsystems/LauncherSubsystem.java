@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.enums.IdleState;
@@ -49,6 +51,9 @@ public class LauncherSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
+
+    SmartDashboard.putString("launcher state", state.toString());
+
     switch(state){
       case LAUNCHING:
         m_left  .setVelocity(Constants.LAUNCHER_LAUNCH_SPEED);

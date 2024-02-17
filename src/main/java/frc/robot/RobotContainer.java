@@ -36,8 +36,8 @@ public class RobotContainer {
       m_driveSubsystem.Drive()
     );
 
-    CommandScheduler.getInstance().schedule(m_LauncherSwingSubsystem.home());
-    CommandScheduler.getInstance().schedule(m_intakeSubsystem.home());
+    //CommandScheduler.getInstance().schedule(m_LauncherSwingSubsystem.home());
+    //CommandScheduler.getInstance().schedule(m_intakeSubsystem.home());
 
   }
   
@@ -51,6 +51,16 @@ public class RobotContainer {
     m_commandDriverController.x().onTrue(m_intakeSubsystem.toggleIntake());
     m_commandDriverController.y().onTrue(m_intakeSubsystem.toggleReverse());
 
+    m_commandDriverController.povUp()   .onTrue(m_LauncherSwingSubsystem.gotoPosition(0));
+    m_commandDriverController.povLeft() .onTrue(m_LauncherSwingSubsystem.gotoPosition(1));
+    m_commandDriverController.povRight().onTrue(
+      m_LauncherSwingSubsystem.gotoPosition(1).andThen(
+        m_intakeSubsystem.gotostate(0, 0).andThen(
+        m_intakeSubsystem.gotostate(0, 2)
+      )
+      )
+    );
+    m_commandDriverController.povDown() .onTrue(m_LauncherSwingSubsystem.gotoPosition(2));
   }
 
   public Command getAutonomousCommand() {
