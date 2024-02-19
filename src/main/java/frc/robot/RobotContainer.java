@@ -16,13 +16,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 
 public class RobotContainer {
+  private final Field2d m_field = new Field2d();
+
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final LauncherSubsystem m_launcherSubsystem = new LauncherSubsystem();
   
   // private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
 
-  private final Field2d m_field = new Field2d();
+  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -36,6 +38,7 @@ public class RobotContainer {
 
     // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
+    m_driveSubsystem.setField(m_field);
 
   }
   

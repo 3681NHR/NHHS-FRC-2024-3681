@@ -7,6 +7,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
+
+import java.util.List;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Drive;
@@ -19,10 +22,15 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -95,7 +103,7 @@ public class DriveSubsystem extends SubsystemBase {
   //   new Pose2d(5.0, 13.5, new Rotation2d()) // TODO: Check/update starting pose
   // );
 
-  private Pose2d m_pose = new Pose2d(5.0, 13.5, new Rotation2d()); // TODO: Right now, using starting pose from creating m_odometry
+  private Pose2d m_pose = new Pose2d(1.0, 1.5, new Rotation2d()); // TODO: Right now, using starting pose from creating m_odometry
 
   // Simulated Hardware Definitions
   // These are our EncoderSim objects, which we will only use in
@@ -106,7 +114,10 @@ public class DriveSubsystem extends SubsystemBase {
   private EncoderSim m_back_left_encoder_sim; 
   private EncoderSim m_back_right_encoder_sim; 
 
-  private REVPhysicsSim physicsSim; 
+  private REVPhysicsSim physicsSim;
+  private Trajectory m_trajectory; 
+  
+  private Field2d field = null; 
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
@@ -135,7 +146,7 @@ public class DriveSubsystem extends SubsystemBase {
       m_front_left_encoder.getPosition(), m_front_right_encoder.getPosition(),
       m_back_left_encoder.getPosition(), m_back_right_encoder.getPosition()
     ),
-    new Pose2d(5.0, 13.5, new Rotation2d()) // TODO: Check/update starting pose
+    new Pose2d(1.0, 1.5, new Rotation2d()) // TODO: Check/update starting pose
   );
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
@@ -152,6 +163,13 @@ public class DriveSubsystem extends SubsystemBase {
     // this.physicsSim.addSparkMax(m_front_right.getCanSparkMax(), DCMotor.getNeo550(1));
     // this.physicsSim.addSparkMax(m_back_left.getCanSparkMax(), DCMotor.getNeo550(1));
     // this.physicsSim.addSparkMax(m_back_right.getCanSparkMax(), DCMotor.getNeo550(1));
+
+    m_trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+            new Pose2d(3, 0, Rotation2d.fromDegrees(0)),
+            new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0)));
   }
   
   public Command Drive() {
@@ -159,7 +177,10 @@ public class DriveSubsystem extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          drive.driveCartesian(rotate, right, forward);
+          System.out.println(rotate + ", " + right + ", " + forward);
+
+          drive.driveCartesian(rotate, right, forward); // TODO: These value don't map to what they seem. 
+          SmartDashboard.putData("Drive Command", this);
         });
   }
 
@@ -260,14 +281,17 @@ public class DriveSubsystem extends SubsystemBase {
     return this.m_back_right.getCanSparkMax();
   }
 
+  public void setField(Field2d field) {
+    this.field = field; 
+  }
   
 
   @Override
   public void simulationPeriodic()  {
-    System.out.println("Doing a simulation thing in the subsystem");
-    System.out.println("driverController: " + m_driverController.getLeftY());
-    System.out.println("driverController: " + m_driverController.getRawAxis(1));
-    System.out.println("Joystick: " + joystick.getRawAxis(1));
+    // System.out.println("Doing a simulation thing in the subsystem");
+    // System.out.println("driverController: " + m_driverController.getLeftY());
+    // System.out.println("driverController: " + m_driverController.getRawAxis(1));
+    // System.out.println("Joystick: " + joystick.getRawAxis(1));
     REVPhysicsSim.getInstance().run();
 
     // This method will be called once per scheduler run
@@ -292,6 +316,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Update the pose
     m_pose = m_odometry.update(gyroAngle, wheelPositions);
+    // Do this in either robot periodic or subsystem periodic
+    if (field != null) {
+      // field.setRobotPose(m_odometry.getPoseMeters());
+      field.setRobotPose(this.m_pose);
+      System.out.println(this.m_pose);
+    }
+
   }
 
 }

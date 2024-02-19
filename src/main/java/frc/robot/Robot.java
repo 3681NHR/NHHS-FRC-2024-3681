@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
 
     @Override
   public void simulationPeriodic() {
-    System.out.println("Doing a simulation thing");
+    // System.out.println("Doing a simulation thing");
   }
 
   
