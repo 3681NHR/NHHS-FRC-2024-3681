@@ -1,31 +1,60 @@
- * confirm all wires in place
- * confirm all loose wires sepperated to avoid short
- * confirm no metal shavings in electronics
- * confirm fuses in place
+ # Team 3681 Robot Functionality Checklist
 
- * put battery in holder and strap in tightly
- * main breaker ON
+ 
 
- * confirm router and roboRIO on with no errors
- * connect to computer
- * open driver station and smartdashboard
- * confirm driverstation and smartdashboard connected to robot
- * deploy robot code
+ ## Core Inspection
+ 
+ * Before powering up the robot, check the following: 
+    * confirm all wires in place
+    * confirm all loose wires sepperated to avoid short
+    * confirm no metal shavings in electronics
+    * confirm fuses in place
+* Add power 
+    * put battery in holder and strap in tightly
+    * main breaker ON
+* Inspect basic connections and communication
+    * confirm router and roboRIO on with no errors
+        * Router will take a couple minutes to initialize
+            * Look for (TODO) lights to be on 
+        * RoboRIO Status light should be on and solid
+    * connect computer to RoboRIO
+        * Computer joins the (TODO) `3681` network (for the competition robot)
+    * On the computer, open Driver Station and Smartdashboard
+        * confirm driverstation and smartdashboard connected to robot
+            * (TODO) Look at (these) status indicators to confirm
+            * On the Smart Dashboard, there is a "Connected" widget that is Green when connected; Red otherwise
+    * deploy robot code
+        * From VS Code, click the WPI icon and find the "Deploy Robot Code" entry
 ----
+## Driver Station 
+
+In the Driver Station, confirm the following items: 
+
  * on driverstation
-    * connected: all green
-    * robot code: green
-    * joysticks: green
-    * robot battery voltage: >11V
-    * mode: teleoperated
-    * enabled: disable
-    * team number: 3681
-    * joysticks: xbox controller on port 0
-    * dashboard type: smartdashboard
+    * Communications: all green (not partial green)
+    * Robot Code: green
+        * Indicates we have deployed code to the RoboRIO that can be run
+    * Joysticks: green
+        * Indicates that (expected?) joysticks are connected to the laptop
+    * Robot battery voltage: >11V
+        * Under this voltage, the robot my not perform as expected
+    * Mode: teleoperated
+        * This is the menu on the left-hand side, where we can select "Autonomous", etc. 
+    * Enabled: disable
+        * On startup, the robot should be "Disabled" until ready to drive
+    * Team number: 3681
+    * Joysticks: xbox controller on port 0
+        * This is in the USB sub-menu (select on the left-hand side tab menu)
+    * Dashboard type: smartdashboard
+        * This is in the Setup sub-menu (select on the left-hand side tab menu)
 ----
+## Preparing to Run the Robot
+
  * confirm no one near robot
  * enable robot
-----
+
+### Checking Core Functionality
+
  * check drive train
     * confirm all 4 wheels moving with user inputs
     * confirm speeds consistant/close to input magnatude
