@@ -1,6 +1,7 @@
  # Team 3681 Robot Functionality Checklist
 
-
+note: for full check(after changes), follow every instruction exactaly in the order they are told, if something cannot be confirmed, or is wrong, 
+**stop the robot and fix it!**
 
  ## Core Inspection
  
@@ -35,7 +36,7 @@ In the Driver Station, confirm the following items:
     * Robot Code: green
         * Indicates we have deployed code to the RoboRIO that can be run
     * Joysticks: green
-        * Indicates that (expected?) joysticks are connected to the laptop
+        * Indicates that joysticks are connected to the laptop
     * Robot battery voltage: >11V
         * Under this voltage, the robot my not perform as expected
     * Mode: teleoperated
@@ -52,6 +53,7 @@ In the Driver Station, confirm the following items:
 
  * confirm no one near robot
  * enable robot
+    * big green 'Enable' button
 
 ### Checking Core Functionality
 
@@ -65,77 +67,71 @@ In the Driver Station, confirm the following items:
 * check motion on ground
 
 #### Check launcher motors
-
-* set to drop speed
-    * confirm speed at drop speed
-* set to launch speed
-    * confirm speed at launch speed
-* set to idle
-    * confirm motors winding down to idle
+* set to DROP speed
+    * confirm speed at DROP speed
+* set to LAUNCH speed
+    * confirm speed at LAUNCH speed
+* set to IDLE
+    * confirm motors slowing to IDLE
 
 #### Check intake motors
-
-* set to intake
-    * confirm top and bottom motors at intake speed
-* set to reverse
-    * confirm top and bottom motors at reverse speed
-* set to idle
-    * confirm motors slowing to idle
+* set to INTAKE speed
+    * confirm top and bottom motors at INTAKE speed
+* set to REVERSE speed
+    * confirm top and bottom motors at REVERSE speed
+* set to IDLE
+    * confirm motors slowing to IDLE
 
 #### Launcher Homing Sequence
-
 * start launcher homing sequence
     * if expected motions are not happening, STOP HOMING SEQUENCE IMEDIEDLY
     * confirm launcher swing is moving at homing speed tords homing switch
     * confirm launcher swing stops at homing switch and resets encoders to zero
+ 
+#### Intake Homing Sequence
 * start intake homing sequence
     * if expected motions are not happening, STOP HOMING SEQUENCE IMEDIEDLY
     * confirm intake swing is moving at homing speed tords homing switch
     * confirm intake swing stops at homing switch and resets encoders to zero
 
-### Launcher Swing-- Manual Control
-
+#### Launcher Swing: Manual Control
 * confirm launcher swing moving up/down with inputs
 * confirm propper speeds moving up/down
 * confirm propper deadzone and limitor working propperly
 
-#### Launcher Swing-- PID/Positional Hold
-
+#### Launcher Swing: PID/Positional Hold
 * move arm to low position without resting on bumper or lim. switch
-    * confirm arm is holding steady in place for 5 seconds
+    * confirm arm is holding steady in place for ~5 seconds
 * move arm to medium position
-    * confirm arm is holding steady in place for 5 seconds
+    * confirm arm is holding steady in place for ~5 seconds
 * move arm to high position
-    * confirm arm is holding steady in place for 5 seconds
+    * confirm arm is holding steady in place for ~5 seconds
 
-#### Launcher swing-- autoset positional hold
-
+#### Launcher swing: autoset position hold
 * set position to autoset LAUNCH position
     * confirm selected position is set
     * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
+    * confirm arm stays as position for ~5 seconds
 * set position to autoset RECV position
     * confirm selected position is set
     * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
+    * confirm arm stays as position for ~5 seconds
 * set position to autoset DROP position
     * confirm selected position is set
     * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
+    * confirm arm stays as position for ~5 seconds
 
 #### Intake swing: autoset positional hold
-
 * set position to autoset UP position
     * confirm selected position is set
     * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
+    * confirm arm stays as position for ~5 seconds
 * set position to autoset DOWN position
     * confirm selected position is set
     * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
+    * confirm arm stays as position for ~5 seconds
 
 #### Auto Recieve function: without gamepiece
-
 * start auto recv
     * confirm launcher arm moves to RECV position
     * confirm intake arm moves to UP position
@@ -144,7 +140,6 @@ In the Driver Station, confirm the following items:
 * confirm launcher recever motor set to INTAKE speed
 
 #### Auto Recieve function: with gamepiece
-
 * use intake to collect gamepiece
 * Start auto recv
     * confirm launcher arm moves to RECV position
