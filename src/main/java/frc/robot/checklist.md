@@ -1,6 +1,6 @@
  # Team 3681 Robot Functionality Checklist
 
- 
+
 
  ## Core Inspection
  
@@ -25,7 +25,7 @@
             * On the Smart Dashboard, there is a "Connected" widget that is Green when connected; Red otherwise
     * deploy robot code
         * From VS Code, click the WPI icon and find the "Deploy Robot Code" entry
-----
+
 ## Driver Station 
 
 In the Driver Station, confirm the following items: 
@@ -47,115 +47,109 @@ In the Driver Station, confirm the following items:
         * This is in the USB sub-menu (select on the left-hand side tab menu)
     * Dashboard type: smartdashboard
         * This is in the Setup sub-menu (select on the left-hand side tab menu)
-----
-## Preparing to Run the Robot
+
+## Run the Robot
 
  * confirm no one near robot
  * enable robot
 
 ### Checking Core Functionality
 
- * check drive train
-    * confirm all 4 wheels moving with user inputs
-    * confirm speeds consistant/close to input magnatude
-    * confirm deadzone and limitor working propperly(no drift)
-    * confirm wheel direction correct
-    * confirm drive controllers no errors
-    * confirm drive controllers set to BRAKE idle mode(wheels stop when no input)
-    * check motion on ground
-----
- * check launcher motors
-    * set to drop speed
+#### Check drive train
+* confirm all 4 wheels moving with user inputs
+* confirm speeds consistant/close to input magnatude
+* confirm deadzone and limitor working propperly(no drift)
+* confirm wheel direction correct
+* confirm drive controllers no errors
+* confirm drive controllers set to BRAKE idle mode(wheels stop when no input)
+* check motion on ground
+
+#### Check launcher motors
+
+* set to drop speed
     * confirm speed at drop speed
-
-    * set to launch speed
+* set to launch speed
     * confirm speed at launch speed
-
-    * set to idle
+* set to idle
     * confirm motors winding down to idle
-----
- * check intake motors
-    * set to intake
+
+#### Check intake motors
+
+* set to intake
     * confirm top and bottom motors at intake speed
-
-    * set to reverse
+* set to reverse
     * confirm top and bottom motors at reverse speed
-
-    * set to idle
+* set to idle
     * confirm motors slowing to idle
-----
- * start launcher homing sequence
+
+#### Launcher Homing Sequence
+
+* start launcher homing sequence
     * if expected motions are not happening, STOP HOMING SEQUENCE IMEDIEDLY
     * confirm launcher swing is moving at homing speed tords homing switch
     * confirm launcher swing stops at homing switch and resets encoders to zero
-----
- * start intake homing sequence
+* start intake homing sequence
     * if expected motions are not happening, STOP HOMING SEQUENCE IMEDIEDLY
     * confirm intake swing is moving at homing speed tords homing switch
     * confirm intake swing stops at homing switch and resets encoders to zero
-----
- * check launcher swing manual controlls
-    * confirm launcher swing moving up/down with inputs
-    * confirm propper speeds moving up/down
-    * confirm propper deadzone and limitor working propperly
-----
- * check launcher swing pid/positional hold
-    * move arm to low position without resting on bumper or lim. switch
+
+### Launcher Swing-- Manual Control
+
+* confirm launcher swing moving up/down with inputs
+* confirm propper speeds moving up/down
+* confirm propper deadzone and limitor working propperly
+
+#### Launcher Swing-- PID/Positional Hold
+
+* move arm to low position without resting on bumper or lim. switch
+    * confirm arm is holding steady in place for 5 seconds
+* move arm to medium position
+    * confirm arm is holding steady in place for 5 seconds
+* move arm to high position
     * confirm arm is holding steady in place for 5 seconds
 
-    * move arm to medium position
-    * confirm arm is holding steady in place for 5 seconds
+#### Launcher swing-- autoset positional hold
 
-    * move arm to high position
-    * confirm arm is holding steady in place for 5 seconds
-----
-* check launcher swing autoset positional hold
-    * set position to autoset LAUNCH position
+* set position to autoset LAUNCH position
+    * confirm selected position is set
+    * confirm arm moving tords set position
+    * confirm arm stays as position for 5 seconds
+* set position to autoset RECV position
+    * confirm selected position is set
+    * confirm arm moving tords set position
+    * confirm arm stays as position for 5 seconds
+* set position to autoset DROP position
     * confirm selected position is set
     * confirm arm moving tords set position
     * confirm arm stays as position for 5 seconds
 
-    * set position to autoset RECV position
+#### Intake swing: autoset positional hold
+
+* set position to autoset UP position
+    * confirm selected position is set
+    * confirm arm moving tords set position
+    * confirm arm stays as position for 5 seconds
+* set position to autoset DOWN position
     * confirm selected position is set
     * confirm arm moving tords set position
     * confirm arm stays as position for 5 seconds
 
-    * set position to autoset DROP position
-    * confirm selected position is set
-    * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
-----
-* check intake swing autoset positional hold
-    * set position to autoset UP position
-    * confirm selected position is set
-    * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
+#### Auto Recieve function: without gamepiece
 
-    * set position to autoset DOWN position
-    * confirm selected position is set
-    * confirm arm moving tords set position
-    * confirm arm stays as position for 5 seconds
-----
- * check auto recv function without gamepiece
-    * start auto recv
-
+* start auto recv
     * confirm launcher arm moves to RECV position
     * confirm intake arm moves to UP position
     * confirm launcher and intake arms line up
+* confirm intake top and bottom motors set to REVERSE speed
+* confirm launcher recever motor set to INTAKE speed
 
-    * confirm intake top and bottom motors set to REVERSE speed
-    * confirm launcher recever motor set to INTAKE speed
-----
- * check auto recv function with gamepiece
-    * use intake to collect gamepiece
+#### Auto Recieve function: with gamepiece
 
-    * start auto recv
-
+* use intake to collect gamepiece
+* Start auto recv
     * confirm launcher arm moves to RECV position
     * confirm intake arm moves to UP position and held game piece is not impacting anything and is held firmly
     * confirm launcher and intake arms line up
-
     * confirm intake top and bottom motors set to REVERSE speed
     * confirm launcher recever motor set to INTAKE speed
-
     * confirm gamepiece moves to launcher assembaly, not touching launcher wheels or intake
