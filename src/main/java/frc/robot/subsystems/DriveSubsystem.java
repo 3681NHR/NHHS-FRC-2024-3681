@@ -29,6 +29,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -113,6 +114,8 @@ public class DriveSubsystem extends SubsystemBase {
   private EncoderSim m_front_right_encoder_sim; 
   private EncoderSim m_back_left_encoder_sim; 
   private EncoderSim m_back_right_encoder_sim; 
+
+  private ADXRS450_GyroSim m_gyro_sim = new ADXRS450_GyroSim(m_gyro);
 
   private REVPhysicsSim physicsSim;
   private Trajectory m_trajectory; 
@@ -285,6 +288,7 @@ public class DriveSubsystem extends SubsystemBase {
     this.field = field; 
   }
   
+  private double angle = 0.0; 
 
   @Override
   public void simulationPeriodic()  {
@@ -292,6 +296,8 @@ public class DriveSubsystem extends SubsystemBase {
     // System.out.println("driverController: " + m_driverController.getLeftY());
     // System.out.println("driverController: " + m_driverController.getRawAxis(1));
     // System.out.println("Joystick: " + joystick.getRawAxis(1));
+    angle += 0.1;
+    this.m_gyro_sim.setAngle(angle);
     REVPhysicsSim.getInstance().run();
 
     // This method will be called once per scheduler run
