@@ -50,23 +50,15 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     });
   }
 
-  public Command gotoPosition(int position){
-    return runOnce(() -> {
-      switch(position){
-        case 0:
-          selectedPosition = Constants.LAUNCHER_LAUNCH_POSITION;
-          break;
-        case 1:
-          selectedPosition = Constants.LAUNCHER_RECV_POSITION;
-          break;
-        case 2:
-          selectedPosition = Constants.LAUNCHER_DROP_POSITION;
-          break;
-        default:
-          throw new IndexOutOfBoundsException("launcher swing goto set to bad position index");
-      }
-
-    });
+  public void gotoPosition(double position){
+    selectedPosition = position;
+  }
+  public boolean isAtSelectedPos(){
+    if(Math.abs(selectedPosition - swingEncoder.getDistance()) <= Constants.LAUNCHER_SWING_POS_AE){
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public Command manualSwingControl(){
