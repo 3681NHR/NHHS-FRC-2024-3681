@@ -4,55 +4,52 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.enums.IdleState;
-import frc.robot.enums.LauncherState;
-import frc.robot.wrappers.SparkWrapper;
 import frc.robot.Constants;
 
 public class LauncherSwingSubsystem extends SubsystemBase {
 
-  private SparkWrapper swingMotor;
+  private CANSparkMax swingMotor;
 
-  private Encoder swingEncoder = new Encoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN_A, Constants.LAUNCHER_SWING_ENCODER_DIO_PIN_B);
-  private DigitalInput homingSwitch = new DigitalInput(Constants.LAUNCHER_SWING_LIMIT_SWITCH_DIO_PIN);
+  private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
   private PIDController swingPID = new PIDController(0, 0, 0);
 
   private double selectedPosition;
 
-  private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
+  private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 
   public LauncherSwingSubsystem() 
   {
 
-    this.swingMotor  = new SparkWrapper(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
+    this.swingMotor  = new CANSparkMax(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
 
-    this.swingMotor.setIdleMode(IdleState.BRAKE);
+    this.swingMotor.setIdleMode(IdleMode.kBrake);
 
   }
 
-  public Command home(){
-    return run(() -> {
-      if(homingSwitch.get()){
-        swingEncoder.reset();
-        swingMotor.setVelocity(0);
-      } else {
-        swingMotor.setVelocity(Constants.LAUNCHER_SWING_HOMING_SPEED);
-      }
-    });
-  }
+  //public Command home(){
+  //  return run(() -> {
+  //    if(homingSwitch.get()){
+  //      swingEncoder.reset();
+  //      swingMotor.set(0);
+  //    } else {
+  //      swingMotor.set(Constants.LAUNCHER_SWING_HOMING_SPEED);
+  //    }
+  //  });
+  //}
 
-  public void gotoPosition(double position){
-    selectedPosition = position;
-  }
+  //public void gotoPosition(double position){
+  //  selectedPosition = position;
+  //}
   public boolean isAtSelectedPos(){
     if(Math.abs(selectedPosition - swingEncoder.getDistance()) <= Constants.LAUNCHER_SWING_POS_AE){
       return true;
@@ -62,8 +59,8 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   }
 
   public Command manualSwingControl(){
-    return runOnce(() -> {
-      selectedPosition += m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis();
+    return run(() -> {
+      selectedPosition += (m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING_MAN_CTRL_SENS;
 
       selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING_LOWER_BOUND, Constants.LAUNCHER_SWING_UPPER_BOUND);
     });
@@ -71,11 +68,12 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    SmartDashboard.putNumber("launcher swing selected pos", selectedPosition          );
-    SmartDashboard.putNumber("launcher swing current pos" , swingEncoder.getDistance());
+    SmartDashboard.putNumber ("launcher swing selected pos", selectedPosition                );
+    SmartDashboard.putNumber ("launcher swing current pos" , swingEncoder.getDistance()      );
+    SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected());
 
 
-    swingMotor.setVelocity(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
+    swingMotor.set(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
   }
   
   private double clamp(double val, double min, double max) {

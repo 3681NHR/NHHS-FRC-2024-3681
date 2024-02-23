@@ -6,9 +6,9 @@ package frc.robot.subsystems;
 
 // import com.revrobotics.CANSparkMax.IdleMode;
 
-
-import frc.robot.wrappers.VictorWrapper;
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -17,16 +17,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.enums.IdleState;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.IntakeSwingState;
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private VictorWrapper m_intakeBottom;
-  private VictorWrapper m_intakeTop;
-  private VictorWrapper m_rotate;
+  private VictorSPX m_intakeBottom;
+  private VictorSPX m_intakeTop;
+  private VictorSPX m_rotate;
   
   private IntakeState state = IntakeState.IDLE;
   private IntakeSwingState swingState = IntakeSwingState.DOWN;
@@ -39,14 +38,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
-   this.m_intakeBottom = new VictorWrapper(Constants.INTAKE_BOTTOM_MOTOR_ID);
-   this.m_intakeTop = new VictorWrapper(Constants.INTAKE_TOP_MOTOR_ID);
-   this.m_rotate = new VictorWrapper(Constants.INTAKE_SWING_MOTOR_ID);
+   this.m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
+   this.m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
+   this.m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
    
    //set motor idle modes - did this *sam* 
-   this.m_intakeBottom.setIdleMode(IdleState.BRAKE);
-   this.m_intakeTop.setIdleMode(IdleState.BRAKE);
-   this.m_rotate.setIdleMode(IdleState.BRAKE);
+   this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
+   this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
+   this.m_rotate      .setNeutralMode(NeutralMode.Brake);
   }
 
   
@@ -80,7 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command toggleSwing() {
-    return run(
+    return runOnce(
       () -> {
       if(swingState == IntakeSwingState.UP){
         swingState = IntakeSwingState.DOWN;
@@ -91,7 +90,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     
     public Command toggleIntake() {
-    return run(
+    return runOnce(
     () -> {
     if(state == IntakeState.INTAKE){
        state = IntakeState.IDLE;
@@ -103,7 +102,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
     public Command toggleReverse() {
-    return run(
+    return runOnce(
     () -> {
     if(state == IntakeState.REVERSE){
        state = IntakeState.IDLE;
@@ -119,9 +118,11 @@ public class IntakeSubsystem extends SubsystemBase {
       () -> {
       if(homingSwitch.get()){
         intakeSwingEncoder.reset();
-        m_rotate.setVelocity(0);
+        m_rotate.set(ControlMode.Velocity, 0);
       } else{
-        m_rotate.setVelocity(Constants.INTAKE_SWING_HOMING_SPEED);
+        m_rotate.set(ControlMode.Velocity, Constants.INTAKE_SWING_HOMING_SPEED);
+
+        //add interupt to end homing
       }
     });
   
@@ -143,17 +144,17 @@ public class IntakeSubsystem extends SubsystemBase {
       selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
     }
 
-    m_rotate.setVelocity(clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED));
+    m_rotate.set(ControlMode.Velocity, clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED));
   
   if(state == IntakeState.INTAKE){
-    m_intakeBottom.setVelocity(Constants.INTAKE_SPEED);
-    m_intakeTop.setVelocity(Constants.INTAKE_SPEED);
+    m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_SPEED);
+    m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_SPEED);
   }else if(state == IntakeState.REVERSE){
-    m_intakeBottom.setVelocity(Constants.INTAKE_REVERSE_SPEED);
-    m_intakeTop.setVelocity(Constants.INTAKE_REVERSE_SPEED);    
+    m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);
+    m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);    
   } else{
-    m_intakeBottom.setVelocity(0);
-    m_intakeTop.setVelocity(0);
+    m_intakeBottom.set(ControlMode.Velocity, 0);
+    m_intakeTop   .set(ControlMode.Velocity, 0);
   }
 }
   

@@ -25,7 +25,7 @@ public class RobotContainer {
   private final LauncherSwingSubsystem m_LauncherSwingSubsystem = new LauncherSwingSubsystem();
 
   
-  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
+  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -35,6 +35,9 @@ public class RobotContainer {
 
     m_driveSubsystem.setDefaultCommand(
       m_driveSubsystem.Drive()
+    );
+    m_LauncherSwingSubsystem.setDefaultCommand(
+      m_LauncherSwingSubsystem.manualSwingControl()
     );
 
     //CommandScheduler.getInstance().schedule(m_LauncherSwingSubsystem.home());

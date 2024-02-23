@@ -2,6 +2,8 @@ package frc.robot;
 
 import static edu.wpi.first.util.ErrorMessages.requireNonNullParam;
 
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -12,9 +14,6 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
-import frc.robot.enums.MotionType;
-import frc.robot.interfaces.MotorInterface;
-
 /**
  * A class for driving Mecanum drive platforms.
  *
@@ -54,10 +53,10 @@ import frc.robot.interfaces.MotorInterface;
 public class Drive extends RobotDriveBase implements Sendable, AutoCloseable {
   private static int instances;
 
-  private final MotorInterface m_frontLeftMotor;
-  private final MotorInterface m_rearLeftMotor;
-  private final MotorInterface m_frontRightMotor;
-  private final MotorInterface m_rearRightMotor;
+  private final CANSparkMax m_frontLeftMotor;
+  private final CANSparkMax m_rearLeftMotor;
+  private final CANSparkMax m_frontRightMotor;
+  private final CANSparkMax m_rearRightMotor;
 
   private boolean m_reported;
 
@@ -103,10 +102,10 @@ public class Drive extends RobotDriveBase implements Sendable, AutoCloseable {
    * @param rearRightMotor The motor on the rear-right corner.
    */
   public Drive(
-      MotorInterface frontLeftMotor,
-      MotorInterface rearLeftMotor,
-      MotorInterface frontRightMotor,
-      MotorInterface rearRightMotor) {
+      CANSparkMax frontLeftMotor,
+      CANSparkMax rearLeftMotor,
+      CANSparkMax frontRightMotor,
+      CANSparkMax rearRightMotor) {
     requireNonNullParam(frontLeftMotor, "frontLeftMotor", "MecanumDrive");
     requireNonNullParam(rearLeftMotor, "rearLeftMotor", "MecanumDrive");
     requireNonNullParam(frontRightMotor, "frontRightMotor", "MecanumDrive");
@@ -169,10 +168,10 @@ public class Drive extends RobotDriveBase implements Sendable, AutoCloseable {
 
     var speeds = driveCartesianIK(xSpeed, ySpeed, zRotation, gyroAngle);
 
-    m_frontLeftMotor .set(MotionType.VELOCITY, speeds.frontLeft * m_maxOutput);
-    m_frontRightMotor.set(MotionType.VELOCITY, speeds.frontRight * m_maxOutput);
-    m_rearLeftMotor  .set(MotionType.VELOCITY, speeds.rearLeft * m_maxOutput);
-    m_rearRightMotor .set(MotionType.VELOCITY, speeds.rearRight * m_maxOutput);
+    m_frontLeftMotor .set(speeds.frontLeft * m_maxOutput);
+    m_frontRightMotor.set(speeds.frontRight * m_maxOutput);
+    m_rearLeftMotor  .set(speeds.rearLeft * m_maxOutput);
+    m_rearRightMotor .set(speeds.rearRight * m_maxOutput);
 
     feed();
   }
@@ -271,15 +270,15 @@ public class Drive extends RobotDriveBase implements Sendable, AutoCloseable {
     builder.setActuator(true);
     builder.setSafeState(this::stopMotor);
     builder.addDoubleProperty(
-        "Front Left Motor Speed", m_frontLeftMotor::get, m_frontLeftMotor::setVelocity);
+        "Front Left Motor Speed", m_frontLeftMotor::get, m_frontLeftMotor::set);
     builder.addDoubleProperty(
         "Front Right Motor Speed",
         () -> m_frontRightMotor.get(),
-        value -> m_frontRightMotor.setVelocity(value));
-    builder.addDoubleProperty("Rear Left Motor Speed", m_rearLeftMotor::get, m_rearLeftMotor::setVelocity);
+        value -> m_frontRightMotor.set(value));
+    builder.addDoubleProperty("Rear Left Motor Speed", m_rearLeftMotor::get, m_rearLeftMotor::set);
     builder.addDoubleProperty(
         "Rear Right Motor Speed",
         () -> m_rearRightMotor.get(),
-        value -> m_rearRightMotor.setVelocity(value));
+        value -> m_rearRightMotor.set(value));
   }
 }

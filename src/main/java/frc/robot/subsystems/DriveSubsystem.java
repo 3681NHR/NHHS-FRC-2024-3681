@@ -4,24 +4,23 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Drive;
-import frc.robot.enums.IdleState;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.wrappers.SparkWrapper;
-
 public class DriveSubsystem extends SubsystemBase {
 
-  private SparkWrapper m_back_left;
-  private SparkWrapper m_back_right;
-  private SparkWrapper m_front_left;
-  private SparkWrapper m_front_right;
+  private CANSparkMax m_back_left;
+  private CANSparkMax m_back_right;
+  private CANSparkMax m_front_left;
+  private CANSparkMax m_front_right;
 
   double forward;
   double right; 
@@ -29,20 +28,23 @@ public class DriveSubsystem extends SubsystemBase {
 
   private Drive drive;
 
-  private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
+  private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);//change to DRIVER_CONTROLLER_PORT to use duel controller
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
-   this.m_back_left   = new SparkWrapper(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
-   this.m_back_right  = new SparkWrapper(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
-   this.m_front_left  = new SparkWrapper(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
-   this.m_front_right = new SparkWrapper(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
+   this.m_back_left   = new CANSparkMax(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
+   this.m_back_right  = new CANSparkMax(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
+   this.m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
+   this.m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
   
-    
-   this.m_back_left  .setIdleMode(IdleState.BRAKE);
-   this.m_back_right .setIdleMode(IdleState.BRAKE);
-   this.m_front_left .setIdleMode(IdleState.BRAKE);
-   this.m_front_right.setIdleMode(IdleState.BRAKE);
+    //should be kOk if no error
+   System.out.println(this.m_back_left  .setIdleMode(IdleMode.kBrake).toString());
+   System.out.println(this.m_back_right .setIdleMode(IdleMode.kBrake).toString());
+   System.out.println(this.m_front_left .setIdleMode(IdleMode.kBrake).toString());
+   System.out.println(this.m_front_right.setIdleMode(IdleMode.kBrake).toString());
+
+   this.m_back_right .setInverted(true);
+   this.m_front_right.setInverted(true);
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
@@ -53,7 +55,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          drive.driveCartesian(rotate, right, forward);
+          drive.driveCartesian(forward, right, -rotate);
         });
   }
 
