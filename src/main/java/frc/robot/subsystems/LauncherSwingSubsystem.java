@@ -23,7 +23,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
   private PIDController swingPID = new PIDController(0, 0, 0);
 
-  private double selectedPosition;
+  private double selectedPosition = 0;
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import javax.print.CancelablePrintJob;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -17,10 +19,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
 
-  private CANSparkMax m_back_left;
-  private CANSparkMax m_back_right;
-  private CANSparkMax m_front_left;
-  private CANSparkMax m_front_right;
+  private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
+  private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
+  private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
+  private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
   double forward;
   double right; 
@@ -32,21 +34,23 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
-   this.m_back_left   = new CANSparkMax(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
-   this.m_back_right  = new CANSparkMax(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
-   this.m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
-   this.m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
-  
-    //should be kOk if no error
-   System.out.println(this.m_back_left  .setIdleMode(IdleMode.kBrake).toString());
-   System.out.println(this.m_back_right .setIdleMode(IdleMode.kBrake).toString());
-   System.out.println(this.m_front_left .setIdleMode(IdleMode.kBrake).toString());
-   System.out.println(this.m_front_right.setIdleMode(IdleMode.kBrake).toString());
+    System.out.println("drive initalized");
 
+    setMotorIdleMode();
+   
    this.m_back_right .setInverted(true);
    this.m_front_right.setInverted(true);
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
+
+  }
+
+  private void setMotorIdleMode(){
+     //should be kOk if no error
+   m_back_left  .setIdleMode(IdleMode.kBrake);
+   m_back_right .setIdleMode(IdleMode.kBrake);
+   m_front_left .setIdleMode(IdleMode.kBrake);
+   m_front_right.setIdleMode(IdleMode.kBrake);
 
   }
   
