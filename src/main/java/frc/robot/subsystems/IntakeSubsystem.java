@@ -11,8 +11,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -30,8 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private IntakeState state = IntakeState.IDLE;
   private IntakeSwingState swingState = IntakeSwingState.DOWN;
 
-  private Encoder intakeSwingEncoder = new Encoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN_A, Constants.INTAKE_SWING_ENCODER_DIO_PIN_B);
-  private DigitalInput homingSwitch = new DigitalInput(Constants.INTAKE_SWING_LIMIT_SWITCH_DIO_PIN);
+  private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
   private PIDController swingPID = new PIDController(0, 0, 0);
   
   private double selectedPosition;
@@ -42,41 +40,38 @@ public class IntakeSubsystem extends SubsystemBase {
    this.m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
    this.m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
    
-   //set motor idle modes - did this *sam* 
+   //set motor idle modes
    this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
    this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
    this.m_rotate      .setNeutralMode(NeutralMode.Brake);
   }
 
   
-  public Command gotostate(int swing, int intake){
-    return runOnce(() -> {
-      switch(swing){
-        case 0:
-          swingState = IntakeSwingState.UP;
-          break;
-        case 1:
-          swingState = IntakeSwingState.DOWN;
-          break;
-        default:
-          throw new IndexOutOfBoundsException("intake swing goto set to bad position index");
-      }
-      switch(intake){
-        case 0:
-          state = IntakeState.IDLE;
-          break;
-        case 1:
-          state = IntakeState.INTAKE;
-          break;
-        case 2:
-          state = IntakeState.REVERSE;
-          break;
-        default:
-          throw new IndexOutOfBoundsException("intake goto set to bad motion index");
-      }
-
-    });
+  public double getPosition(boolean selectedPos){
+    if(selectedPos){
+      return selectedPosition;
+    } else{
+    return intakeSwingEncoder.getDistance();
+    }
   }
+
+  public void setPosition(double pos){
+    selectedPosition = pos;
+  }
+
+  public boolean isAtSelectedPos(){
+    if(Math.abs(selectedPosition - intakeSwingEncoder.getDistance()) <= Constants.INTAKE_SWING_POS_AE){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public void setIntake(double speed){
+    m_intakeBottom.set(ControlMode.Velocity, speed);
+    m_intakeTop   .set(ControlMode.Velocity, speed);
+  }
+  
 
   public Command toggleSwing() {
     return runOnce(
@@ -94,8 +89,12 @@ public class IntakeSubsystem extends SubsystemBase {
     () -> {
     if(state == IntakeState.INTAKE){
        state = IntakeState.IDLE;
+       m_intakeBottom.set(ControlMode.Velocity, 0);
+       m_intakeTop   .set(ControlMode.Velocity, 0);  
      } else{
         state = IntakeState.INTAKE;
+        m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_SPEED);
+        m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_SPEED);  
       } 
     });
   
@@ -106,27 +105,18 @@ public class IntakeSubsystem extends SubsystemBase {
     () -> {
     if(state == IntakeState.REVERSE){
        state = IntakeState.IDLE;
+       m_intakeBottom.set(ControlMode.Velocity, 0);
+       m_intakeTop   .set(ControlMode.Velocity, 0);  
      } else{
         state = IntakeState.REVERSE;
+        m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);
+        m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);  
       } 
     });
     
   
   }  
-    public Command home() {
-      return run(
-      () -> {
-      if(homingSwitch.get()){
-        intakeSwingEncoder.reset();
-        m_rotate.set(ControlMode.Velocity, 0);
-      } else{
-        m_rotate.set(ControlMode.Velocity, Constants.INTAKE_SWING_HOMING_SPEED);
-
-        //add interupt to end homing
-      }
-    });
-  
-    }
+    
 
   @Override
   public void periodic() {
@@ -146,16 +136,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
     m_rotate.set(ControlMode.Velocity, clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED));
   
-  if(state == IntakeState.INTAKE){
-    m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_SPEED);
-    m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_SPEED);
-  }else if(state == IntakeState.REVERSE){
-    m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);
-    m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);    
-  } else{
-    m_intakeBottom.set(ControlMode.Velocity, 0);
-    m_intakeTop   .set(ControlMode.Velocity, 0);
-  }
+  //if(state == IntakeState.INTAKE){
+  //  m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_SPEED);
+  //  m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_SPEED);
+  //}else if(state == IntakeState.REVERSE){
+  //  m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);
+  //  m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);    
+  //} else{
+  //  m_intakeBottom.set(ControlMode.Velocity, 0);
+  //  m_intakeTop   .set(ControlMode.Velocity, 0);
+  //}
 }
   
   private double clamp(double val, double min, double max)  {

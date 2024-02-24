@@ -1,10 +1,5 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+// done
 package frc.robot.subsystems;
-
-import javax.print.CancelablePrintJob;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -30,7 +25,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private Drive drive;
 
-  private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);//change to DRIVER_CONTROLLER_PORT to use duel controller
+  private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);//change to DRIVER_CONTROLLER_PORT to use duel controller
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
