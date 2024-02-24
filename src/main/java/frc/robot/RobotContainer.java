@@ -4,12 +4,13 @@
 
 package frc.robot;
 
+import frc.robot.commands.AutoRecv;
+import frc.robot.enums.RollerState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -24,7 +25,7 @@ public class RobotContainer {
   private final LauncherSwingSubsystem m_LauncherSwingSubsystem = new LauncherSwingSubsystem();
 
   
-  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
+  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -35,9 +36,10 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(
       m_driveSubsystem.Drive()
     );
+    m_LauncherSwingSubsystem.setDefaultCommand(
+      m_LauncherSwingSubsystem.manualSwingControl()
+    );
 
-    //CommandScheduler.getInstance().schedule(m_LauncherSwingSubsystem.home());
-    //CommandScheduler.getInstance().schedule(m_intakeSubsystem.home());
 
   }
   
@@ -47,20 +49,17 @@ public class RobotContainer {
     m_commandDriverController.b().onTrue(m_launcherSubsystem.toggleDrop());
 
     m_commandDriverController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
+    m_commandDriverController.leftBumper().onTrue(m_LauncherSwingSubsystem.toggleRollerRecv());
     
     m_commandDriverController.x().onTrue(m_intakeSubsystem.toggleIntake());
     m_commandDriverController.y().onTrue(m_intakeSubsystem.toggleReverse());
 
-    m_commandDriverController.povUp()   .onTrue(m_LauncherSwingSubsystem.gotoPosition(0));
-    m_commandDriverController.povLeft() .onTrue(m_LauncherSwingSubsystem.gotoPosition(1));
-    m_commandDriverController.povRight().onTrue(
-      m_LauncherSwingSubsystem.gotoPosition(1).andThen(
-        m_intakeSubsystem.gotostate(0, 0).andThen(
-        m_intakeSubsystem.gotostate(0, 2)
-      )
-      )
-    );
-    m_commandDriverController.povDown() .onTrue(m_LauncherSwingSubsystem.gotoPosition(2));
+    m_commandDriverController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
+    m_commandDriverController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
+    m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
+    m_commandDriverController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
+  
+    m_commandDriverController.start().onTrue(m_LauncherSwingSubsystem.toggleRollerBackout());
   }
 
   public Command getAutonomousCommand() {
