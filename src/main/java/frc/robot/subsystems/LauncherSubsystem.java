@@ -13,36 +13,19 @@ import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
-  private CANSparkMax m_left;
-  private CANSparkMax m_right;
+  private CANSparkMax m_left  = new CANSparkMax(Constants.LAUNCHER_LEFT_MOTOR_ID, MotorType.kBrushless);
+  private CANSparkMax m_right = new CANSparkMax(Constants.LAUNCHER_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
   public LauncherState state = LauncherState.IDLE;
 
   public LauncherSubsystem() {
-   this.m_left  = new CANSparkMax(Constants.LAUNCHER_LEFT_MOTOR_ID, MotorType.kBrushless);
-   this.m_right = new CANSparkMax(Constants.LAUNCHER_RIGHT_MOTOR_ID, MotorType.kBrushless);
-
-
-    this.m_left  .setIdleMode(IdleMode.kBrake);
-    this.m_right .setIdleMode(IdleMode.kBrake);
+    this.m_left  .setIdleMode(IdleMode.kCoast);
+    this.m_right .setIdleMode(IdleMode.kCoast);
   }
 
-  public Command toggleLaunch(){
+  public Command setSpeedCommand(LauncherState s){
     return runOnce(() -> {
-      if(state == LauncherState.LAUNCHING){
-        state = LauncherState.IDLE;
-      } else{
-        state = LauncherState.LAUNCHING;
-      }
-    });
-  }
-  public Command toggleDrop(){
-    return runOnce(() -> {
-      if(state == LauncherState.DROPPING){
-        state = LauncherState.IDLE;
-      } else{
-        state = LauncherState.DROPPING;
-      }
+      state = s;
     });
   }
   

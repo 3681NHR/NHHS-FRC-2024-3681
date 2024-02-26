@@ -22,9 +22,9 @@ import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private VictorSPX m_intakeBottom;
-  private VictorSPX m_intakeTop;
-  private VictorSPX m_rotate;
+   private VictorSPX m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
+   private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
+   private VictorSPX m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
   
   private IntakeState state = IntakeState.IDLE;
   private IntakeSwingState swingState = IntakeSwingState.DOWN;
@@ -36,10 +36,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
-   this.m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
-   this.m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
-   this.m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
-   
    //set motor idle modes
    this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
    this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
@@ -54,7 +50,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return intakeSwingEncoder.getDistance();
     }
   }
-
   public void setPosition(double pos){
     selectedPosition = pos;
   }
@@ -67,9 +62,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  public void setIntake(double speed){
-    m_intakeBottom.set(ControlMode.Velocity, speed);
-    m_intakeTop   .set(ControlMode.Velocity, speed);
+  public void setIntake(IntakeState state){
+    this.state = state;
+  }
+  public Command setIntakeCommand(IntakeState s){
+    return runOnce(() -> {
+      state = s;
+    }
+    );
   }
   
 
@@ -89,12 +89,8 @@ public class IntakeSubsystem extends SubsystemBase {
     () -> {
     if(state == IntakeState.INTAKE){
        state = IntakeState.IDLE;
-       m_intakeBottom.set(ControlMode.Velocity, 0);
-       m_intakeTop   .set(ControlMode.Velocity, 0);  
      } else{
-        state = IntakeState.INTAKE;
-        m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_SPEED);
-        m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_SPEED);  
+        state = IntakeState.INTAKE; 
       } 
     });
   
@@ -105,12 +101,8 @@ public class IntakeSubsystem extends SubsystemBase {
     () -> {
     if(state == IntakeState.REVERSE){
        state = IntakeState.IDLE;
-       m_intakeBottom.set(ControlMode.Velocity, 0);
-       m_intakeTop   .set(ControlMode.Velocity, 0);  
      } else{
         state = IntakeState.REVERSE;
-        m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);
-        m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);  
       } 
     });
     
@@ -126,7 +118,6 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putString("intake swing state"       , swingState.toString()           );
     SmartDashboard.putString("intake state"             , state.toString()                );
 
-
     if(swingState == IntakeSwingState.UP){
       selectedPosition = Constants.INTAKE_SWING_UP_POSITION;
     }
@@ -134,18 +125,18 @@ public class IntakeSubsystem extends SubsystemBase {
       selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
     }
 
-    m_rotate.set(ControlMode.Velocity, clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED));
+    m_rotate.set(ControlMode.PercentOutput, clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED));
   
-  //if(state == IntakeState.INTAKE){
-  //  m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_SPEED);
-  //  m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_SPEED);
-  //}else if(state == IntakeState.REVERSE){
-  //  m_intakeBottom.set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);
-  //  m_intakeTop   .set(ControlMode.Velocity, Constants.INTAKE_REVERSE_SPEED);    
-  //} else{
-  //  m_intakeBottom.set(ControlMode.Velocity, 0);
-  //  m_intakeTop   .set(ControlMode.Velocity, 0);
-  //}
+  if(state == IntakeState.INTAKE){
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
+  }else if(state == IntakeState.REVERSE){
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_REVERSE_SPEED);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_REVERSE_SPEED);    
+  } else{
+    m_intakeBottom.set(ControlMode.PercentOutput, 0);
+    m_intakeTop   .set(ControlMode.PercentOutput, 0);
+  }
 }
   
   private double clamp(double val, double min, double max)  {

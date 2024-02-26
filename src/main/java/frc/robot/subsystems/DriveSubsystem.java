@@ -31,7 +31,7 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     System.out.println("drive initalized");
 
-    setMotorIdleMode();
+    setMotorIdleMode();//idfk why i need this but it works
    
    this.m_back_right .setInverted(true);
    this.m_front_right.setInverted(true);

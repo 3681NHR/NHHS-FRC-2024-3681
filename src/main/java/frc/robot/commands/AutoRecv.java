@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.enums.IntakeState;
 import frc.robot.enums.RollerState;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
@@ -29,7 +30,7 @@ public class AutoRecv extends Command{
 
     @Override
     public void end(boolean e){
-        m_intakeSubsystem.setIntake(0);
+        m_intakeSubsystem.setIntake(IntakeState.IDLE);
         m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
     }
 
@@ -42,7 +43,7 @@ public class AutoRecv extends Command{
 
         if(m_launcherSwingSubsystem.isAtSelectedPos() && m_intakeSubsystem.isAtSelectedPos()){
             m_launcherSwingSubsystem.setRoller(RollerState.RECV);
-            m_intakeSubsystem.setIntake(Constants.INTAKE_REVERSE_SPEED);
+            m_intakeSubsystem.setIntake(IntakeState.REVERSE);
             ticks++;
         }
         
