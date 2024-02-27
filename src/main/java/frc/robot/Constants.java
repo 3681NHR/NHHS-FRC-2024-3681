@@ -31,7 +31,7 @@ public final class Constants {
   public static final double LAUNCHER_LAUNCH_SPEED            = 1;
   public static final double LAUNCHER_DROP_SPEED              = 0.1;
 
-  public static final double LAUNCHER_SWING_SPEED             = 0.5;
+  public static final double LAUNCHER_SWING_SPEED             = 1;
   public static final double LAUNCHER_ROLLER_RECV_SPEED       = -1;
   public static final double LAUNCHER_ROLLER_BACKOUT_SPEED    = 1;
 
