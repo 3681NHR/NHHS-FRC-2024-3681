@@ -27,7 +27,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
   private PIDController swingPID = new PIDController(0, 0, 0);
 
-  private double selectedPosition = 0;
+  private double selectedPosition = Constants.LAUNCHER_RECV_POSITION;
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 
@@ -74,7 +74,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
   public Command manualSwingControl(){
     return run(() -> {
-      selectedPosition += (m_driverController.getRightTriggerAxis()-m_driverController.getLeftTriggerAxis())*Constants.LAUNCHER_SWING_MAN_CTRL_SENS;
+      selectedPosition += (m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING_MAN_CTRL_SENS;
 
     });
   }

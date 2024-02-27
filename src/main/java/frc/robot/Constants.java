@@ -60,7 +60,8 @@ public final class Constants {
   public static final double INTAKE_SPEED                     =-1;
   public static final double INTAKE_REVERSE_SPEED             =1;
 
-  public static final double INTAKE_SWING_SPEED               =0.5;
+  public static final double INTAKE_SWING_UP_SPEED            =1;
+  public static final double INTAKE_SWING_DOWN_SPEED          =0.5;
 
   public static final int INTAKE_SWING_ENCODER_DIO_PIN        =8;
 
@@ -68,6 +69,6 @@ public final class Constants {
   public static final int INTAKE_SWING_LOWER_BOUND            =0;
 
   public static final double INTAKE_SWING_DOWN_POSITION       =0.3;
-  public static final double INTAKE_SWING_UP_POSITION         =0.75;
+  public static final double INTAKE_SWING_UP_POSITION         =0.675;
 
 }

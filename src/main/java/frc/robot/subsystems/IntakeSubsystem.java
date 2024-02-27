@@ -25,6 +25,8 @@ public class IntakeSubsystem extends SubsystemBase {
    private VictorSPX m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
    private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
    private VictorSPX m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
+
+   private double pidOut = 0.0;
   
   private IntakeState state = IntakeState.IDLE;
   private IntakeSwingState swingState = IntakeSwingState.DOWN;
@@ -113,10 +115,11 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    SmartDashboard.putNumber("intake swing selected pos", selectedPosition                );
-    SmartDashboard.putNumber("intake swing current pos" , intakeSwingEncoder.getDistance());
-    SmartDashboard.putString("intake swing state"       , swingState.toString()           );
-    SmartDashboard.putString("intake state"             , state.toString()                );
+    SmartDashboard.putNumber("intake swing selected pos" , selectedPosition                );
+    SmartDashboard.putNumber("intake swing current pos"  , intakeSwingEncoder.getDistance());
+    SmartDashboard.putString("intake swing state"        , swingState.toString()           );
+    SmartDashboard.putString("intake state"              , state.toString()                );
+    SmartDashboard.putNumber("intake swing \"PID\" value", pidOut                          );
 
     if(swingState == IntakeSwingState.UP){
       selectedPosition = Constants.INTAKE_SWING_UP_POSITION;
@@ -125,8 +128,18 @@ public class IntakeSubsystem extends SubsystemBase {
       selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
     }
 
-    m_rotate.set(ControlMode.PercentOutput, clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED));
-  
+    if(intakeSwingEncoder.getDistance() < selectedPosition){
+    pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
+    } else {
+    pidOut = clamp(1 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
+ 
+    }
+    //pidOut = clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
+
+
+    m_rotate.set(ControlMode.PercentOutput, pidOut);
+
+
   if(state == IntakeState.INTAKE){
     m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
     m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
