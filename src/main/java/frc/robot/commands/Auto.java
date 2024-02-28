@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.enums.IntakeState;
@@ -32,7 +33,7 @@ public class Auto extends Command{
 
     @Override
     public void end(boolean e){
-        m_launcherSubsystem     .setSpeedCommand(LauncherState.IDLE);
+        m_launcherSubsystem     .setSpeed(LauncherState.IDLE);
         m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
     }
 
@@ -46,11 +47,12 @@ public class Auto extends Command{
             m_launcherSwingSubsystem.setRoller(RollerState.RECV);
         }
 
+        SmartDashboard.putNumber("auto ticks", ticks);
         ticks++;
     }
 
     @Override
     public boolean isFinished(){
-        return ticks >= 50;
+        return ticks >= 100;//50ticks = 1sec
     }
 }

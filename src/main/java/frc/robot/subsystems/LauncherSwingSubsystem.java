@@ -79,6 +79,9 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     });
   }
 
+  public void init(){
+    selectedPosition = swingEncoder.getDistance();
+  }
   @Override
   public void periodic() {
 

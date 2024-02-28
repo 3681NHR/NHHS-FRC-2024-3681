@@ -80,4 +80,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem);
   }
+  public void init(){
+    m_LauncherSwingSubsystem.init();
+  }
 }

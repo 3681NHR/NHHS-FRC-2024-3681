@@ -127,6 +127,9 @@ public class IntakeSubsystem extends SubsystemBase {
     if(swingState == IntakeSwingState.DOWN){
       selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
     }
+    if(swingState == IntakeSwingState.IDLE){
+      selectedPosition = intakeSwingEncoder.getDistance();
+    }
 
     if(intakeSwingEncoder.getDistance() < selectedPosition){
     pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
