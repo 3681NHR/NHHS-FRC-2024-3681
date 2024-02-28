@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,8 +31,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private IntakeSwingState swingState = IntakeSwingState.IDLE;
 
   private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
-  private PIDController swingPID = new PIDController(0, 0, 0);
-  
+  //private PIDController swingPID = new PIDController(0, 0, 0);
+  //pids are for nerds
   private double selectedPosition;
 
   /** Creates a new Subsystem. */
