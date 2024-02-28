@@ -22,10 +22,10 @@ public final class Constants {
   public static final int DRIVE_BACK_LEFT_MOTOR_ID            = 16;
   public static final int DRIVE_BACK_RIGHT_MOTOR_ID           = 15;
 
-  public static final double DRIVE_INPUT_LIMITER              = 1;//watch out for sam h
+  public static final double DRIVE_INPUT_LIMITER              = 1;//limit before remap, just use 1
   public static final double DRIVE_INPUT_DEADZONE             = 0.125;
 
-  public static final double DRIVE_FAST_SPEED_MAX_INPUT       = 1;
+  public static final double DRIVE_FAST_SPEED_MAX_INPUT       = 1;//these will be the max after remap
   public static final double DRIVE_MEDIUM_SPEED_MAX_INPUT     = 0.5;
   public static final double DRIVE_SLOW_SPEED_MAX_INPUT       = 0.25;
 
@@ -34,12 +34,13 @@ public final class Constants {
 
   public static final double LAUNCHER_LAUNCH_SPEED            = 1;
   public static final double LAUNCHER_DROP_SPEED              = 0.1;
-  public static final double LAUNCHER_IN_SPEED                = -0.1;
-
+  public static final double LAUNCHER_IN_SPEED                = -0.075;
 
   public static final double LAUNCHER_SWING_SPEED             = 1;
-  public static final double LAUNCHER_ROLLER_RECV_SPEED       = -1;
-  public static final double LAUNCHER_ROLLER_BACKOUT_SPEED    = 1;
+  public static final double LAUNCHER_ROLLER_RECV_SPEED       = -0.75;//note was jamming when at 1, i think this will help
+  public static final double LAUNCHER_ROLLER_BACKOUT_SPEED    = 0.75; //slow so you dont mess up and drop it inside the robot and
+                                                                      //have to spin around in hope it falls off 
+                                                                      //but it doesnt so you then loose the comp
 
   public static final double LAUNCHER_SWING_POS_AE            = 0.005;
   public static final double INTAKE_SWING_POS_AE              = 0.005;

@@ -51,6 +51,6 @@ public class Auto extends Command{
 
     @Override
     public boolean isFinished(){
-        return ticks >= 100;//50ticks = 1sec
+        return ticks >= 150;//50ticks = 1sec
     }
 }
