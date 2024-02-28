@@ -27,7 +27,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
   private PIDController swingPID = new PIDController(0, 0, 0);
 
-  private double selectedPosition = Constants.LAUNCHER_RECV_POSITION;
+  private double selectedPosition = swingEncoder.getDistance();
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 
@@ -105,7 +105,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     //swingMotor.set(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
   
     //bad pid
-    swingMotor.set(clamp(selectedPosition - swingEncoder.getDistance(), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
+    swingMotor.set(clamp(3 * (selectedPosition - swingEncoder.getDistance()), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
 
   
   }

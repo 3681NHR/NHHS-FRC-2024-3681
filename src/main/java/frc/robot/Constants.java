@@ -25,11 +25,17 @@ public final class Constants {
   public static final double DRIVE_INPUT_LIMITER              = 1;//watch out for sam h
   public static final double DRIVE_INPUT_DEADZONE             = 0.125;
 
+  public static final double DRIVE_FAST_SPEED_MAX_INPUT       = 1;
+  public static final double DRIVE_MEDIUM_SPEED_MAX_INPUT     = 0.5;
+  public static final double DRIVE_SLOW_SPEED_MAX_INPUT       = 0.25;
+
   public static final int LAUNCHER_LEFT_MOTOR_ID              = 18;
   public static final int LAUNCHER_RIGHT_MOTOR_ID             = 17;
 
   public static final double LAUNCHER_LAUNCH_SPEED            = 1;
   public static final double LAUNCHER_DROP_SPEED              = 0.1;
+  public static final double LAUNCHER_IN_SPEED                = -0.1;
+
 
   public static final double LAUNCHER_SWING_SPEED             = 1;
   public static final double LAUNCHER_ROLLER_RECV_SPEED       = -1;

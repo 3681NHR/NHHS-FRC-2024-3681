@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.Auto;
 import frc.robot.commands.AutoRecv;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
@@ -70,10 +71,13 @@ public class RobotContainer {
   
     m_commandDriverController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
     m_commandDriverController.start().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
+
+    m_commandDriverController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
+    m_commandDriverController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
   }
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;//Autos.exampleAuto(m_exampleSubsystem);
+    return new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem);
   }
 }

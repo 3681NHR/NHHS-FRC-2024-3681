@@ -29,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
    private double pidOut = 0.0;
   
   private IntakeState state = IntakeState.IDLE;
-  private IntakeSwingState swingState = IntakeSwingState.DOWN;
+  private IntakeSwingState swingState = IntakeSwingState.IDLE;
 
   private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
   private PIDController swingPID = new PIDController(0, 0, 0);

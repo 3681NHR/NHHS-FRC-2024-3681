@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Drive;
+import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,9 +20,11 @@ public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
   private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
-  double forward;
-  double right; 
-  double rotate;
+  private double forward;
+  private double right; 
+  private double rotate;
+
+  private DriveMode mode;
 
   private Drive drive;
 
@@ -65,10 +68,29 @@ public class DriveSubsystem extends SubsystemBase {
     forward = limit(Constants.DRIVE_INPUT_LIMITER, deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE));
     right   = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE));
     rotate  = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE));
+
+    if(m_driverController.getRightBumper()){
+      mode = DriveMode.FAST;
+    } else if(m_driverController.getLeftBumper()){
+      mode = DriveMode.SLOW;
+    } else {
+      mode = DriveMode.MEDIUM;
+    }
+
+    if(mode == DriveMode.MEDIUM){
+      forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+      right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+      rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+    } else if (mode == DriveMode.SLOW){
+      forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+      right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+      rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+    }
     
-    SmartDashboard.putNumber("forward", forward);
-    SmartDashboard.putNumber("right"  ,   right);
-    SmartDashboard.putNumber("rotate" ,  rotate);
+    SmartDashboard.putNumber("forward"   , forward        );
+    SmartDashboard.putNumber("right"     , right          );
+    SmartDashboard.putNumber("rotate"    , rotate         );
+    SmartDashboard.putString("drive mode", mode.toString());
   }
 
   
@@ -97,5 +119,9 @@ public class DriveSubsystem extends SubsystemBase {
         return lim * (Math.abs(value)/value);//multiply lim by normalized value(-1 or 1)
       }
     }
+  }
+  private double remap(double input, double start_top, double start_bottom, double end_top, double end_bottom){
+    return end_bottom + ((end_top-end_bottom)*((input-start_bottom) / (start_top-start_bottom)));
+    
   }
 }

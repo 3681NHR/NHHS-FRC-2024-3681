@@ -28,7 +28,11 @@ public class LauncherSubsystem extends SubsystemBase {
       state = s;
     });
   }
-  
+  public void setSpeed(LauncherState s){
+    
+    state = s;
+    
+  }
   @Override
   public void periodic() {
 
@@ -47,6 +51,9 @@ public class LauncherSubsystem extends SubsystemBase {
         m_left  .set(0);
         m_right .set(0);
         break;
+      case IN:
+        m_left .set(Constants.LAUNCHER_IN_SPEED);
+        m_right.set(-Constants.LAUNCHER_IN_SPEED);
     }
   }
 
