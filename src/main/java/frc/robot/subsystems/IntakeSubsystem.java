@@ -51,8 +51,8 @@ public class IntakeSubsystem extends SubsystemBase {
     return intakeSwingEncoder.getDistance();
     }
   }
-  public void setPosition(double pos){
-    selectedPosition = pos;
+  public void setPosition(IntakeSwingState s){
+    swingState = s;
   }
 
   public boolean isAtSelectedPos(){

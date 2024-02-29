@@ -89,7 +89,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber ("launcher swing selected pos", selectedPosition                );
     SmartDashboard.putNumber ("launcher swing current pos" , swingEncoder.getDistance()      );
-    SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected());
+    SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected() );
     
 
     switch(rollerState){
