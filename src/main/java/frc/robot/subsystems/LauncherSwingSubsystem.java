@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,8 +25,8 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private VictorSPX   roller      = new VictorSPX(Constants.LAUNCHER_ROLLER_MOTOR_ID);
 
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
-  //private PIDController swingPID = new PIDController(0, 0, 0);
-  //pid is no
+  private PIDController swingPID = new PIDController(3, 1, 1);
+  //pid is eh
   private double selectedPosition = swingEncoder.getDistance();
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
@@ -103,11 +104,11 @@ public class LauncherSwingSubsystem extends SubsystemBase {
         roller.set(ControlMode.PercentOutput, 0);
         break;
     }
-
-    //swingMotor.set(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
+    //PID controller
+    swingMotor.set(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
   
-    //bad pid
-    swingMotor.set(clamp(3 * (selectedPosition - swingEncoder.getDistance()), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
+    //P controller
+    //swingMotor.set(clamp(3 * (selectedPosition - swingEncoder.getDistance()), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
 
   
   }

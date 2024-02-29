@@ -70,6 +70,8 @@ public final class Constants {
   public static final double INTAKE_SWING_UP_SPEED            =1;
   public static final double INTAKE_SWING_DOWN_SPEED          =0.5;
 
+  public static final double INTAKE_SWING_SPEED               =1;
+
   public static final int INTAKE_SWING_ENCODER_DIO_PIN        =8;
 
   public static final int INTAKE_SWING_UPPER_BOUND            =1;

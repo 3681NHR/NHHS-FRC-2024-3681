@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,8 +32,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private IntakeSwingState swingState = IntakeSwingState.IDLE;
 
   private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
-  //private PIDController swingPID = new PIDController(0, 0, 0);
-  //pids are for nerds
+  private PIDController swingPID = new PIDController(3, 1, 1);
+  //pids are for nerds like me
   private double selectedPosition;
 
   /** Creates a new Subsystem. */
@@ -130,13 +131,13 @@ public class IntakeSubsystem extends SubsystemBase {
       selectedPosition = intakeSwingEncoder.getDistance();
     }
 
-    if(intakeSwingEncoder.getDistance() < selectedPosition){
-    pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
-    } else {
-    pidOut = clamp(1 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
- 
-    }
-    //pidOut = clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
+    //if(intakeSwingEncoder.getDistance() < selectedPosition){
+    //pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
+    //} else {
+    //pidOut = clamp(1 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
+    
+    //}
+    pidOut = clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
 
 
     m_rotate.set(ControlMode.PercentOutput, pidOut);
