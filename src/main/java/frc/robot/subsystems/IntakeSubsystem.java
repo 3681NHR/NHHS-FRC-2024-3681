@@ -32,7 +32,11 @@ public class IntakeSubsystem extends SubsystemBase {
   private IntakeSwingState swingState = IntakeSwingState.IDLE;
 
   private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
-  private PIDController swingPID = new PIDController(3, 1, 1);
+  private PIDController swingPID = new PIDController(
+  Constants.INTAKE_SWING_P_GAIN,
+  Constants.INTAKE_SWING_I_GAIN,
+  Constants.INTAKE_SWING_D_GAIN
+  );
   //pids are for nerds like me
   private double selectedPosition;
 
@@ -135,8 +139,7 @@ public class IntakeSubsystem extends SubsystemBase {
     //pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
     //} else {
     //pidOut = clamp(1 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
-    
-    //}
+    //} //p controller
     pidOut = clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
 
 

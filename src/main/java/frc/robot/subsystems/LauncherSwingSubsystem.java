@@ -25,7 +25,11 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private VictorSPX   roller      = new VictorSPX(Constants.LAUNCHER_ROLLER_MOTOR_ID);
 
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
-  private PIDController swingPID = new PIDController(3, 1, 1);
+  private PIDController swingPID = new PIDController(
+    Constants.LAUNCHER_SWING_P_GAIN,
+    Constants.LAUNCHER_SWING_I_GAIN,
+    Constants.LAUNCHER_SWING_D_GAIN
+  );
   //pid is eh
   private double selectedPosition = swingEncoder.getDistance();
 
