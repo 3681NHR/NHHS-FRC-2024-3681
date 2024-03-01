@@ -45,7 +45,13 @@ public class RobotContainer {
       m_LauncherSwingSubsystem.manualSwingControl()
     );
 
+    SmartDashboard.putData(m_driveSubsystem);
+    SmartDashboard.putData(m_intakeSubsystem);
+    SmartDashboard.putData(m_launcherSubsystem);
+    SmartDashboard.putData(m_LauncherSwingSubsystem);
 
+    SmartDashboard.putData("AutoRecv", new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
+  
   }
   
   private void configureBindings() {//keybindings
@@ -82,14 +88,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem);
   }
-  public void init(){
-    m_LauncherSwingSubsystem.init();
-
-    SmartDashboard.putData(m_driveSubsystem);
-    SmartDashboard.putData(m_intakeSubsystem);
-    SmartDashboard.putData(m_launcherSubsystem);
-    SmartDashboard.putData(m_LauncherSwingSubsystem);
-
-    SmartDashboard.putData("AutoRecv", new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
+  public void disabledPeriodic(){
+    m_LauncherSwingSubsystem.disabledPeriodic();
   }
 }

@@ -24,6 +24,8 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private CANSparkMax swingMotor  = new CANSparkMax(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
   private VictorSPX   roller      = new VictorSPX(Constants.LAUNCHER_ROLLER_MOTOR_ID);
 
+  private double PIDOut;
+
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
   private PIDController swingPID = new PIDController(
     Constants.LAUNCHER_SWING_P_GAIN,
@@ -31,7 +33,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     Constants.LAUNCHER_SWING_D_GAIN
   );
   //pid is eh
-  private double selectedPosition = swingEncoder.getDistance();
+  private double selectedPosition;
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 
@@ -39,6 +41,10 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   public LauncherSwingSubsystem() 
   {
     this.swingMotor.setIdleMode(IdleMode.kBrake);
+
+    swingPID.setTolerance(Constants.LAUNCHER_SWING_POS_AE, Constants.LAUNCHER_SWING_PID_VELOCITY_TOLERANCE);
+
+    swingPID.setIntegratorRange(-1, 1);
   }
 
   public void setRoller(RollerState state){
@@ -83,7 +89,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     });
   }
 
-  public void init(){
+  public void disabledPeriodic(){
     selectedPosition = swingEncoder.getDistance();
   }
   @Override
@@ -91,11 +97,20 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING_LOWER_BOUND, Constants.LAUNCHER_SWING_UPPER_BOUND);
 
+    PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED);
 
-    SmartDashboard.putNumber ("launcher swing selected pos", selectedPosition                );
-    SmartDashboard.putNumber ("launcher swing current pos" , swingEncoder.getDistance()      );
-    SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected() );
-    
+    SmartDashboard.putNumber ("launcher swing selected pos"     , selectedPosition          );
+    SmartDashboard.putNumber ("launcher swing current pos"      , swingEncoder.getDistance());
+    SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected());
+    SmartDashboard.putNumber ("pid out", PIDOut);
+
+    SmartDashboard.putNumber ("pid P gain", swingPID.getP());
+    SmartDashboard.putNumber ("pid I gain", swingPID.getI());
+    SmartDashboard.putNumber ("pid D gain", swingPID.getD());
+
+    swingPID.setP(SmartDashboard.getNumber("pid P gain", 0));
+    swingPID.setI(SmartDashboard.getNumber("pid I gain", 0));
+    swingPID.setD(SmartDashboard.getNumber("pid D gain", 0));
 
     switch(rollerState){
       case RECV:
@@ -109,8 +124,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
         break;
     }
     //PID controller
-    swingMotor.set(clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
-  
+    swingMotor.set(PIDOut);
     //P controller
     //swingMotor.set(clamp(3 * (selectedPosition - swingEncoder.getDistance()), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
 

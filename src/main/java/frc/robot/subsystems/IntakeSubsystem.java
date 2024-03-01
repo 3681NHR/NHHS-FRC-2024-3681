@@ -46,6 +46,8 @@ public class IntakeSubsystem extends SubsystemBase {
    this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
    this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
    this.m_rotate      .setNeutralMode(NeutralMode.Brake);
+
+   swingPID.setTolerance(Constants.INTAKE_SWING_POS_AE, Constants.INTAKE_SWING_PID_VELOCITY_TOLERANCE);
   }
 
   
@@ -123,7 +125,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("intake swing current pos"  , intakeSwingEncoder.getDistance());
     SmartDashboard.putString("intake swing state"        , swingState.toString()           );
     SmartDashboard.putString("intake state"              , state.toString()                );
-    SmartDashboard.putNumber("intake swing \"PID\" value", pidOut                          );
+    SmartDashboard.putNumber("intake swing PID value"    , pidOut                          );
 
     if(swingState == IntakeSwingState.UP){
       selectedPosition = Constants.INTAKE_SWING_UP_POSITION;
@@ -135,13 +137,12 @@ public class IntakeSubsystem extends SubsystemBase {
       selectedPosition = intakeSwingEncoder.getDistance();
     }
 
-    //if(intakeSwingEncoder.getDistance() < selectedPosition){
-    //pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
-    //} else {
-    //pidOut = clamp(1 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
-    //} //p controller
-    pidOut = clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
-
+    if(intakeSwingEncoder.getDistance() < selectedPosition){
+    pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
+    } else {
+    pidOut = clamp(1 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
+    } //p controller
+    //pidOut = clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
 
     m_rotate.set(ControlMode.PercentOutput, pidOut);
 

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,10 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     SmartDashboard.putData(CommandScheduler.getInstance());
+
+    CameraServer.startAutomaticCapture();
+
+    //m_robotContainer.init();
   }
 
   /**
@@ -47,7 +52,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -55,7 +59,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.disabledPeriodic();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -81,7 +87,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.init();
   }
 
   /** This function is called periodically during operator control. */
