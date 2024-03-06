@@ -5,26 +5,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.enums.LauncherState;
 import frc.robot.enums.RollerState;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
 
-public class Auto extends Command{
+public class AutoLaunchOnly extends Command{
     
     LauncherSubsystem m_launcherSubsystem;
     LauncherSwingSubsystem m_launcherSwingSubsystem;
-    DriveSubsystem m_DriveSubsystem;
 
     int ticks = 0;
 
-    public Auto(LauncherSwingSubsystem launcherSwing, LauncherSubsystem launcher, DriveSubsystem drive){
+    public AutoLaunchOnly(LauncherSwingSubsystem launcherSwing, LauncherSubsystem launcher){
         m_launcherSubsystem      = launcher;
         m_launcherSwingSubsystem = launcherSwing;
-        m_DriveSubsystem         = drive;
 
         addRequirements(launcher);
         addRequirements(launcherSwing);
-        addRequirements(m_DriveSubsystem);
 
     }
     @Override
@@ -36,7 +32,6 @@ public class Auto extends Command{
     public void end(boolean e){
         m_launcherSubsystem     .setSpeed(LauncherState.IDLE);
         m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
-        m_DriveSubsystem        .setAutoMotion(0, 0, 0);
     }
 
     @Override
@@ -45,15 +40,10 @@ public class Auto extends Command{
         m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
         m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
 
-        if(ticks >= 30 && ticks <= 300){
+        if(ticks >= 30){
             m_launcherSwingSubsystem.setRoller(RollerState.RECV);
         } else {
             m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
-        }
-        if(ticks >= 300 && ticks <= 350){
-            m_DriveSubsystem.setAutoMotion(-0.4, 0, 0);
-        } else {
-            m_DriveSubsystem.setAutoMotion(0, 0, 0);
         }
 
         SmartDashboard.putNumber("auto ticks", ticks);

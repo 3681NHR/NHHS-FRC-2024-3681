@@ -23,7 +23,7 @@ public final class Constants {
   public static final int DRIVE_BACK_RIGHT_MOTOR_ID           = 15;
 
   public static final double DRIVE_INPUT_LIMITER              = 1;//limit before remap, just use 1
-  public static final double DRIVE_INPUT_DEADZONE             = 0.125;
+  public static final double DRIVE_INPUT_DEADZONE             = 0.13;
 
   public static final double DRIVE_FAST_SPEED_MAX_INPUT       = 1;//these will be the max after remap
   public static final double DRIVE_MEDIUM_SPEED_MAX_INPUT     = 0.5;
@@ -44,7 +44,7 @@ public final class Constants {
   public static final double INTAKE_SWING_POS_AE              = 0.01;
 
   public static final double LAUNCHER_RECV_POSITION           = 0.5;
-  public static final double LAUNCHER_LAUNCH_POSITION         = 0.56;
+  public static final double LAUNCHER_LAUNCH_POSITION         = 0.55;
   public static final double LAUNCHER_DROP_POSITION           = 0.25;
  
   public static final double LAUNCHER_SWING_UPPER_BOUND       = 0.6;
@@ -75,16 +75,16 @@ public final class Constants {
   public static final int INTAKE_SWING_UPPER_BOUND            =1;
   public static final int INTAKE_SWING_LOWER_BOUND            =0;
 
-  public static final double INTAKE_SWING_DOWN_POSITION       =0.3;
+  public static final double INTAKE_SWING_DOWN_POSITION       =0.29;
   public static final double INTAKE_SWING_UP_POSITION         =0.69;
 
   public static final double INTAKE_SWING_P_GAIN              =1;
   public static final double INTAKE_SWING_I_GAIN              =0.1;
   public static final double INTAKE_SWING_D_GAIN              =0.1;
 
-  public static double LAUNCHER_SWING_P_GAIN                  =3;
+  public static double LAUNCHER_SWING_P_GAIN                  =5;
   public static double LAUNCHER_SWING_I_GAIN                  =0.2;
-  public static double LAUNCHER_SWING_D_GAIN                  =0.01;
+  public static double LAUNCHER_SWING_D_GAIN                  =0.05;
 
   public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.01;
   public static final double INTAKE_SWING_PID_VELOCITY_TOLERANCE  =0.01;

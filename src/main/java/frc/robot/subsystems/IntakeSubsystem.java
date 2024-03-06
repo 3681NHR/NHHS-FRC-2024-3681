@@ -32,6 +32,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private IntakeSwingState swingState = IntakeSwingState.IDLE;
 
   private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
+
+  private double position = intakeSwingEncoder.getDistance();
+
   private PIDController swingPID = new PIDController(
   Constants.INTAKE_SWING_P_GAIN,
   Constants.INTAKE_SWING_I_GAIN,
@@ -43,9 +46,6 @@ public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
    //set motor idle modes
-   this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
-   this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
-   this.m_rotate      .setNeutralMode(NeutralMode.Brake);
 
    swingPID.setTolerance(Constants.INTAKE_SWING_POS_AE, Constants.INTAKE_SWING_PID_VELOCITY_TOLERANCE);
   }
@@ -55,7 +55,7 @@ public class IntakeSubsystem extends SubsystemBase {
     if(selectedPos){
       return selectedPosition;
     } else{
-    return intakeSwingEncoder.getDistance();
+    return position;
     }
   }
   public void setPosition(IntakeSwingState s){
@@ -63,7 +63,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public boolean isAtSelectedPos(){
-    if(Math.abs(selectedPosition - intakeSwingEncoder.getDistance()) <= Constants.INTAKE_SWING_POS_AE){
+    if(Math.abs(selectedPosition - position) <= Constants.INTAKE_SWING_POS_AE){
       return true;
     } else {
       return false;
@@ -120,9 +120,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
+    position = intakeSwingEncoder.getDistance();
+
+    
+      
+   this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
+   this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
+   this.m_rotate      .setNeutralMode(NeutralMode.Brake);
 
     SmartDashboard.putNumber("intake swing selected pos" , selectedPosition                );
-    SmartDashboard.putNumber("intake swing current pos"  , intakeSwingEncoder.getDistance());
+    SmartDashboard.putNumber("intake swing current pos"  , position);
     SmartDashboard.putString("intake swing state"        , swingState.toString()           );
     SmartDashboard.putString("intake state"              , state.toString()                );
     SmartDashboard.putNumber("intake swing PID value"    , pidOut                          );
@@ -134,15 +142,19 @@ public class IntakeSubsystem extends SubsystemBase {
       selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
     }
     if(swingState == IntakeSwingState.IDLE){
-      selectedPosition = intakeSwingEncoder.getDistance();
+      selectedPosition = position;
     }
 
-    if(intakeSwingEncoder.getDistance() < selectedPosition){
-    pidOut = clamp(6 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
+    if(position < selectedPosition){
+    pidOut = clamp(6 * (selectedPosition - position), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
     } else {
-    pidOut = clamp(1 * (selectedPosition - intakeSwingEncoder.getDistance()), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
-    } //p controller
-    //pidOut = clamp(swingPID.calculate(intakeSwingEncoder.getDistance(),selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
+    pidOut = clamp(1.5 * (selectedPosition - position), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
+    } 
+    if(intakeSwingEncoder.getDistance() > 1){
+      pidOut = clamp(1, -Constants.INTAKE_SWING_SPEED, Constants.INTAKE_SWING_SPEED);
+    }
+    //p controller
+    //pidOut = clamp(swingPID.calculate(position,selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
 
     m_rotate.set(ControlMode.PercentOutput, pidOut);
 

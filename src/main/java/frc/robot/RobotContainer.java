@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.Auto;
-import frc.robot.commands.AutoRecv;
+import frc.robot.commands.AutoLaunchOnly;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
 import frc.robot.enums.RollerState;
@@ -13,6 +13,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -32,26 +33,32 @@ public class RobotContainer {
   
   private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
 
+
+  private Command m_fullAuto       = new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem, m_driveSubsystem);
+  private Command m_AutoLaunchOnly = new AutoLaunchOnly(m_LauncherSwingSubsystem, m_launcherSubsystem);
+
+  private SendableChooser<Command> Autos = new SendableChooser<>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
-
-
-    m_driveSubsystem.setDefaultCommand(
-      m_driveSubsystem.Drive()
-    );
+    
     m_LauncherSwingSubsystem.setDefaultCommand(
       m_LauncherSwingSubsystem.manualSwingControl()
     );
+    
+    configureBindings();
+
+    Autos.setDefaultOption("full", m_fullAuto);
+    Autos.addOption("no reverse" , m_AutoLaunchOnly);
+    Autos.addOption("no auto", null);
 
     SmartDashboard.putData(m_driveSubsystem);
     SmartDashboard.putData(m_intakeSubsystem);
     SmartDashboard.putData(m_launcherSubsystem);
     SmartDashboard.putData(m_LauncherSwingSubsystem);
 
-    SmartDashboard.putData("AutoRecv", new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
-  
+    SmartDashboard.putData(Autos);  
   }
   
   private void configureBindings() {//keybindings
@@ -74,7 +81,7 @@ public class RobotContainer {
 
     m_commandDriverController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
     m_commandDriverController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
-    m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
+    //m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
     m_commandDriverController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
   
     m_commandDriverController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
@@ -86,9 +93,13 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem);
+    return Autos.getSelected();
   }
   public void disabledPeriodic(){
     m_LauncherSwingSubsystem.disabledPeriodic();
+  }
+  public void teleopPeriodic(){
+    m_driveSubsystem.teleopPeriodic();
+
   }
 }

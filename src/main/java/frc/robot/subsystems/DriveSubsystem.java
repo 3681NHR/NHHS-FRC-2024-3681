@@ -11,7 +11,6 @@ import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
 
@@ -51,20 +50,20 @@ public class DriveSubsystem extends SubsystemBase {
    m_front_right.setIdleMode(IdleMode.kBrake);
 
   }
-  
-  public Command Drive() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(
-        () -> {
-          drive.driveCartesian(forward, right, -rotate);
-        });
-  }
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    
+    drive.driveCartesian(forward, right, -rotate);
+
+    
+    SmartDashboard.putNumber("forward"   , forward        );
+    SmartDashboard.putNumber("right"     , right          );
+    SmartDashboard.putNumber("rotate"    , rotate         );
+  }
+  public void teleopPeriodic(){
     forward = limit(Constants.DRIVE_INPUT_LIMITER, deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE));
     right   = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE));
     rotate  = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE));
@@ -86,13 +85,13 @@ public class DriveSubsystem extends SubsystemBase {
       right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
       rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
     }
-    
-    SmartDashboard.putNumber("forward"   , forward        );
-    SmartDashboard.putNumber("right"     , right          );
-    SmartDashboard.putNumber("rotate"    , rotate         );
-    SmartDashboard.putString("drive mode", mode.toString());
   }
 
+  public void setAutoMotion(double f, double r, double rot){
+    this.forward = f;
+    this.right   = r;
+    this.rotate  = rot;
+  }
   
   private double deadzone(double value, double zone)
   {

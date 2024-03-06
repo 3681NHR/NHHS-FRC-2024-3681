@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -40,11 +41,14 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private RollerState rollerState = RollerState.IDLE;
   public LauncherSwingSubsystem() 
   {
-    this.swingMotor.setIdleMode(IdleMode.kBrake);
 
     swingPID.setTolerance(Constants.LAUNCHER_SWING_POS_AE, Constants.LAUNCHER_SWING_PID_VELOCITY_TOLERANCE);
 
     swingPID.setIntegratorRange(-1, 1);
+
+    SmartDashboard.putNumber ("pid P gain", swingPID.getP());
+    SmartDashboard.putNumber ("pid I gain", swingPID.getI());
+    SmartDashboard.putNumber ("pid D gain", swingPID.getD());
   }
 
   public void setRoller(RollerState state){
@@ -70,7 +74,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
   public Command setPositionCommand(double pos){
     return runOnce(() -> {
-    selectedPosition = pos;
+      selectedPosition = pos;
     });
   }
 
@@ -95,6 +99,9 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    this.swingMotor.setIdleMode(IdleMode.kBrake);
+    this.roller    .setNeutralMode(NeutralMode.Brake);
+
     selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING_LOWER_BOUND, Constants.LAUNCHER_SWING_UPPER_BOUND);
 
     PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED);
@@ -104,9 +111,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected());
     SmartDashboard.putNumber ("pid out", PIDOut);
 
-    SmartDashboard.putNumber ("pid P gain", swingPID.getP());
-    SmartDashboard.putNumber ("pid I gain", swingPID.getI());
-    SmartDashboard.putNumber ("pid D gain", swingPID.getD());
+    
 
     swingPID.setP(SmartDashboard.getNumber("pid P gain", 0));
     swingPID.setI(SmartDashboard.getNumber("pid I gain", 0));

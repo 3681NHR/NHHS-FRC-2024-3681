@@ -19,8 +19,8 @@ public class LauncherSubsystem extends SubsystemBase {
   public LauncherState state = LauncherState.IDLE;
 
   public LauncherSubsystem() {
-    this.m_left  .setIdleMode(IdleMode.kCoast);
-    this.m_right .setIdleMode(IdleMode.kCoast);
+    
+   
   }
 
   public Command setSpeedCommand(LauncherState s){
@@ -36,7 +36,12 @@ public class LauncherSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+     this.m_left  .setIdleMode(IdleMode.kCoast);
+    this.m_right .setIdleMode(IdleMode.kCoast);
+
     SmartDashboard.putString("launcher state", state.toString());
+    SmartDashboard.putNumber("L launcher speed", m_left.getEncoder().getVelocity());
+    SmartDashboard.putNumber("R launcher speed", m_right.getEncoder().getVelocity());
 
     switch(state){
       case LAUNCHING:
