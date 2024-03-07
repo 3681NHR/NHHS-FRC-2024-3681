@@ -8,6 +8,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,6 +24,10 @@ public class DriveSubsystem extends SubsystemBase {
   private double forward;
   private double right; 
   private double rotate;
+
+  private Rotation2d angle = new Rotation2d();
+
+  private boolean FOD = true;
 
   private ADIS16448_IMU gyro = new ADIS16448_IMU();
 
@@ -57,8 +63,14 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    if(FOD){
+      angle = new Rotation2d(Math.toRadians(gyro.getGyroAngleZ()));
+    } else {
+      angle = new Rotation2d(0);
+    }
     
-    drive.driveCartesian(forward, right, -rotate);
+    drive.driveCartesian(forward, right, -rotate, angle);
 
     SmartDashboard.putNumber("gyro", gyro.getGyroAngleZ());
     SmartDashboard.putNumber("forward"   , forward        );
