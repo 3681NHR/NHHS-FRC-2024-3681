@@ -31,7 +31,8 @@ public class RobotContainer {
   private final LauncherSwingSubsystem m_LauncherSwingSubsystem = new LauncherSwingSubsystem();
 
   
-  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
+  private final CommandXboxController m_commandASOController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
+  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
 
 
   private Command m_fullAuto       = new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem, m_driveSubsystem);
@@ -63,32 +64,36 @@ public class RobotContainer {
   
   private void configureBindings() {//keybindings
 
-    m_commandDriverController.a().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.LAUNCHING));
-    m_commandDriverController.b().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.DROPPING));
+    m_commandASOController.a().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.LAUNCHING));
+    m_commandASOController.b().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.DROPPING));
 
-    m_commandDriverController.a().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
-    m_commandDriverController.b().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+    m_commandASOController.a().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+    m_commandASOController.b().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
 
-    m_commandDriverController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
-    m_commandDriverController.leftBumper().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.RECV));
-    m_commandDriverController.leftBumper().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
+    m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
+    m_commandASOController.leftBumper().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.RECV));
+    m_commandASOController.leftBumper().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
     
-    m_commandDriverController.x().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.INTAKE));
-    m_commandDriverController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
+    m_commandASOController.x().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.INTAKE));
+    m_commandASOController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
 
-    m_commandDriverController.x().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
-    m_commandDriverController.y().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
+    m_commandASOController.x().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
+    m_commandASOController.y().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
 
-    m_commandDriverController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
-    m_commandDriverController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
+    m_commandASOController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
+    m_commandASOController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
     //m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
-    m_commandDriverController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
+    m_commandASOController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
   
-    m_commandDriverController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
-    m_commandDriverController.start().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
+    m_commandASOController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
+    m_commandASOController.start().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
 
-    m_commandDriverController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
-    m_commandDriverController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+    m_commandASOController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
+    m_commandASOController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+
+
+    m_commandDriverController.a().onTrue(m_driveSubsystem.toggleFOD());
+    m_commandDriverController.b().onTrue(m_driveSubsystem.zero());
   }
 
   public Command getAutonomousCommand() {

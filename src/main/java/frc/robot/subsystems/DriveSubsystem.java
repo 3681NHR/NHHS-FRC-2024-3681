@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
 
@@ -26,13 +27,14 @@ public class DriveSubsystem extends SubsystemBase {
   private double rotate;
 
   private Rotation2d angle = new Rotation2d();
-
   private boolean FOD = true;
-
   private ADIS16448_IMU gyro = new ADIS16448_IMU();
+  private double offset = 0.0;
+
+  private boolean squaringEnabled = false;
+  private boolean modeChangeEnabled = true;
 
   private DriveMode mode;
-
   private Drive drive;
 
   private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);//change to DRIVER_CONTROLLER_PORT to use duel controller
@@ -65,7 +67,7 @@ public class DriveSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     if(FOD){
-      angle = new Rotation2d(Math.toRadians(gyro.getGyroAngleZ()));
+      angle = new Rotation2d(Math.toRadians(gyro.getGyroAngleZ()+offset));
     } else {
       angle = new Rotation2d(0);
     }
@@ -76,28 +78,40 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("forward"   , forward        );
     SmartDashboard.putNumber("right"     , right          );
     SmartDashboard.putNumber("rotate"    , rotate         );
+    SmartDashboard.putBoolean("field oriented driving", FOD);
+    SmartDashboard.putBoolean("input squaring enabled", squaringEnabled);
+    SmartDashboard.putBoolean("input sensitivity buttons enabled", modeChangeEnabled);
+
   }
   public void teleopPeriodic(){
-    forward = limit(Constants.DRIVE_INPUT_LIMITER, deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE));
-    right   = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE));
-    rotate  = limit(Constants.DRIVE_INPUT_LIMITER, deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE));
-
-    if(m_driverController.getRightBumper()){
+    if(squaringEnabled){
+      forward = Math.pow(deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE), 2) * normalize(deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE));
+      right   = Math.pow(deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE), 2) * normalize(deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE));
+      rotate  = Math.pow(deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE), 2) * normalize(deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE));
+    } //square the value, then reaply the sign using the normalize function
+    else 
+    {
+      forward = deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE);
+      right   = deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE);
+      rotate  = deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE);
+    }
+    if(m_driverController.getRightBumper()){//set mode(only does anything if mode change is enabled)
       mode = DriveMode.FAST;
     } else if(m_driverController.getLeftBumper()){
       mode = DriveMode.SLOW;
     } else {
       mode = DriveMode.MEDIUM;
     }
-
-    if(mode == DriveMode.MEDIUM){
-      forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
-      right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
-      rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
-    } else if (mode == DriveMode.SLOW){
-      forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
-      right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
-      rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+    if(modeChangeEnabled){//remap if mode change is enabled
+      if(mode == DriveMode.MEDIUM){
+        forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+        right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+        rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+      } else if (mode == DriveMode.SLOW){
+        forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+        right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+        rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+      }
     }
   }
 
@@ -107,6 +121,35 @@ public class DriveSubsystem extends SubsystemBase {
     this.rotate  = rot;
   }
   
+  public Command setFOD(boolean enabled){
+    return runOnce(() -> {
+      this.FOD = enabled;
+    });
+  }
+  public Command toggleFOD(){
+    return runOnce(() -> {
+      this.FOD = !this.FOD;
+    });
+  }
+
+  public Command setOffset(double offset){
+    return runOnce(() -> {
+      this.offset = offset;
+    });
+  }
+  /* sets current headding to absolute forward when using FOD */
+  public Command zero(){
+    return runOnce(() -> {
+      this.offset = -gyro.getGyroAngleZ();
+    });
+  }
+  /* recalibrate the gyro, requires 10 seconds of absolutly no motion */
+  public Command resetGyro(){
+    return runOnce(() -> {
+      gyro.reset();
+    });
+  }
+
   private double deadzone(double value, double zone)
   {
     double x = value;
@@ -116,25 +159,12 @@ public class DriveSubsystem extends SubsystemBase {
     }
     return x;
   }
-  private double limit(double lim, double  value)
-  {
-    if(lim  < 0)
-    {
-      return value;
-    }
-    else
-    {
-      if(Math.abs(value) <= lim){
-        return value;
-      }
-      else
-      {
-        return lim * (Math.abs(value)/value);//multiply lim by normalized value(-1 or 1)
-      }
-    }
-  }
+  
   private double remap(double input, double start_top, double start_bottom, double end_top, double end_bottom){
     return end_bottom + ((end_top-end_bottom)*((input-start_bottom) / (start_top-start_bottom)));
-    
+  }
+
+  private double normalize(double input){
+    return Math.abs(input)/input;
   }
 }
