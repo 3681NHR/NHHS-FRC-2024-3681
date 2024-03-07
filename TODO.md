@@ -4,7 +4,6 @@
  * auto(done... ish)
  * aim asist(doubt i can do this)(april tags)
  * april tags(cameras)
- * intake swing improvements(PID)
  *
  
  ## after glacier peak;
@@ -17,4 +16,3 @@
   * fix intale swing encoder jump to 1.34 bug
   * more cams
   * computer tray on robot cart
-  * 

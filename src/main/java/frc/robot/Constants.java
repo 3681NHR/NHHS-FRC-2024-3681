@@ -45,9 +45,9 @@ public final class Constants {
 
   public static final double LAUNCHER_RECV_POSITION           = 0.5;
   public static final double LAUNCHER_LAUNCH_POSITION         = 0.55;
-  public static final double LAUNCHER_DROP_POSITION           = 0.25;
+  public static final double LAUNCHER_DROP_POSITION           = 0.275;
  
-  public static final double LAUNCHER_SWING_UPPER_BOUND       = 0.6;
+  public static final double LAUNCHER_SWING_UPPER_BOUND       = 0.578;
   public static final double LAUNCHER_SWING_LOWER_BOUND       = 0.275;
 
   public static final int LAUNCHER_ROLLER_MOTOR_ID            = 6;
@@ -82,7 +82,7 @@ public final class Constants {
   public static final double INTAKE_SWING_I_GAIN              =0.1;
   public static final double INTAKE_SWING_D_GAIN              =0.1;
 
-  public static double LAUNCHER_SWING_P_GAIN                  =5;
+  public static double LAUNCHER_SWING_P_GAIN                  =25;
   public static double LAUNCHER_SWING_I_GAIN                  =0.2;
   public static double LAUNCHER_SWING_D_GAIN                  =0.05;
 

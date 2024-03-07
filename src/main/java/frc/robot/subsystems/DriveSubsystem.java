@@ -8,7 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
-
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,6 +22,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double forward;
   private double right; 
   private double rotate;
+
+  private ADIS16448_IMU gyro = new ADIS16448_IMU();
 
   private DriveMode mode;
 
@@ -43,7 +45,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   private void setMotorIdleMode(){
-     //should be kOk if no error
+
    m_back_left  .setIdleMode(IdleMode.kBrake);
    m_back_right .setIdleMode(IdleMode.kBrake);
    m_front_left .setIdleMode(IdleMode.kBrake);
@@ -58,7 +60,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     drive.driveCartesian(forward, right, -rotate);
 
-    
+    SmartDashboard.putNumber("gyro", gyro.getGyroAngleZ());
     SmartDashboard.putNumber("forward"   , forward        );
     SmartDashboard.putNumber("right"     , right          );
     SmartDashboard.putNumber("rotate"    , rotate         );
