@@ -1,4 +1,4 @@
-// done
+
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
@@ -26,6 +26,7 @@ public class DriveSubsystem extends SubsystemBase {
   , new Translation2d()
   , new Translation2d()
   , new Translation2d());
+  private MecanumDriveOdometry odometry = new
   private double forward;
   private double right; 
   private double rotate;
@@ -64,10 +65,10 @@ public class DriveSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     
     // Locations of the wheels relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-    Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-    Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-    Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+    Translation2d m_frontLeftLocation = new Translation2d(0, 0);
+    Translation2d m_frontRightLocation = new Translation2d(0, 0);
+    Translation2d m_backLeftLocation = new Translation2d(0, 0);
+    Translation2d m_backRightLocation = new Translation2d(0, 0);
 
     // Creating my kinematics object using the wheel locations.
     MecanumDriveKinematics m_kinematics = new MecanumDriveKinematics(
