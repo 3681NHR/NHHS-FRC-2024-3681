@@ -91,9 +91,10 @@ public class RobotContainer {
     m_commandASOController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
     m_commandASOController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
 
-
     m_commandDriverController.a().onTrue(m_driveSubsystem.toggleFOD());
     m_commandDriverController.b().onTrue(m_driveSubsystem.zero());
+    m_commandDriverController.x().onTrue(m_driveSubsystem.toggleModeChanging());
+    m_commandDriverController.y().onTrue(m_driveSubsystem.togglesquaring());
   }
 
   public Command getAutonomousCommand() {

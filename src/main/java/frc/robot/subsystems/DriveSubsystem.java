@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.XboxController;
@@ -50,6 +49,10 @@ public class DriveSubsystem extends SubsystemBase {
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
+
+    SmartDashboard.putBoolean("field oriented driving", FOD);
+    SmartDashboard.putBoolean("input squaring", squaringEnabled);
+    SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
   }
 
   private void setMotorIdleMode(){
@@ -78,9 +81,10 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("forward"   , forward        );
     SmartDashboard.putNumber("right"     , right          );
     SmartDashboard.putNumber("rotate"    , rotate         );
-    SmartDashboard.putBoolean("field oriented driving", FOD);
-    SmartDashboard.putBoolean("input squaring enabled", squaringEnabled);
-    SmartDashboard.putBoolean("input sensitivity buttons enabled", modeChangeEnabled);
+
+    FOD               = SmartDashboard.getBoolean("field oriented driving", FOD);
+    squaringEnabled   = SmartDashboard.getBoolean("input squaring", squaringEnabled);
+    modeChangeEnabled = SmartDashboard.getBoolean("input sensitivity buttons", modeChangeEnabled);
 
   }
   public void teleopPeriodic(){
@@ -120,7 +124,10 @@ public class DriveSubsystem extends SubsystemBase {
     this.right   = r;
     this.rotate  = rot;
   }
-  
+  /**
+   * sets Field-Oriented-Driving(FOD)
+   * @param enabled - set FOD enabled
+   */
   public Command setFOD(boolean enabled){
     return runOnce(() -> {
       this.FOD = enabled;
@@ -131,19 +138,40 @@ public class DriveSubsystem extends SubsystemBase {
       this.FOD = !this.FOD;
     });
   }
-
-  public Command setOffset(double offset){
+  /** toggle input squaring 
+   * <p>{@link https://docs.wpilib.org/en/stable/docs/software/hardware-apis/motors/wpi-drive-classes.html#squaring-inputs}
+  */
+  public Command togglesquaring(){
     return runOnce(() -> {
-      this.offset = offset;
+      this.squaringEnabled = !this.squaringEnabled;
     });
   }
-  /* sets current headding to absolute forward when using FOD */
+  /** toggle multiple sensitivities
+   * <p> when on, input mode is medium, causing controlable, but slower speeds by default. 
+   * bumpers can be used to change to high and low sensitivity modes
+   * <p> when off, input is a full sensitivity the whole time, recomended if using input squaring
+   */
+  public Command toggleModeChanging(){
+    return runOnce(() -> {
+      this.modeChangeEnabled = !this.modeChangeEnabled;
+    });
+  }
+  /** sets current headding to absolute forward when using FOD */
   public Command zero(){
     return runOnce(() -> {
       this.offset = -gyro.getGyroAngleZ();
     });
   }
-  /* recalibrate the gyro, requires 10 seconds of absolutly no motion */
+  /**
+   * zeros with current angle set to offset
+   * @param offset
+   */
+  public Command zero(double offset){
+    return runOnce(() -> {
+      this.offset = -gyro.getGyroAngleZ() + offset;
+    });
+  }
+  /** recalibrate the gyro, requires 10 seconds of absolutly no motion */
   public Command resetGyro(){
     return runOnce(() -> {
       gyro.reset();
