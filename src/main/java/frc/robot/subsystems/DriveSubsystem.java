@@ -13,9 +13,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Encoder;
 public class DriveSubsystem extends SubsystemBase {
 
   private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
@@ -26,7 +28,17 @@ public class DriveSubsystem extends SubsystemBase {
   , new Translation2d()
   , new Translation2d()
   , new Translation2d());
-  private MecanumDriveOdometry odometry = new
+  private MecanumDriveOdometry odometry = new MecanumDriveOdometry(
+    m_kinematics,
+    m_gyro.getRotation2d(),
+    new MecanumDriveWheelPositions(
+      m_frontLeftEncoder.getDistance(),m_frontRightEncoder.getDistance(),
+      m_backLeftEncoder.getDistance(),m_backRightEncoder.getDistance()
+    ),
+    // Here, our starting pose is 5 meters along the long end of the field and in the
+    // center of the field along the short end, facing the opposing alliance wall
+    new Pose2d(5.0,13.5,new Rotation2d())
+  );
   private double forward;
   private double right; 
   private double rotate;
