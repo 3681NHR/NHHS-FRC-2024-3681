@@ -43,8 +43,7 @@ public class RobotContainer {
   private RobotPosition center = new RobotPosition(0.0, 0.0, 180.0);
   private RobotPosition left   = new RobotPosition(0.0, 0.0, 180.0);
   private RobotPosition right  = new RobotPosition(0.0, 0.0, 180.0);
-
-
+  private RobotPosition zero  = new RobotPosition(0.0, 0.0, 0.0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -63,6 +62,7 @@ public class RobotContainer {
     startingPositions.setDefaultOption("center", center);
     startingPositions.addOption("left", left);
     startingPositions.addOption("right", right);
+    startingPositions.addOption("forward", zero);
 
     SmartDashboard.putData(m_driveSubsystem);
     SmartDashboard.putData(m_intakeSubsystem);

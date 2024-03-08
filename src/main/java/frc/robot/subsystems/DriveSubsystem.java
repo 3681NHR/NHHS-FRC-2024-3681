@@ -81,12 +81,6 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("forward"   , forward        );
     SmartDashboard.putNumber("right"     , right          );
     SmartDashboard.putNumber("rotate"    , rotate         );
-
-    //FOD               = SmartDashboard.getBoolean("field oriented driving", FOD);
-    //squaringEnabled   = SmartDashboard.getBoolean("input squaring", squaringEnabled);
-    //modeChangeEnabled = SmartDashboard.getBoolean("input sensitivity buttons", modeChangeEnabled);
-
-    
     SmartDashboard.putBoolean("field oriented driving", FOD);
     SmartDashboard.putBoolean("input squaring", squaringEnabled);
     SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
