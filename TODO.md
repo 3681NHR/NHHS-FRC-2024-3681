@@ -18,3 +18,4 @@
   * more cams
   * computer tray on robot cart
   * kinematics/odometry - Sam H.
+  * fix pathplanning - Sam H.
