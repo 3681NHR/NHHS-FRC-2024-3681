@@ -77,21 +77,25 @@ public class DriveSubsystem extends SubsystemBase {
     
     drive.driveCartesian(forward, right, -rotate, angle);
 
-    SmartDashboard.putNumber("gyro", gyro.getGyroAngleZ());
+    SmartDashboard.putNumber("gyro", angle.getDegrees());
     SmartDashboard.putNumber("forward"   , forward        );
     SmartDashboard.putNumber("right"     , right          );
     SmartDashboard.putNumber("rotate"    , rotate         );
 
-    FOD               = SmartDashboard.getBoolean("field oriented driving", FOD);
-    squaringEnabled   = SmartDashboard.getBoolean("input squaring", squaringEnabled);
-    modeChangeEnabled = SmartDashboard.getBoolean("input sensitivity buttons", modeChangeEnabled);
+    //FOD               = SmartDashboard.getBoolean("field oriented driving", FOD);
+    //squaringEnabled   = SmartDashboard.getBoolean("input squaring", squaringEnabled);
+    //modeChangeEnabled = SmartDashboard.getBoolean("input sensitivity buttons", modeChangeEnabled);
 
+    
+    SmartDashboard.putBoolean("field oriented driving", FOD);
+    SmartDashboard.putBoolean("input squaring", squaringEnabled);
+    SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
-      forward = Math.pow(deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE), 2) * normalize(deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE));
-      right   = Math.pow(deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE), 2) * normalize(deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE));
-      rotate  = Math.pow(deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE), 2) * normalize(deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE));
+      forward = deadzone(Math.pow(-m_driverController.getLeftY() , 2) * normalize(-m_driverController.getLeftY() ),Constants.DRIVE_INPUT_DEADZONE);
+      right   = deadzone(Math.pow( m_driverController.getLeftX() , 2) * normalize( m_driverController.getLeftX() ),Constants.DRIVE_INPUT_DEADZONE);
+      rotate  = deadzone(Math.pow( m_driverController.getRightX(), 2) * normalize( m_driverController.getRightX()),Constants.DRIVE_INPUT_DEADZONE);
     } //square the value, then reaply the sign using the normalize function
     else 
     {
