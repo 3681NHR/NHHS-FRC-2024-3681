@@ -8,6 +8,7 @@ import frc.robot.commands.Auto;
 import frc.robot.commands.AutoLaunchOnly;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
+import frc.robot.enums.RobotPosition;
 import frc.robot.enums.RollerState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -17,8 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-
 
 
 public class RobotContainer {
@@ -39,6 +38,13 @@ public class RobotContainer {
   private Command m_AutoLaunchOnly = new AutoLaunchOnly(m_LauncherSwingSubsystem, m_launcherSubsystem);
 
   private SendableChooser<Command> Autos = new SendableChooser<>();
+  private SendableChooser<RobotPosition>  startingPositions = new SendableChooser<>();
+
+  private RobotPosition center = new RobotPosition(0.0, 0.0, 180.0);
+  private RobotPosition left   = new RobotPosition(0.0, 0.0, 180.0);
+  private RobotPosition right  = new RobotPosition(0.0, 0.0, 180.0);
+
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -54,12 +60,17 @@ public class RobotContainer {
     Autos.addOption("no reverse" , m_AutoLaunchOnly);
     Autos.addOption("no auto", null);
 
+    startingPositions.setDefaultOption("center", center);
+    startingPositions.addOption("left", left);
+    startingPositions.addOption("right", right);
+
     SmartDashboard.putData(m_driveSubsystem);
     SmartDashboard.putData(m_intakeSubsystem);
     SmartDashboard.putData(m_launcherSubsystem);
     SmartDashboard.putData(m_LauncherSwingSubsystem);
 
     SmartDashboard.putData(Autos);  
+    SmartDashboard.putData(startingPositions);
   }
   
   private void configureBindings() {//keybindings
