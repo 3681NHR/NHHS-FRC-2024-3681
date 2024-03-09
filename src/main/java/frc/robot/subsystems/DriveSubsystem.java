@@ -30,8 +30,8 @@ public class DriveSubsystem extends SubsystemBase {
   private ADIS16448_IMU gyro = new ADIS16448_IMU();
   private double offset = 0.0;
 
-  private boolean squaringEnabled = false;
-  private boolean modeChangeEnabled = true;
+  private boolean squaringEnabled = true;
+  private boolean modeChangeEnabled = false;
 
   private DriveMode mode;
   private Drive drive;
@@ -87,9 +87,9 @@ public class DriveSubsystem extends SubsystemBase {
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
-      forward = deadzone(Math.pow(-m_driverController.getLeftY() , 2) * normalize(-m_driverController.getLeftY() ),Constants.DRIVE_INPUT_DEADZONE);
-      right   = deadzone(Math.pow( m_driverController.getLeftX() , 2) * normalize( m_driverController.getLeftX() ),Constants.DRIVE_INPUT_DEADZONE);
-      rotate  = deadzone(Math.pow( m_driverController.getRightX(), 2) * normalize( m_driverController.getRightX()),Constants.DRIVE_INPUT_DEADZONE);
+      forward = Math.pow(deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE), 2.5);
+      right   = Math.pow(deadzone(m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE), 2.5);
+      rotate  = Math.pow(deadzone(m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE), 2.5);
     } //square the value, then reaply the sign using the normalize function
     else 
     {
