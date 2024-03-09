@@ -31,12 +31,15 @@ public class DriveSubsystem extends SubsystemBase {
   private RelativeEncoder m_front_left_encoder = m_front_left.getEncoder();
   private RelativeEncoder m_front_right_encoder = m_front_right.getEncoder(); 
   
+  private final Translation2d m_frontLeftLocation = new Translation2d(0.051,0.15);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.559,0.15);
+  private final Translation2d m_backLeftLocation = new Translation2d(0.051,0.667);
+  private final Translation2d m_backRightLocation = new Translation2d(0.559,0.667);
 
-  private MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
-    new Translation2d()
-  , new Translation2d()
-  , new Translation2d()
-  , new Translation2d());//wheel positions 
+  private final MecanumDriveKinematics m_kinematics =
+      new MecanumDriveKinematics(
+          m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+  
   
   private double forward;
   private double right; 
@@ -105,7 +108,7 @@ public class DriveSubsystem extends SubsystemBase {
     speeds.omegaRadiansPerSecond = -rotate * inputRotationSpeedMultiplyer;
 
     // Convert to wheel speeds
-    MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
+    MecanumDriveWheelSpeeds wheelSpeeds = m_kinematics.toWheelSpeeds(speeds);
 
     wheelSpeeds.desaturate(wheelMaxSpeed);
 
