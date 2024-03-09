@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.XboxController;
@@ -75,6 +76,24 @@ public class DriveSubsystem extends SubsystemBase {
    m_front_right.setIdleMode(IdleMode.kBrake);
 
   }
+
+  public MecanumDriveWheelSpeeds getCurrentSpeeds(){
+    return new MecanumDriveWheelSpeeds(
+      m_back_left_encoder.getVelocity(),
+      m_back_right_encoder.getVelocity(),
+      m_front_left_encoder.getVelocity(),
+      m_front_right_encoder.getVelocity()
+      );
+ }
+  public MecanumDriveWheelPositions getCurrentDistances(){
+    return new MecanumDriveWheelPositions(
+      m_back_left_encoder.getPosition(),
+      m_back_right_encoder.getPosition(),
+      m_front_left_encoder.getPosition(),
+      m_front_right_encoder.getPosition());
+
+  }
+
 
 
   @Override
