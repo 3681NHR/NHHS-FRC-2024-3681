@@ -87,9 +87,9 @@ public class DriveSubsystem extends SubsystemBase {
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
-      forward = Math.pow(deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE), 2.5);
-      right   = Math.pow(deadzone(m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE), 2.5);
-      rotate  = Math.pow(deadzone(m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE), 2.5);
+      forward = Math.pow(deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE), 3);
+      right   = Math.pow(deadzone(m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE) , 3);
+      rotate  = Math.pow(deadzone(m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE) , 3);
     } //square the value, then reaply the sign using the normalize function
     else 
     {

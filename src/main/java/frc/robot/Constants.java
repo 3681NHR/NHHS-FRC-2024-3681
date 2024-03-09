@@ -83,7 +83,7 @@ public final class Constants {
   public static final double INTAKE_SWING_D_GAIN              =0.1;
 
   public static double LAUNCHER_SWING_P_GAIN                  =25;
-  public static double LAUNCHER_SWING_I_GAIN                  =0.2;
+  public static double LAUNCHER_SWING_I_GAIN                  =0.01;
   public static double LAUNCHER_SWING_D_GAIN                  =0.05;
 
   public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.01;
