@@ -93,7 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
     } //square the value, then reaply the sign using the normalize function
     else 
     {
-      forward = deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE);
+      forward = deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE);
       right   = deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE);
       rotate  = deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE);
     }

@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +27,8 @@ public class IntakeSubsystem extends SubsystemBase {
    private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
    private VictorSPX m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
 
+   private DigitalInput holdSwitch = new DigitalInput(3);
+
    private double pidOut = 0.0;
   
   private IntakeState state = IntakeState.IDLE;
@@ -34,6 +37,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
 
   private double position = intakeSwingEncoder.getDistance();
+  private boolean holding;
 
   private PIDController swingPID = new PIDController(
   Constants.INTAKE_SWING_P_GAIN,
@@ -113,9 +117,10 @@ public class IntakeSubsystem extends SubsystemBase {
         state = IntakeState.REVERSE;
       } 
     });
-    
-  
   }  
+  public boolean isHolding(){
+    return holding;
+  }
     
 
   @Override
@@ -123,7 +128,7 @@ public class IntakeSubsystem extends SubsystemBase {
     
     position = intakeSwingEncoder.getDistance();
 
-    
+    holding = !holdSwitch.get();
       
    this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
    this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
