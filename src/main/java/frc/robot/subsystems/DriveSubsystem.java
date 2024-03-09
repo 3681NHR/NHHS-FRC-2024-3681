@@ -7,6 +7,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
@@ -41,6 +43,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);//change to DRIVER_CONTROLLER_PORT to use duel controller
 
+  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+  private final PIDController m_frontLeftPIDController = new PIDController(1, 0, 0);
+  private final PIDController m_frontRightPIDController = new PIDController(1, 0, 0);
+  private final PIDController m_backLeftPIDController = new PIDController(1, 0, 0);
+  private final PIDController m_backRightPIDController = new PIDController(1, 0, 0);
+
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
 
@@ -74,11 +82,30 @@ public class DriveSubsystem extends SubsystemBase {
 
     wheelSpeeds.desaturate(wheelMaxSpeed);
 
+    final double frontLeftFeedforward = m_feedforward.calculate(wheelSpeeds.frontLeftMetersPerSecond);
+    final double frontRightFeedforward = m_feedforward.calculate(wheelSpeeds.frontRightMetersPerSecond);
+    final double backLeftFeedforward = m_feedforward.calculate(wheelSpeeds.rearLeftMetersPerSecond);
+    final double backRightFeedforward = m_feedforward.calculate(wheelSpeeds.rearRightMetersPerSecond);
+
+    final double frontLeftOutput =
+        m_frontLeftPIDController.calculate(
+            m_front_left.getEncoder().getVelocity(), wheelSpeeds.frontLeftMetersPerSecond);
+    final double frontRightOutput =
+        m_frontRightPIDController.calculate(
+            m_front_right.getEncoder().getVelocity(), wheelSpeeds.frontRightMetersPerSecond);
+    final double backLeftOutput =
+        m_backLeftPIDController.calculate(
+            m_back_left.getEncoder().getVelocity(), wheelSpeeds.rearLeftMetersPerSecond);
+    final double backRightOutput =
+        m_backRightPIDController.calculate(
+            m_back_right.getEncoder().getVelocity(), wheelSpeeds.rearRightMetersPerSecond);
+
+
     // Get the individual wheel speeds
-    m_front_left .setVoltage(wheelSpeeds.frontLeftMetersPerSecond );
-    m_front_right.setVoltage(wheelSpeeds.frontRightMetersPerSecond);
-    m_back_left  .setVoltage(wheelSpeeds.rearLeftMetersPerSecond  );
-    m_back_right .setVoltage(wheelSpeeds.rearRightMetersPerSecond );
+    m_front_left .setVoltage(frontLeftOutput  + frontLeftFeedforward );
+    m_front_right.setVoltage(frontRightOutput + frontRightFeedforward);
+    m_back_left  .setVoltage(backLeftOutput   + backLeftFeedforward  );
+    m_back_right .setVoltage(backRightOutput  + backRightFeedforward );
     
     SmartDashboard.putNumber("forward", forward);
     SmartDashboard.putNumber("right"  , right  );
