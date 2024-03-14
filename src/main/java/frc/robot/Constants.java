@@ -56,6 +56,7 @@ public final class Constants {
   public static final double LAUNCHER_SWING_MAN_CTRL_SENS     = 0.01;
 
   public static final int LAUNCHER_SWING_ENCODER_DIO_PIN      = 9;
+  public static final int LAUNCHER_DETECTOR_DIO_PIN           =7;
 
   public static final int INTAKE_TOP_MOTOR_ID                 = 7;
   public static final int INTAKE_BOTTOM_MOTOR_ID              = 8;
@@ -71,6 +72,7 @@ public final class Constants {
   public static final double INTAKE_SWING_SPEED               =1;
 
   public static final int INTAKE_SWING_ENCODER_DIO_PIN        =8;
+  public static final int INTAKE_DETECTOR_DIO_PIN             =6;
 
   public static final int INTAKE_SWING_UPPER_BOUND            =1;
   public static final int INTAKE_SWING_LOWER_BOUND            =0;

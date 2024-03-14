@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +25,10 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
   private CANSparkMax swingMotor  = new CANSparkMax(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
   private VictorSPX   roller      = new VictorSPX(Constants.LAUNCHER_ROLLER_MOTOR_ID);
+
+   private DigitalInput holdingSwitch = new DigitalInput(Constants.LAUNCHER_DETECTOR_DIO_PIN);
+
+   private boolean holding = false;
 
   private double PIDOut;
 
@@ -49,6 +54,9 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     SmartDashboard.putNumber ("pid P gain", swingPID.getP());
     SmartDashboard.putNumber ("pid I gain", swingPID.getI());
     SmartDashboard.putNumber ("pid D gain", swingPID.getD());
+  }
+  public boolean isHolding(){
+    return holding;
   }
 
   public void setRoller(RollerState state){
@@ -98,6 +106,8 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   }
   @Override
   public void periodic() {
+
+    holding = !holdingSwitch.get();
 
     this.swingMotor.setIdleMode(IdleMode.kBrake);
     this.roller    .setNeutralMode(NeutralMode.Brake);

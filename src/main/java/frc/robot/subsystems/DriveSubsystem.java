@@ -189,8 +189,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double remap(double input, double start_top, double start_bottom, double end_top, double end_bottom){
     return end_bottom + ((end_top-end_bottom)*((input-start_bottom) / (start_top-start_bottom)));
   }
-
-  private double normalize(double input){
-    return Math.abs(input)/input;
+  @SuppressWarnings("unused")
+  private double normalize(double input){//only needed for squaring with even exponents
+    return input/Math.abs(input);
   }
 }
