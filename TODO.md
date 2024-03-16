@@ -4,7 +4,6 @@
  * auto(done... ish)
  * aim asist(doubt i can do this)(april tags)
  * april tags(cameras)
- * intake swing improvements(PID)
  *
  
  ## after glacier peak;
@@ -18,6 +17,5 @@
   * more cams
   * computer tray on robot cart
   * kinematics/odometry - Sam H.
-
-  * fix path planning - Sam H.
+  * fix pathplanning - Sam H.
 

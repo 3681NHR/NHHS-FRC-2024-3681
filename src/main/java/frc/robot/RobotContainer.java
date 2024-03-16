@@ -8,6 +8,7 @@ import frc.robot.commands.Auto;
 import frc.robot.commands.AutoLaunchOnly;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
+import frc.robot.enums.RobotPosition;
 import frc.robot.enums.RollerState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -17,8 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-
 
 
 public class RobotContainer {
@@ -31,13 +30,20 @@ public class RobotContainer {
   private final LauncherSwingSubsystem m_LauncherSwingSubsystem = new LauncherSwingSubsystem();
 
   
-  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
+  private final CommandXboxController m_commandASOController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
+  private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
 
 
   private Command m_fullAuto       = new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem, m_driveSubsystem);
   private Command m_AutoLaunchOnly = new AutoLaunchOnly(m_LauncherSwingSubsystem, m_launcherSubsystem);
 
   private SendableChooser<Command> Autos = new SendableChooser<>();
+  private SendableChooser<RobotPosition>  startingPositions = new SendableChooser<>();
+
+  private RobotPosition center = new RobotPosition(0.0, 0.0, 180.0);
+  private RobotPosition left   = new RobotPosition(0.0, 0.0, 180.0);
+  private RobotPosition right  = new RobotPosition(0.0, 0.0, 180.0);
+  private RobotPosition zero  = new RobotPosition(0.0, 0.0, 0.0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -53,42 +59,53 @@ public class RobotContainer {
     Autos.addOption("no reverse" , m_AutoLaunchOnly);
     Autos.addOption("no auto", null);
 
+    startingPositions.setDefaultOption("center", center);
+    startingPositions.addOption("left", left);
+    startingPositions.addOption("right", right);
+    startingPositions.addOption("forward", zero);
+
     SmartDashboard.putData(m_driveSubsystem);
     SmartDashboard.putData(m_intakeSubsystem);
     SmartDashboard.putData(m_launcherSubsystem);
     SmartDashboard.putData(m_LauncherSwingSubsystem);
 
     SmartDashboard.putData(Autos);  
+    SmartDashboard.putData(startingPositions);
   }
   
   private void configureBindings() {//keybindings
 
-    m_commandDriverController.a().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.LAUNCHING));
-    m_commandDriverController.b().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.DROPPING));
+    m_commandASOController.a().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.LAUNCHING));
+    m_commandASOController.b().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.DROPPING));
 
-    m_commandDriverController.a().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
-    m_commandDriverController.b().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+    m_commandASOController.a().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+    m_commandASOController.b().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
 
-    m_commandDriverController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
-    m_commandDriverController.leftBumper().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.RECV));
-    m_commandDriverController.leftBumper().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
+    m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
+    m_commandASOController.leftBumper().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.RECV));
+    m_commandASOController.leftBumper().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
     
-    m_commandDriverController.x().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.INTAKE));
-    m_commandDriverController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
+    m_commandASOController.x().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.INTAKE));
+    m_commandASOController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
 
-    m_commandDriverController.x().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
-    m_commandDriverController.y().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
+    m_commandASOController.x().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
+    m_commandASOController.y().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
 
-    m_commandDriverController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
-    m_commandDriverController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
+    m_commandASOController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
+    m_commandASOController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
     //m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
-    m_commandDriverController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
+    m_commandASOController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
   
-    m_commandDriverController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
-    m_commandDriverController.start().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
+    m_commandASOController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
+    m_commandASOController.start().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
 
-    m_commandDriverController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
-    m_commandDriverController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+    m_commandASOController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
+    m_commandASOController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+
+    m_commandDriverController.a().onTrue(m_driveSubsystem.toggleFOD());
+    m_commandDriverController.b().onTrue(m_driveSubsystem.zero());
+    m_commandDriverController.x().onTrue(m_driveSubsystem.toggleModeChanging());
+    m_commandDriverController.y().onTrue(m_driveSubsystem.togglesquaring());
   }
 
   public Command getAutonomousCommand() {

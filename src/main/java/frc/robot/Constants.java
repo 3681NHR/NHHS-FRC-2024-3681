@@ -45,9 +45,9 @@ public final class Constants {
 
   public static final double LAUNCHER_RECV_POSITION           = 0.5;
   public static final double LAUNCHER_LAUNCH_POSITION         = 0.55;
-  public static final double LAUNCHER_DROP_POSITION           = 0.25;
+  public static final double LAUNCHER_DROP_POSITION           = 0.275;
  
-  public static final double LAUNCHER_SWING_UPPER_BOUND       = 0.6;
+  public static final double LAUNCHER_SWING_UPPER_BOUND       = 0.578;
   public static final double LAUNCHER_SWING_LOWER_BOUND       = 0.275;
 
   public static final int LAUNCHER_ROLLER_MOTOR_ID            = 6;
@@ -56,6 +56,7 @@ public final class Constants {
   public static final double LAUNCHER_SWING_MAN_CTRL_SENS     = 0.01;
 
   public static final int LAUNCHER_SWING_ENCODER_DIO_PIN      = 9;
+  public static final int LAUNCHER_DETECTOR_DIO_PIN           =7;
 
   public static final int INTAKE_TOP_MOTOR_ID                 = 7;
   public static final int INTAKE_BOTTOM_MOTOR_ID              = 8;
@@ -71,6 +72,7 @@ public final class Constants {
   public static final double INTAKE_SWING_SPEED               =1;
 
   public static final int INTAKE_SWING_ENCODER_DIO_PIN        =8;
+  public static final int INTAKE_DETECTOR_DIO_PIN             =6;
 
   public static final int INTAKE_SWING_UPPER_BOUND            =1;
   public static final int INTAKE_SWING_LOWER_BOUND            =0;
@@ -82,8 +84,8 @@ public final class Constants {
   public static final double INTAKE_SWING_I_GAIN              =0.1;
   public static final double INTAKE_SWING_D_GAIN              =0.1;
 
-  public static double LAUNCHER_SWING_P_GAIN                  =5;
-  public static double LAUNCHER_SWING_I_GAIN                  =0.2;
+  public static double LAUNCHER_SWING_P_GAIN                  =25;
+  public static double LAUNCHER_SWING_I_GAIN                  =0.01;
   public static double LAUNCHER_SWING_D_GAIN                  =0.05;
 
   public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.01;
