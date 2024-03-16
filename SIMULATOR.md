@@ -13,3 +13,19 @@ Collecting notes on how to make it work/run:
             * If the XBox Controller is expected to be on USB 0, move to the "Joystick[0]" entry
         * Use the S, D, R and E keys to "move the joystick"
 
+* Right now: 
+    * It's showing an update on the field because the encoders and the gyro and just calculating numbers and going up. 
+    * What is supposed to happen is that when the input controller moves, it moves the drive component, which is supposed to update the motors, which then should update the encoders. In reality, the gyro gets updated because it actually moves as a result of the movement. 
+        * To simulate the movement of the gyro, i guess we want to calculate which direction the robot should be facing. 
+    * We can make it more realistic by 
+
+
+
+* What do we want to simulate? 
+    * When the joystick is [one way] the robot moves forward
+    * When the joystick is the other way, the robot moves backgard
+    * When it is another way, it rotates
+    * I think it means that in the Drive() command, we update positions. 
+        * What we expect is that if the drive command is going, it updates the motors, which updates the encoders, which makes it look like the robot is moving
+    * In the simulation, the encoder values are increasing because we keep calling get(), which (hackily) updates the position
+    * 

@@ -1,0 +1,40 @@
+{
+  "Clients": {
+    "open": true
+  },
+  "Connections": {
+    "open": true
+  },
+  "NT3@10.36.81.156:57353": {
+    "open": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "3681"
+  },
+  "Persistent Values": {
+    "open": false
+  },
+  "Retained Values": {
+    "open": false
+  },
+  "Server": {
+    "Subscribers": {
+      "open": true
+    }
+  },
+  "Transitory Values": {
+    "open": false
+  },
+  "transitory": {
+    "CameraPublisher": {
+      "open": true
+    },
+    "Shuffleboard": {
+      "open": true
+    }
+  },
+  "wpilibpi@2": {
+    "open": true
+  }
+}

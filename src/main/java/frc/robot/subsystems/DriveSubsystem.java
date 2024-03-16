@@ -29,6 +29,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -110,12 +111,13 @@ public class DriveSubsystem extends SubsystemBase {
   // These are our EncoderSim objects, which we will only use in
   // simulation. However, you do not need to comment out these
   // declarations when you are deploying code to the roboRIO.
-  private EncoderSim m_front_left_encoder_sim; // = new EncoderSim(m_leftEncoder);
-  private EncoderSim m_front_right_encoder_sim; 
+  private RelativeEncoder m_front_left_encoder_sim; // = new EncoderSim(m_leftEncoder);
+  private RelativeEncoder m_front_right_encoder_sim; 
   private EncoderSim m_back_left_encoder_sim; 
   private EncoderSim m_back_right_encoder_sim; 
 
   private ADXRS450_GyroSim m_gyro_sim = new ADXRS450_GyroSim(m_gyro);
+
 
   private REVPhysicsSim physicsSim;
   private Trajectory m_trajectory; 
@@ -154,6 +156,7 @@ public class DriveSubsystem extends SubsystemBase {
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
+
    // Initialize Simulated Hardware
   //  m_front_left_encoder_sim = new EncoderSim();
   //  m_front_right_encoder = m_front_right.getEncoder();
@@ -167,12 +170,6 @@ public class DriveSubsystem extends SubsystemBase {
     // this.physicsSim.addSparkMax(m_back_left.getCanSparkMax(), DCMotor.getNeo550(1));
     // this.physicsSim.addSparkMax(m_back_right.getCanSparkMax(), DCMotor.getNeo550(1));
 
-    m_trajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            new Pose2d(3, 0, Rotation2d.fromDegrees(0)),
-            new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0)));
   }
   
   public Command Drive() {
@@ -296,9 +293,8 @@ public class DriveSubsystem extends SubsystemBase {
     // System.out.println("driverController: " + m_driverController.getLeftY());
     // System.out.println("driverController: " + m_driverController.getRawAxis(1));
     // System.out.println("Joystick: " + joystick.getRawAxis(1));
-    angle += 0.1;
-    this.m_gyro_sim.setAngle(angle);
-    REVPhysicsSim.getInstance().run();
+    // angle += 0.1;
+    // this.m_gyro_sim.setAngle(angle);  
 
     // This method will be called once per scheduler run
     forward = limit(Constants.DRIVE_INPUT_LIMITER, deadzone(-m_driverController.getLeftY(),  Constants.DRIVE_INPUT_DEADZONE));
@@ -324,10 +320,13 @@ public class DriveSubsystem extends SubsystemBase {
     m_pose = m_odometry.update(gyroAngle, wheelPositions);
     // Do this in either robot periodic or subsystem periodic
     if (field != null) {
-      // field.setRobotPose(m_odometry.getPoseMeters());
-      field.setRobotPose(this.m_pose);
-      System.out.println(this.m_pose);
+      field.setRobotPose(m_odometry.getPoseMeters());
+      // field.setRobotPose(this.m_pose);
+      // System.out.println(this.m_pose);
     }
+
+
+    REVPhysicsSim.getInstance().run();
 
   }
 

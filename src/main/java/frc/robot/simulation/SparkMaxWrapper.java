@@ -6,6 +6,7 @@
 package frc.robot.simulation;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
@@ -14,14 +15,18 @@ import edu.wpi.first.wpilibj.RobotController;
 public class SparkMaxWrapper extends CANSparkMax {
     private SimDouble m_simSpeed;
     private SimDevice m_simSparkMax;
+    
+    private RelativeEncoderWrapper m_simEncoder; 
+    private SimDouble m_simPosition; 
 
     public SparkMaxWrapper(int deviceID, MotorType type) {
         super(deviceID,type);
 
         m_simSparkMax = SimDevice.create("SparkMax",deviceID);
         if (m_simSparkMax != null){
-            m_simSpeed = m_simSparkMax.createDouble("speed", null, 0.0);
+            m_simSpeed = m_simSparkMax.createDouble("speed", SimDevice.Direction.kBidir , 0.0);
         }
+
     }
 
     @Override
@@ -36,6 +41,9 @@ public class SparkMaxWrapper extends CANSparkMax {
     public void set(double speed){
         if (m_simSparkMax != null){
             m_simSpeed.set(speed);
+            if (m_simEncoder != null && speed > 0.0) {
+                m_simEncoder.setPosition(m_simEncoder.getPosition() + 0.01);
+            }
         }else{
             super.set(speed);
         }
@@ -47,6 +55,18 @@ public class SparkMaxWrapper extends CANSparkMax {
             set(outputVolts / RobotController.getBatteryVoltage());
         } else {
             super.setVoltage(outputVolts);
+        }
+    }
+
+    @Override
+    public RelativeEncoder getEncoder() {
+        if (m_simSparkMax != null) {
+            if (m_simEncoder == null) {
+                m_simEncoder = new RelativeEncoderWrapper(this.getDeviceId()); 
+            }
+            return m_simEncoder;
+        } else {
+            return super.getEncoder();
         }
     }
 }
