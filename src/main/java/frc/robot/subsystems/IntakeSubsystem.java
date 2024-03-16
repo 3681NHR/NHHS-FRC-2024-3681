@@ -9,6 +9,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -24,7 +27,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
    private VictorSPX m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
    private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
-   private VictorSPX m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
+   private CANSparkMax m_rotate       = new CANSparkMax(Constants.INTAKE_SWING_MOTOR_ID, MotorType.kBrushless);
 
    private double pidOut = 0.0;
   
@@ -127,7 +130,7 @@ public class IntakeSubsystem extends SubsystemBase {
       
    this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
    this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
-   this.m_rotate      .setNeutralMode(NeutralMode.Brake);
+   this.m_rotate      .setIdleMode(IdleMode.kBrake);
 
     SmartDashboard.putNumber("intake swing selected pos" , selectedPosition                );
     SmartDashboard.putNumber("intake swing current pos"  , position);
@@ -156,7 +159,7 @@ public class IntakeSubsystem extends SubsystemBase {
     //p controller
     //pidOut = clamp(swingPID.calculate(position,selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
 
-    m_rotate.set(ControlMode.PercentOutput, pidOut);
+    m_rotate.set(pidOut);
 
 
   if(state == IntakeState.INTAKE){
