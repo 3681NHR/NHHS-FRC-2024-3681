@@ -27,7 +27,7 @@ public class IntakeSubsystem extends SubsystemBase {
    private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
    private VictorSPX m_rotate       = new VictorSPX(Constants.INTAKE_SWING_MOTOR_ID );
 
-   private DigitalInput holdSwitch = new DigitalInput(3);
+   private DigitalInput holdSwitch = new DigitalInput(Constants.INTAKE_DETECTOR_DIO_PIN);
 
    private double pidOut = 0.0;
   
