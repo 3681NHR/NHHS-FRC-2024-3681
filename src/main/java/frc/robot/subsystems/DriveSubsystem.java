@@ -1,15 +1,24 @@
-// done
+
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,36 +29,60 @@ public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
   private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
   private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
+ 
+  private RelativeEncoder m_back_left_encoder = m_back_left.getEncoder();
+  private RelativeEncoder m_back_right_encoder = m_back_right.getEncoder();
+  private RelativeEncoder m_front_left_encoder = m_front_left.getEncoder();
+  private RelativeEncoder m_front_right_encoder = m_front_right.getEncoder(); 
+  
+  private final Translation2d m_frontLeftLocation = new Translation2d(0.051,0.15);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.559,0.15);
+  private final Translation2d m_backLeftLocation = new Translation2d(0.051,0.667);
+  private final Translation2d m_backRightLocation = new Translation2d(0.559,0.667);
 
+  private final MecanumDriveKinematics m_kinematics =
+      new MecanumDriveKinematics(
+          m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+  
+  
   private double forward;
   private double right; 
   private double rotate;
+  private double wheelMaxSpeed = 10000;//placeholder
+
+  private double inputSpeedMultiplyer = 1;
+  private double inputRotationSpeedMultiplyer = 0.5;
+
+  ChassisSpeeds speeds = new ChassisSpeeds();
 
   private Rotation2d angle = new Rotation2d();
   private boolean FOD = true;
   private ADIS16448_IMU gyro = new ADIS16448_IMU();
   private double offset = 0.0;
 
+
   private boolean squaringEnabled = true;
   private boolean modeChangeEnabled = false;
 
   private DriveMode mode;
-  private Drive drive;
+  // private Drive drive; // TODO: Check that this can be removed
 
   private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);//change to DRIVER_CONTROLLER_PORT to use duel controller
 
+  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+  private final PIDController m_frontLeftPIDController = new PIDController(1, 0, 0);
+  private final PIDController m_frontRightPIDController = new PIDController(1, 0, 0);
+  private final PIDController m_backLeftPIDController = new PIDController(1, 0, 0);
+  private final PIDController m_backRightPIDController = new PIDController(1, 0, 0);
+
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
-    System.out.println("drive initalized");
 
     setMotorIdleMode();//idfk why i need this but it works
    
    this.m_back_right .setInverted(true);
    this.m_front_right.setInverted(true);
-
-   drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
-
-
+   //drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right); // TODO: Check that this can be removed
     SmartDashboard.putBoolean("field oriented driving", FOD);
     SmartDashboard.putBoolean("input squaring", squaringEnabled);
     SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
@@ -64,19 +97,69 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
+  public MecanumDriveWheelSpeeds getCurrentSpeeds(){
+    return new MecanumDriveWheelSpeeds(
+      m_back_left_encoder.getVelocity(),
+      m_back_right_encoder.getVelocity(),
+      m_front_left_encoder.getVelocity(),
+      m_front_right_encoder.getVelocity()
+      );
+ }
+  public MecanumDriveWheelPositions getCurrentDistances(){
+    return new MecanumDriveWheelPositions(
+      m_back_left_encoder.getPosition(),
+      m_back_right_encoder.getPosition(),
+      m_front_left_encoder.getPosition(),
+      m_front_right_encoder.getPosition());
+
+  }
+
+
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
+    speeds.vxMetersPerSecond     = forward * inputSpeedMultiplyer;
+    speeds.vyMetersPerSecond     = -right  * inputSpeedMultiplyer;
+    speeds.omegaRadiansPerSecond = -rotate * inputRotationSpeedMultiplyer;
+
+    // Convert to wheel speeds
+    MecanumDriveWheelSpeeds wheelSpeeds = m_kinematics.toWheelSpeeds(speeds);
+
+    wheelSpeeds.desaturate(wheelMaxSpeed);
+
+    final double frontLeftFeedforward = m_feedforward.calculate(wheelSpeeds.frontLeftMetersPerSecond);
+    final double frontRightFeedforward = m_feedforward.calculate(wheelSpeeds.frontRightMetersPerSecond);
+    final double backLeftFeedforward = m_feedforward.calculate(wheelSpeeds.rearLeftMetersPerSecond);
+    final double backRightFeedforward = m_feedforward.calculate(wheelSpeeds.rearRightMetersPerSecond);
+
+    final double frontLeftOutput =
+        m_frontLeftPIDController.calculate(
+            m_front_left.getEncoder().getVelocity(), wheelSpeeds.frontLeftMetersPerSecond);
+    final double frontRightOutput =
+        m_frontRightPIDController.calculate(
+            m_front_right.getEncoder().getVelocity(), wheelSpeeds.frontRightMetersPerSecond);
+    final double backLeftOutput =
+        m_backLeftPIDController.calculate(
+            m_back_left.getEncoder().getVelocity(), wheelSpeeds.rearLeftMetersPerSecond);
+    final double backRightOutput =
+        m_backRightPIDController.calculate(
+            m_back_right.getEncoder().getVelocity(), wheelSpeeds.rearRightMetersPerSecond);
+
+
+    // Get the individual wheel speeds
+    m_front_left .setVoltage(frontLeftOutput  + frontLeftFeedforward );
+    m_front_right.setVoltage(frontRightOutput + frontRightFeedforward);
+    m_back_left  .setVoltage(backLeftOutput   + backLeftFeedforward  );
+    m_back_right .setVoltage(backRightOutput  + backRightFeedforward );
+    
     if(FOD){
       angle = new Rotation2d(Math.toRadians(gyro.getGyroAngleZ()+offset));
     } else {
       angle = new Rotation2d(0);
     }
     
-    drive.driveCartesian(forward, right, -rotate, angle);
-
     SmartDashboard.putNumber("gyro", angle.getDegrees());
     SmartDashboard.putNumber("forward"   , forward        );
     SmartDashboard.putNumber("right"     , right          );
@@ -84,6 +167,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("field oriented driving", FOD);
     SmartDashboard.putBoolean("input squaring", squaringEnabled);
     SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
+
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
@@ -193,4 +277,5 @@ public class DriveSubsystem extends SubsystemBase {
   private double normalize(double input){//only needed for squaring with even exponents
     return input/Math.abs(input);
   }
+
 }
