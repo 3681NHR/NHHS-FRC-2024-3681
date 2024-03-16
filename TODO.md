@@ -16,3 +16,6 @@
   * fix intale swing encoder jump to 1.34 bug
   * more cams
   * computer tray on robot cart
+  * kinematics/odometry - Sam H.
+  * fix pathplanning - Sam H.
+
