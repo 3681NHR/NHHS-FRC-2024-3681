@@ -14,6 +14,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -106,6 +107,11 @@ public class RobotContainer {
     m_commandDriverController.b().onTrue(m_driveSubsystem.zero());
     m_commandDriverController.x().onTrue(m_driveSubsystem.toggleModeChanging());
     m_commandDriverController.y().onTrue(m_driveSubsystem.togglesquaring());
+
+    m_commandDriverController.povUp()   .whileTrue(m_driveSubsystem.sysidDynamic(Direction.kForward));
+    m_commandDriverController.povDown() .whileTrue(m_driveSubsystem.sysidDynamic(Direction.kReverse));
+    m_commandDriverController.povLeft() .whileTrue(m_driveSubsystem.sysidQuasistatic(Direction.kForward));
+    m_commandDriverController.povRight().whileTrue(m_driveSubsystem.sysidQuasistatic(Direction.kReverse));
   }
 
   public Command getAutonomousCommand() {

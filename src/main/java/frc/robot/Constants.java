@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -90,5 +92,11 @@ public final class Constants {
 
   public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.01;
   public static final double INTAKE_SWING_PID_VELOCITY_TOLERANCE  =0.01;
+
+  public static final int DRIVE_CPR= 1024;
+  public static final double DRIVE_WHEEL_SIZE = Units.inchesToMeters(6);
+  public static final double DRIVE_DISANCE_PER_PULSE =
+    // Assumes the encoders are directly mounted on the wheel shafts
+    (DRIVE_WHEEL_SIZE * Math.PI) / (double) DRIVE_CPR;
 
 }

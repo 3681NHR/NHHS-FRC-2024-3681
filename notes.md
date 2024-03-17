@@ -12,3 +12,7 @@ this is a list of notes about the code/interesting things in said code
         * the blue is after cubing the input
     * when you square(or cube) the input from the joystick, your drive will have better percision at low speeds, without loosing your top speed
     
+----
+
+ * encoder distenceperPulse is 2pi(r)/encoderCPR(countsPerRev?) when no gearbox
+    * account for gearbox in this calc, then encoder data can be taken by kinematics and sysid

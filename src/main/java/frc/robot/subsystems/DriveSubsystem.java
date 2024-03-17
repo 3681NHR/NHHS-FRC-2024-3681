@@ -2,6 +2,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -9,17 +10,34 @@ import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import static edu.wpi.first.units.MutableMeasure.mutable;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 public class DriveSubsystem extends SubsystemBase {
 
   private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
   private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
   private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
   private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
+
+  private RelativeEncoder m_back_left_encoder  ;
+  private RelativeEncoder m_back_right_encoder ;
+  private RelativeEncoder m_front_left_encoder ;
+  private RelativeEncoder m_front_right_encoder;
 
   private double forward;
   private double right; 
@@ -38,17 +56,88 @@ public class DriveSubsystem extends SubsystemBase {
 
   private XboxController m_driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);//change to DRIVER_CONTROLLER_PORT to use duel controller
 
-  /** Creates a new Subsystem. */
+  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
+  private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
+  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
+  private final MutableMeasure<Distance> m_distance = mutable(Meters.of(0));
+  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
+  private final MutableMeasure<Velocity<Distance>> m_velocity = mutable(MetersPerSecond.of(0));
+
+//region sysid
+  private final SysIdRoutine m_sysIdRoutine =
+      new SysIdRoutine(
+          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+          new SysIdRoutine.Config(),
+          new SysIdRoutine.Mechanism(
+              // Tell SysId how to plumb the driving voltage to the motors.
+              (Measure<Voltage> volts) -> {
+                m_back_left  .setVoltage(volts.in(Volts));
+                m_back_right .setVoltage(volts.in(Volts));
+                m_front_left .setVoltage(volts.in(Volts));
+                m_front_right.setVoltage(volts.in(Volts));
+              },
+              // Tell SysId how to record a frame of data for each motor on the mechanism being
+              // characterized.
+              log -> {
+                // Record a frame for the motors
+                log.motor("drive-back-left")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_back_left.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_back_left_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_back_left_encoder.getVelocity(), MetersPerSecond));
+                
+                log.motor("drive-back-right")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_back_right.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_back_right_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_back_right_encoder.getVelocity(), MetersPerSecond));
+                
+                log.motor("drive-front-left")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_front_left.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_front_left_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_front_left_encoder.getVelocity(), MetersPerSecond));
+                
+                log.motor("drive-front-right")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_front_right.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_front_right_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_front_right_encoder.getVelocity(), MetersPerSecond));
+                
+              },
+              // Tell SysId to make generated commands require this subsystem, suffix test state in
+              // WPILog with this subsystem's name ("drive")
+              this));
+//endregion
+  
+/** Creates a new Subsystem. */
   public DriveSubsystem() {
     System.out.println("drive initalized");
 
     setMotorIdleMode();//idfk why i need this but it works
-   
+
    this.m_back_right .setInverted(true);
    this.m_front_right.setInverted(true);
 
    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
+   m_back_left_encoder   = m_back_left.getEncoder(); 
+   m_back_right_encoder  = m_back_right.getEncoder(); 
+   m_front_left_encoder  = m_front_left.getEncoder(); 
+   m_front_right_encoder = m_front_right.getEncoder(); 
+
+   m_back_left_encoder.setPositionConversionFactor(Constants.DRIVE_DISANCE_PER_PULSE); 
+   m_back_right_encoder.setPositionConversionFactor(Constants.DRIVE_DISANCE_PER_PULSE); 
+   m_front_left_encoder.setPositionConversionFactor(Constants.DRIVE_DISANCE_PER_PULSE); 
+   m_front_right_encoder.setPositionConversionFactor(Constants.DRIVE_DISANCE_PER_PULSE); 
 
     SmartDashboard.putBoolean("field oriented driving", FOD);
     SmartDashboard.putBoolean("input squaring", squaringEnabled);
@@ -174,6 +263,13 @@ public class DriveSubsystem extends SubsystemBase {
     return runOnce(() -> {
       gyro.reset();
     });
+  }
+
+  public Command sysidQuasistatic(SysIdRoutine.Direction dir){
+    return m_sysIdRoutine.quasistatic(dir);
+  }
+  public Command sysidDynamic(SysIdRoutine.Direction dir){
+    return m_sysIdRoutine.dynamic(dir);
   }
 
   private double deadzone(double value, double zone)
