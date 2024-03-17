@@ -11,12 +11,16 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.IntakeSwingState;
 import frc.robot.Constants;
@@ -47,6 +51,60 @@ public class IntakeSubsystem extends SubsystemBase {
   //pids are for nerds like me
   private double selectedPosition;
 
+  //region sysid
+  private final SysIdRoutine m_sysIdRoutine =
+      new SysIdRoutine(
+          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+          new SysIdRoutine.Config(),
+          new SysIdRoutine.Mechanism(
+              // Tell SysId how to plumb the driving voltage to the motors.
+              (Measure<Voltage> volts) -> {
+                m_back_left  .setVoltage(volts.in(Volts));
+                m_back_right .setVoltage(volts.in(Volts));
+                m_front_left .setVoltage(volts.in(Volts));
+                m_front_right.setVoltage(volts.in(Volts));
+              },
+              // Tell SysId how to record a frame of data for each motor on the mechanism being
+              // characterized.
+              log -> {
+                // Record a frame for the motors
+                log.motor("drive-back-left")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_back_left.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_back_left_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_back_left_encoder.getVelocity(), MetersPerSecond));
+                
+                log.motor("drive-back-right")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_back_right.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_back_right_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_back_right_encoder.getVelocity(), MetersPerSecond));
+                
+                log.motor("drive-front-left")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_front_left.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_front_left_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_front_left_encoder.getVelocity(), MetersPerSecond));
+                
+                log.motor("drive-front-right")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_front_right.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_front_right_encoder.getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_front_right_encoder.getVelocity(), MetersPerSecond));
+                
+              },
+              // Tell SysId to make generated commands require this subsystem, suffix test state in
+              // WPILog with this subsystem's name ("drive")
+              this));
+//endregion
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
    //set motor idle modes
@@ -122,6 +180,12 @@ public class IntakeSubsystem extends SubsystemBase {
     return holding;
   }
     
+  public Command sysidQuasistatic(SysIdRoutine.Direction dir){
+    return m_sysIdRoutine.quasistatic(dir);
+  }
+  public Command sysidDynamic(SysIdRoutine.Direction dir){
+    return m_sysIdRoutine.dynamic(dir);
+  }
 
   @Override
   public void periodic() {
