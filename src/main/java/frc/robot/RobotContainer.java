@@ -92,10 +92,10 @@ public class RobotContainer {
     m_commandASOController.x().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
     m_commandASOController.y().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
 
-    m_commandASOController.povUp()   .whileTrue(m_intakeSubsystem.sysidQuasistatic(Direction.kForward));
-    m_commandASOController.povDown() .whileTrue(m_intakeSubsystem.sysidQuasistatic(Direction.kReverse));
-    m_commandASOController.povRight().whileTrue(m_intakeSubsystem.sysidDynamic(Direction.kForward));
-    m_commandASOController.povLeft() .whileTrue(m_intakeSubsystem.sysidDynamic(Direction.kReverse));
+    m_commandASOController.povUp()   .whileTrue(m_intakeSubsystem.sysidDynamic(Direction.kForward));
+    m_commandASOController.povDown() .whileTrue(m_intakeSubsystem.sysidDynamic(Direction.kReverse));
+    m_commandASOController.povLeft() .whileTrue(m_intakeSubsystem.sysidQuasistatic(Direction.kForward));
+    m_commandASOController.povRight().whileTrue(m_intakeSubsystem.sysidQuasistatic(Direction.kReverse));
   
     m_commandASOController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
     m_commandASOController.start().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
