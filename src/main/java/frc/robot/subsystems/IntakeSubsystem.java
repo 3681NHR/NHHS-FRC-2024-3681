@@ -10,37 +10,37 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import static edu.wpi.first.units.MutableMeasure.mutable;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 import edu.wpi.first.units.Distance;
-import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.MutableMeasure;
-import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.IntakeSwingState;
-import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
    private VictorSPX m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
    private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
    private CANSparkMax m_rotate       = new CANSparkMax(Constants.INTAKE_SWING_MOTOR_ID, MotorType.kBrushless);
-   private RelativeEncoder m_rotate_encoder = m_rotate.getEncoder();
+
+   private double intakeSwingEncoderRate = 0;
+   private double intakeSwingEncoderLastFrame = 0;
 
    private DigitalInput holdSwitch = new DigitalInput(Constants.INTAKE_DETECTOR_DIO_PIN);
 
@@ -59,7 +59,7 @@ public class IntakeSubsystem extends SubsystemBase {
   Constants.INTAKE_SWING_I_GAIN,
   Constants.INTAKE_SWING_D_GAIN
   );
-  //pids are for nerds like me
+
   private double selectedPosition;
 
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
@@ -83,13 +83,13 @@ public class IntakeSubsystem extends SubsystemBase {
               // characterized.
               log -> {
                 // Record a frame for the motors
-                log.motor("drive-back-left")
+                log.motor("intake swing")
                     .voltage(
                         m_appliedVoltage.mut_replace(
                             m_rotate.get() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(m_rotate_encoder.getPosition(), Meters))
+                    .linearPosition(m_distance.mut_replace(intakeSwingEncoder.getDistance(), Meters))
                     .linearVelocity(
-                        m_velocity.mut_replace(m_rotate_encoder.getVelocity(), MetersPerSecond));
+                        m_velocity.mut_replace(intakeSwingEncoderRate, MetersPerSecond));
                 
               },
               // Tell SysId to make generated commands require this subsystem, suffix test state in
@@ -180,6 +180,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    intakeSwingEncoderRate = (intakeSwingEncoderLastFrame-intakeSwingEncoder.getDistance())*(20/1000);
+    intakeSwingEncoderLastFrame = intakeSwingEncoder.getDistance();
     
     position = intakeSwingEncoder.getDistance();
 
