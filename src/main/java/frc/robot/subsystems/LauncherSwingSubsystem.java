@@ -94,6 +94,23 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     }
   }
 
+   public Command runRollers() {
+    return runOnce(
+    () -> {
+    if(holding){
+       rollerState = RollerState.LAUNCH;
+     } else{
+        rollerState = RollerState.RECV;
+      } 
+    });
+  }  
+  public Command stopRollers() {
+    return runOnce(
+    () -> {
+      rollerState = RollerState.IDLE;
+    });
+  }  
+
   public Command manualSwingControl(){
     return run(() -> {
       selectedPosition += (m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING_MAN_CTRL_SENS;
@@ -129,13 +146,24 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     switch(rollerState){
       case RECV:
-        roller.set(ControlMode.PercentOutput, Constants.LAUNCHER_ROLLER_RECV_SPEED);
+        if(!holding){
+          roller.set(ControlMode.PercentOutput, Constants.LAUNCHER_ROLLER_RECV_SPEED);
+        } else {
+          rollerState = RollerState.IDLE;
+        }
         break;
       case BACKOUT:
         roller.set(ControlMode.PercentOutput, Constants.LAUNCHER_ROLLER_BACKOUT_SPEED);
         break;
       case IDLE:
         roller.set(ControlMode.PercentOutput, 0);
+        break;
+      case LAUNCH:
+        if(holding){
+          roller.set(ControlMode.PercentOutput, Constants.LAUNCHER_ROLLER_RECV_SPEED);
+        } else {
+          rollerState = RollerState.IDLE;
+        }        
         break;
     }
     //PID controller

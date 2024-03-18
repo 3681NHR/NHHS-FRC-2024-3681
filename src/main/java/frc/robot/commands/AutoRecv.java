@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.enums.IntakeState;
@@ -29,15 +28,12 @@ public class AutoRecv extends Command{
     @Override
     public void initialize(){
         ticks = 0;
-        SmartDashboard.putBoolean("autorecv running", true);
     }
 
     @Override
     public void end(boolean e){
         m_intakeSubsystem.setIntake(IntakeState.IDLE);
         m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
-
-        SmartDashboard.putBoolean("autorecv running", false);
     }
 
     @Override
@@ -50,8 +46,14 @@ public class AutoRecv extends Command{
             m_intakeSubsystem.setPosition(IntakeSwingState.UP);
 
             if(m_intakeSubsystem.isAtSelectedPos()){
-                m_launcherSwingSubsystem.setRoller(RollerState.RECV);
-                m_intakeSubsystem.setIntake(IntakeState.REVERSE);
+                
+                if(!m_launcherSwingSubsystem.isHolding() || m_intakeSubsystem.isHolding()){
+                    m_launcherSwingSubsystem.setRoller(RollerState.RECV);
+                    m_intakeSubsystem.setIntake(IntakeState.REVERSE);
+                } else {
+                    m_intakeSubsystem.setIntake(IntakeState.IDLE);
+                    m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+                }
             
                 ticks++;
             }

@@ -41,6 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private double position = intakeSwingEncoder.getDistance();
   private boolean holding;
+  private boolean switchEnabled = true;
 
   private PIDController swingPID = new PIDController(
   Constants.INTAKE_SWING_P_GAIN,
@@ -55,6 +56,8 @@ public class IntakeSubsystem extends SubsystemBase {
    //set motor idle modes
 
    swingPID.setTolerance(Constants.INTAKE_SWING_POS_AE, Constants.INTAKE_SWING_PID_VELOCITY_TOLERANCE);
+  
+    SmartDashboard.putBoolean("intake sensor enabled", switchEnabled);
   }
 
   
@@ -124,10 +127,12 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean isHolding(){
     return holding;
   }
-    
+ 
 
   @Override
   public void periodic() {
+
+    switchEnabled = SmartDashboard.getBoolean("intake sensor enabled", true);
     
     position = intakeSwingEncoder.getDistance();
 
@@ -148,6 +153,9 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     if(swingState == IntakeSwingState.DOWN){
       selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
+      if(!holding && switchEnabled){
+        setIntake(IntakeState.INTAKE);
+      }
     }
     if(swingState == IntakeSwingState.IDLE){
       selectedPosition = position;
@@ -183,4 +191,3 @@ public class IntakeSubsystem extends SubsystemBase {
     return Math.max(min, Math.min(max,val));
   }
 }
-

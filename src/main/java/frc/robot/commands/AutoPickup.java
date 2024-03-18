@@ -10,13 +10,14 @@ public class AutoPickup extends Command{
     IntakeSubsystem m_intakeSubsystem;
 
     public AutoPickup(IntakeSubsystem intake){
-        m_intakeSubsystem        = intake;
+        m_intakeSubsystem = intake;
 
         addRequirements(intake);
     }
     @Override
     public void initialize(){
         m_intakeSubsystem.setPosition(IntakeSwingState.DOWN);
+        m_intakeSubsystem.setIntake(IntakeState.INTAKE);
     }
 
     @Override
@@ -29,6 +30,8 @@ public class AutoPickup extends Command{
     public void execute(){
         if(!m_intakeSubsystem.isHolding()){
             m_intakeSubsystem.setIntake(IntakeState.INTAKE);
+        } else {
+            m_intakeSubsystem.setIntake(IntakeState.IDLE);
         }
     }
 
