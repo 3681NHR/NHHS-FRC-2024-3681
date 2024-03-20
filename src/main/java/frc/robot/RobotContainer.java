@@ -84,8 +84,8 @@ public class RobotContainer {
     
      m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
     
-    m_commandASOController.leftBumper().onTrue(m_LauncherSwingSubsystem.runRollers());
-    m_commandASOController.leftBumper().onFalse(m_LauncherSwingSubsystem.stopRollers());
+    m_commandASOController.povRight().onTrue(m_LauncherSwingSubsystem.runRollers());
+    m_commandASOController.povRight().onFalse(m_LauncherSwingSubsystem.stopRollers());
     
     m_commandASOController.x().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.INTAKE));
     m_commandASOController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
@@ -95,7 +95,7 @@ public class RobotContainer {
 
     m_commandASOController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
     m_commandASOController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
-    m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
+    //m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
     m_commandASOController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
   
     m_commandASOController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));

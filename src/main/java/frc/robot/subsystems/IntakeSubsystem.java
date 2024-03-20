@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.IntakeSwingState;
@@ -43,6 +42,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private boolean holding;
   private boolean switchEnabled = true;
 
+  private double downPos;
+  private double upPos;
+
   private PIDController swingPID = new PIDController(
   Constants.INTAKE_SWING_P_GAIN,
   Constants.INTAKE_SWING_I_GAIN,
@@ -53,11 +55,18 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
+
    //set motor idle modes
 
    swingPID.setTolerance(Constants.INTAKE_SWING_POS_AE, Constants.INTAKE_SWING_PID_VELOCITY_TOLERANCE);
   
     SmartDashboard.putBoolean("intake sensor enabled", switchEnabled);
+
+    SmartDashboard.putNumber ("intake pid P gain", swingPID.getP());
+    SmartDashboard.putNumber ("intake pid I gain", swingPID.getI());
+    SmartDashboard.putNumber ("intake pid D gain", swingPID.getD()); 
+
+    //m_rotate.setInverted(true);
   }
 
   
@@ -132,6 +141,18 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    if(intakeSwingEncoder.getDistance() > Constants.INTAKE_SWING_PID_SWITCH){
+      upPos = Constants.INTAKE_SWING_UP_POSITION_B;
+      downPos = Constants.INTAKE_SWING_DOWN_POSITION_B;
+
+      m_rotate.setInverted(false);
+    } else {
+      upPos = Constants.INTAKE_SWING_UP_POSITION;
+      downPos = Constants.INTAKE_SWING_DOWN_POSITION;
+
+      m_rotate.setInverted(true);
+    }
+
     switchEnabled = SmartDashboard.getBoolean("intake sensor enabled", true);
     
     position = intakeSwingEncoder.getDistance();
@@ -147,30 +168,25 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putString("intake swing state"        , swingState.toString()           );
     SmartDashboard.putString("intake state"              , state.toString()                );
     SmartDashboard.putNumber("intake swing PID value"    , pidOut                          );
+    SmartDashboard.putBoolean("IntakeIsHolding", holding);
+
+    swingPID.setP(SmartDashboard.getNumber("intake pid P gain", Constants.INTAKE_SWING_P_GAIN));
+    swingPID.setI(SmartDashboard.getNumber("intake pid I gain", Constants.INTAKE_SWING_I_GAIN));
+    swingPID.setD(SmartDashboard.getNumber("intake pid D gain", Constants.INTAKE_SWING_D_GAIN));
 
     if(swingState == IntakeSwingState.UP){
-      selectedPosition = Constants.INTAKE_SWING_UP_POSITION;
+      selectedPosition = upPos;
     }
     if(swingState == IntakeSwingState.DOWN){
-      selectedPosition = Constants.INTAKE_SWING_DOWN_POSITION;
-      if(!holding && switchEnabled){
-        setIntake(IntakeState.INTAKE);
-      }
+      selectedPosition = downPos;
+      
     }
     if(swingState == IntakeSwingState.IDLE){
       selectedPosition = position;
     }
 
-    if(position < selectedPosition){
-    pidOut = clamp(6 * (selectedPosition - position), -Constants.INTAKE_SWING_UP_SPEED,Constants.INTAKE_SWING_UP_SPEED);
-    } else {
-    pidOut = clamp(1.5 * (selectedPosition - position), -Constants.INTAKE_SWING_DOWN_SPEED,Constants.INTAKE_SWING_DOWN_SPEED);
-    } 
-    if(intakeSwingEncoder.getDistance() > 1){
-      pidOut = clamp(1, -Constants.INTAKE_SWING_SPEED, Constants.INTAKE_SWING_SPEED);
-    }
-    //p controller
-    //pidOut = clamp(swingPID.calculate(position,selectedPosition), -Constants.INTAKE_SWING_SPEED,Constants.INTAKE_SWING_SPEED);
+    //pid controller
+    pidOut = clamp(swingPID.calculate(position, selectedPosition), -Constants.INTAKE_SWING_SPEED, Constants.INTAKE_SWING_SPEED);
 
     m_rotate.set(pidOut);
 

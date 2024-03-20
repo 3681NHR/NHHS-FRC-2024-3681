@@ -137,12 +137,13 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     SmartDashboard.putNumber ("launcher swing current pos"      , swingEncoder.getDistance());
     SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected());
     SmartDashboard.putNumber ("pid out", PIDOut);
+    SmartDashboard.putBoolean("LauncherIsHolding", holding); 
 
     
 
-    swingPID.setP(SmartDashboard.getNumber("pid P gain", 0));
-    swingPID.setI(SmartDashboard.getNumber("pid I gain", 0));
-    swingPID.setD(SmartDashboard.getNumber("pid D gain", 0));
+    swingPID.setP(SmartDashboard.getNumber("pid P gain", Constants.LAUNCHER_SWING_P_GAIN));
+    swingPID.setI(SmartDashboard.getNumber("pid I gain", Constants.LAUNCHER_SWING_I_GAIN));
+    swingPID.setD(SmartDashboard.getNumber("pid D gain", Constants.LAUNCHER_SWING_D_GAIN));
 
     switch(rollerState){
       case RECV:
