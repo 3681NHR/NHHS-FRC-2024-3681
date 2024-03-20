@@ -74,9 +74,6 @@ public final class Constants {
   public static final double INTAKE_SWING_DOWN_POSITION       =-0.33;//0.66
   public static final double INTAKE_SWING_UP_POSITION         =0.118;//1.1
 
-  public static final double INTAKE_SWING_DOWN_POSITION_B     =0.66;
-  public static final double INTAKE_SWING_UP_POSITION_B       =1.1;
-
   public static final double INTAKE_SWING_PID_SWITCH          =0.2;
 
   public static final double INTAKE_SWING_P_GAIN              =1;

@@ -159,15 +159,11 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
 
     if(intakeSwingEncoder.getDistance() > Constants.INTAKE_SWING_PID_SWITCH){
-      upPos = Constants.INTAKE_SWING_UP_POSITION_B;
-      downPos = Constants.INTAKE_SWING_DOWN_POSITION_B;
-
-      m_rotate.setInverted(false);
+      upPos = Constants.INTAKE_SWING_UP_POSITION + 1;
+      downPos = Constants.INTAKE_SWING_DOWN_POSITION + 1;
     } else {
       upPos = Constants.INTAKE_SWING_UP_POSITION;
       downPos = Constants.INTAKE_SWING_DOWN_POSITION;
-
-      m_rotate.setInverted(true);
     }
 
     switchEnabled = SmartDashboard.getBoolean("intake sensor enabled", true);
