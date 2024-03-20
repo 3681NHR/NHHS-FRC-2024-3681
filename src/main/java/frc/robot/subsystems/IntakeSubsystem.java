@@ -104,8 +104,14 @@ public class IntakeSubsystem extends SubsystemBase {
     return runOnce(
       () -> {
       if(swingState == IntakeSwingState.UP){
+        if(!holding || switchEnabled)
+        {
         swingState = IntakeSwingState.DOWN;
-      } else{
+        } else {
+          swingState = IntakeSwingState.DOWN_HOLDING;
+        }
+      } 
+      if(swingState == IntakeSwingState.DOWN || swingState == IntakeSwingState.DOWN_HOLDING){
         swingState = IntakeSwingState.UP;
       }
       });
@@ -123,7 +129,18 @@ public class IntakeSubsystem extends SubsystemBase {
   
   }
 
-    public Command toggleReverse() {
+  public Command runintake() {
+    return runOnce(
+    () -> {
+    if(holding){
+        setIntake(IntakeState.COMPRESS);
+     } else{
+        setIntake(IntakeState.INTAKE);
+      } 
+    });
+  }
+
+  public Command toggleReverse() {
     return runOnce(
     () -> {
     if(state == IntakeState.REVERSE){
@@ -179,7 +196,12 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     if(swingState == IntakeSwingState.DOWN){
       selectedPosition = downPos;
-      
+      if(holding){
+        swingState = IntakeSwingState.UP;
+      }
+    }
+    if(swingState == IntakeSwingState.DOWN_HOLDING){
+      selectedPosition = downPos;
     }
     if(swingState == IntakeSwingState.IDLE){
       selectedPosition = position;
@@ -191,13 +213,19 @@ public class IntakeSubsystem extends SubsystemBase {
     m_rotate.set(pidOut);
 
 
-  if(state == IntakeState.INTAKE){
+  if(state == IntakeState.INTAKE && (!holding || !switchEnabled)){
     m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
     m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
-  }else if(state == IntakeState.REVERSE){
+  }
+  if(state == IntakeState.COMPRESS){
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
+  }
+  if(state == IntakeState.REVERSE){
     m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_REVERSE_SPEED);
     m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_REVERSE_SPEED);    
-  } else{
+  } 
+  if(state == IntakeState.IDLE){
     m_intakeBottom.set(ControlMode.PercentOutput, 0);
     m_intakeTop   .set(ControlMode.PercentOutput, 0);
   }

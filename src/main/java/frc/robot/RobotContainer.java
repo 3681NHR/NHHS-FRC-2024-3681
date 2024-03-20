@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.commands.Auto;
 import frc.robot.commands.AutoLaunchOnly;
-import frc.robot.commands.AutoRecv;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
 import frc.robot.enums.RobotPosition;
@@ -87,7 +86,7 @@ public class RobotContainer {
     m_commandASOController.povRight().onTrue(m_LauncherSwingSubsystem.runRollers());
     m_commandASOController.povRight().onFalse(m_LauncherSwingSubsystem.stopRollers());
     
-    m_commandASOController.x().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.INTAKE));
+    m_commandASOController.x().onTrue(m_intakeSubsystem.runintake());
     m_commandASOController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
 
     m_commandASOController.x().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
