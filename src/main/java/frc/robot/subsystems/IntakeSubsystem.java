@@ -181,7 +181,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    intakeSwingEncoderRate = (intakeSwingEncoderLastFrame-intakeSwingEncoder.getDistance())*(20/1000);
+    intakeSwingEncoderRate = (intakeSwingEncoderLastFrame-intakeSwingEncoder.getDistance())*(20/1000);//TODO fix encoder speed
     intakeSwingEncoderLastFrame = intakeSwingEncoder.getDistance();
     
     position = intakeSwingEncoder.getDistance();
