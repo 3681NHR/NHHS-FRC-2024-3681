@@ -12,6 +12,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
@@ -39,9 +41,16 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     Constants.LAUNCHER_SWING_D_GAIN,
     new Constraints(10, 20)
   );
+  private ArmFeedforward swingFeedforward = new ArmFeedforward(
+    Constants.LAUNCHER_SWING_S_GAIN, 
+    Constants.LAUNCHER_SWING_V_GAIN, 
+    Constants.LAUNCHER_SWING_G_GAIN, 
+    Constants.LAUNCHER_SWING_A_GAIN
+  );
   
   //pid is eh
   private double selectedPosition;
+  private double selectedPositionAngle;
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 
@@ -126,6 +135,8 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    selectedPositionAngle = (selectedPosition*2*Math.PI) + 0;
+
     holding = !holdingSwitch.get();
 
     this.swingMotor.setIdleMode(IdleMode.kBrake);
@@ -133,7 +144,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING_LOWER_BOUND, Constants.LAUNCHER_SWING_UPPER_BOUND);
 
-    PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED);
+    PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition) + swingFeedforward.calculate(selectedPositionAngle, 0), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED);
 
     SmartDashboard.putNumber ("launcher swing selected pos", selectedPosition               );
     SmartDashboard.putNumber ("launcher swing setpoint"    , swingPID.getSetpoint().position);
@@ -168,7 +179,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
         break;
     }
     //PID controller
-    swingMotor.set(PIDOut);
+    swingMotor.setVoltage(PIDOut);
     //P controller
     //swingMotor.set(clamp(3 * (selectedPosition - swingEncoder.getDistance()), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
 
