@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -27,7 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
    private VictorSPX m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
    private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
-   private CANSparkMax m_rotate       = new CANSparkMax(Constants.INTAKE_SWING_MOTOR_ID, MotorType.kBrushless);
+   private CANSparkMax m_rotate     = new CANSparkMax(Constants.INTAKE_SWING_MOTOR_ID, MotorType.kBrushless);
 
    private DigitalInput holdSwitch = new DigitalInput(Constants.INTAKE_DETECTOR_DIO_PIN);
 
@@ -50,8 +51,15 @@ public class IntakeSubsystem extends SubsystemBase {
   Constants.INTAKE_SWING_I_GAIN,
   Constants.INTAKE_SWING_D_GAIN
   );
+  private ArmFeedforward swingFeedforward = new ArmFeedforward(
+    Constants.INTAKE_SWING_S_GAIN, 
+    Constants.INTAKE_SWING_V_GAIN, 
+    Constants.INTAKE_SWING_G_GAIN, 
+    Constants.INTAKE_SWING_A_GAIN
+  );
   //pids are for nerds like me
   private double selectedPosition;
+  private double selectedPositionAngle;
 
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
@@ -158,6 +166,8 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    selectedPositionAngle = (selectedPosition*2*Math.PI) + 0;
+
     if(intakeSwingEncoder.getDistance() > Constants.INTAKE_SWING_PID_SWITCH){
       upPos = Constants.INTAKE_SWING_UP_POSITION_B;
       downPos = Constants.INTAKE_SWING_DOWN_POSITION_B;
@@ -208,7 +218,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     //pid controller
-    pidOut = clamp(swingPID.calculate(position, selectedPosition), -Constants.INTAKE_SWING_SPEED, Constants.INTAKE_SWING_SPEED);
+    pidOut = clamp(swingPID.calculate(position, selectedPosition) + swingFeedforward.calculate(selectedPositionAngle, 0), -Constants.INTAKE_SWING_SPEED, Constants.INTAKE_SWING_SPEED);
 
     m_rotate.set(pidOut);
 
