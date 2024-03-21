@@ -131,7 +131,7 @@ public class LauncherSubsystem extends SubsystemBase {
         if(!LaunchLock || atspeed()){
           roller.set(ControlMode.PercentOutput, Constants.LAUNCHER_ROLLER_RECV_SPEED);
         } else {
-          roller.set(ControlMode.PercentOutput, 0);
+          rollerState = RollerState.IDLE;
         }
         break;
     }

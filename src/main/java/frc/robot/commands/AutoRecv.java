@@ -61,6 +61,6 @@ public class AutoRecv extends Command{
 
     @Override
     public boolean isFinished(){
-        return (cutoff >= 1000) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
+        return (cutoff >= 1500) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
     }
 }
