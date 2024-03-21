@@ -48,7 +48,7 @@ public class Auto extends Command{
     public void execute(){
 
         m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
+        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
 
         if(ticks >= 30 && ticks <= 300){
             m_launcherSubsystem.setRoller(RollerState.LAUNCH);

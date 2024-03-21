@@ -67,7 +67,6 @@ public final class Constants {
     public static final int    ENCODER_DIO_PIN      = 9;
     public static final double MAN_CTRL_SENS     = 0.01;
   }
-  
 
   public static final class INTAKE{
     public static final int    TOP_MOTOR_ID                 = 7;
