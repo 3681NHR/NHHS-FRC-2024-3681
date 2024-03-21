@@ -66,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber ("intake pid I gain", swingPID.getI());
     SmartDashboard.putNumber ("intake pid D gain", swingPID.getD()); 
 
-    //m_rotate.setInverted(true);
+    m_rotate.setInverted(true);
   }
 
   
@@ -104,14 +104,13 @@ public class IntakeSubsystem extends SubsystemBase {
     return runOnce(
       () -> {
       if(swingState == IntakeSwingState.UP){
-        if(!holding || switchEnabled)
+        if(!holding)
         {
-        swingState = IntakeSwingState.DOWN;
+          swingState = IntakeSwingState.DOWN;
         } else {
           swingState = IntakeSwingState.DOWN_HOLDING;
         }
-      } 
-      if(swingState == IntakeSwingState.DOWN || swingState == IntakeSwingState.DOWN_HOLDING){
+      } else {
         swingState = IntakeSwingState.UP;
       }
       });
@@ -192,7 +191,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     if(swingState == IntakeSwingState.DOWN){
       selectedPosition = downPos;
-      if(holding){
+      if(holding && switchEnabled){
         swingState = IntakeSwingState.UP;
       }
     }
