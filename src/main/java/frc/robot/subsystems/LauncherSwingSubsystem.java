@@ -29,6 +29,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
    private DigitalInput holdingSwitch = new DigitalInput(Constants.LAUNCHER_DETECTOR_DIO_PIN);
 
    private boolean holding = false;
+   private boolean LaunchLock = true;
 
   private double PIDOut;
 
@@ -39,6 +40,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     Constants.LAUNCHER_SWING_D_GAIN,
     new Constraints(10, 20)
   );
+
   //pid is eh
   private double selectedPosition;
 
@@ -105,12 +107,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
       } 
     });
   }  
-  public Command stopRollers() {
-    return runOnce(
-    () -> {
-      rollerState = RollerState.IDLE;
-    });
-  }  
 
   public Command manualSwingControl(){
     return run(() -> {
@@ -140,8 +136,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     SmartDashboard.putNumber ("pid out", PIDOut);
     SmartDashboard.putBoolean("LauncherIsHolding", holding); 
 
-    
-
     swingPID.setP(SmartDashboard.getNumber("pid P gain", Constants.LAUNCHER_SWING_P_GAIN));
     swingPID.setI(SmartDashboard.getNumber("pid I gain", Constants.LAUNCHER_SWING_I_GAIN));
     swingPID.setD(SmartDashboard.getNumber("pid D gain", Constants.LAUNCHER_SWING_D_GAIN));
@@ -161,11 +155,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
         roller.set(ControlMode.PercentOutput, 0);
         break;
       case LAUNCH:
-        if(holding){
-          roller.set(ControlMode.PercentOutput, Constants.LAUNCHER_ROLLER_RECV_SPEED);
-        } else {
-          rollerState = RollerState.IDLE;
-        }        
+        roller.set(ControlMode.PercentOutput, Constants.LAUNCHER_ROLLER_RECV_SPEED);    
         break;
     }
     //PID controller

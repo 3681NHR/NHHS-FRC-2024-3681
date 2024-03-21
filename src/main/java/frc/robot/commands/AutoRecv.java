@@ -13,7 +13,6 @@ public class AutoRecv extends Command{
     IntakeSubsystem m_intakeSubsystem;
     LauncherSwingSubsystem m_launcherSwingSubsystem;
 
-    int ticks = 0;
     int cutoff = 0;
 
     public AutoRecv(IntakeSubsystem intake, LauncherSwingSubsystem launcherSwing){
@@ -27,7 +26,6 @@ public class AutoRecv extends Command{
     }
     @Override
     public void initialize(){
-        ticks = 0;
     }
 
     @Override
@@ -39,7 +37,7 @@ public class AutoRecv extends Command{
     @Override
     public void execute(){
 
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_RECV_POSITION);
+        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
         
         if(m_launcherSwingSubsystem.isAtSelectedPos()){
 
@@ -54,16 +52,13 @@ public class AutoRecv extends Command{
                     m_intakeSubsystem.setIntake(IntakeState.IDLE);
                     m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
                 }
-            
-                ticks++;
             }
         }
-
         cutoff++;
     }
 
     @Override
     public boolean isFinished(){
-        return (ticks >= 125) || (cutoff >= 1000);
+        return (cutoff >= 1000) || (!m_intakeSubsystem.isHolding() && m_launcherSwingSubsystem.isHolding());
     }
 }

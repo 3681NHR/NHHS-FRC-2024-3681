@@ -84,6 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("field oriented driving", FOD);
     SmartDashboard.putBoolean("input squaring", squaringEnabled);
     SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
+    SmartDashboard.putNumber("angle offset", offset);
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
@@ -131,6 +132,12 @@ public class DriveSubsystem extends SubsystemBase {
       this.FOD = enabled;
     });
   }
+  public void setFODFunc(boolean enabled){
+      this.FOD = enabled;
+  }
+  public boolean getFOD(){
+    return this.FOD;
+  }
   public Command toggleFOD(){
     return runOnce(() -> {
       this.FOD = !this.FOD;
@@ -168,6 +175,9 @@ public class DriveSubsystem extends SubsystemBase {
     return runOnce(() -> {
       this.offset = -gyro.getGyroAngleZ() + offset;
     });
+  }
+  public void zeroFunc(double offset){
+      this.offset = -gyro.getGyroAngleZ() + offset;
   }
   /** recalibrate the gyro, requires 10 seconds of absolutly no motion */
   public Command resetGyro(){

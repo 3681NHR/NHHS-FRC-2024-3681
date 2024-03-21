@@ -33,7 +33,7 @@ public final class Constants {
   public static final int LAUNCHER_RIGHT_MOTOR_ID             = 17;
 
   public static final double LAUNCHER_LAUNCH_SPEED            = 1;
-  public static final double LAUNCHER_DROP_SPEED              = 0.2;
+  public static final double LAUNCHER_DROP_SPEED              = 0.3;
   public static final double LAUNCHER_IN_SPEED                = -0.075;
 
   public static final double LAUNCHER_SWING_SPEED             = 1;
@@ -43,7 +43,7 @@ public final class Constants {
   public static final double LAUNCHER_SWING_POS_AE            = 0.005;
   public static final double INTAKE_SWING_POS_AE              = 0.01;
 
-  public static final double LAUNCHER_RECV_POSITION           = 0.52;
+  public static final double LAUNCHER_RECV_POSITION           = 0.491;
   public static final double LAUNCHER_LAUNCH_POSITION         = 0.55;
   public static final double LAUNCHER_DROP_POSITION           = 0.275;
  
@@ -66,23 +66,23 @@ public final class Constants {
   public static final double INTAKE_SPEED                     =1;
   public static final double INTAKE_REVERSE_SPEED             =-1;
 
-  public static final double INTAKE_SWING_SPEED               =0.2;//WARNING: DO NOT SET TO 1!
+  public static final double INTAKE_SWING_SPEED               =0.4;//WARNING: DO NOT SET TO 1!
 
   public static final int INTAKE_SWING_ENCODER_DIO_PIN        =8;
   public static final int INTAKE_DETECTOR_DIO_PIN             =6;
 
-  public static final double INTAKE_SWING_DOWN_POSITION       =-0.33;//0.66
-  public static final double INTAKE_SWING_UP_POSITION         =0.118;//1.1
+  public static final double INTAKE_SWING_DOWN_POSITION       =0.68;
+  public static final double INTAKE_SWING_UP_POSITION         =1.1;
 
   public static final double INTAKE_SWING_PID_SWITCH          =0.2;
 
-  public static final double INTAKE_SWING_P_GAIN              =1;
-  public static final double INTAKE_SWING_I_GAIN              =0;
-  public static final double INTAKE_SWING_D_GAIN              =0;
+  public static final double INTAKE_SWING_P_GAIN              =5;
+  public static final double INTAKE_SWING_I_GAIN              =0.0;
+  public static final double INTAKE_SWING_D_GAIN              =0.1;
 
-  public static double LAUNCHER_SWING_P_GAIN                  =25;
-  public static double LAUNCHER_SWING_I_GAIN                  =0.0;
-  public static double LAUNCHER_SWING_D_GAIN                  =0.05;
+  public static final double LAUNCHER_SWING_P_GAIN            =25;
+  public static final double LAUNCHER_SWING_I_GAIN            =0.0;
+  public static final double LAUNCHER_SWING_D_GAIN            =0.05;
 
   public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.01;
   public static final double INTAKE_SWING_PID_VELOCITY_TOLERANCE  =0.01;

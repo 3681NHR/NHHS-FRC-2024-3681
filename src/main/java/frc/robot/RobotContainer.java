@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.Auto;
 import frc.robot.commands.AutoLaunchOnly;
+import frc.robot.commands.AutoRecv;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
 import frc.robot.enums.RobotPosition;
@@ -84,7 +85,7 @@ public class RobotContainer {
      m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
     
     m_commandASOController.povRight().onTrue(m_LauncherSwingSubsystem.runRollers());
-    m_commandASOController.povRight().onFalse(m_LauncherSwingSubsystem.stopRollers());
+    m_commandASOController.povRight().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
     
     m_commandASOController.x().onTrue(m_intakeSubsystem.runintake());
     m_commandASOController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
@@ -94,7 +95,7 @@ public class RobotContainer {
 
     m_commandASOController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
     m_commandASOController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
-    //m_commandDriverController.povRight().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
+    m_commandASOController.leftStick().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
     m_commandASOController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
   
     m_commandASOController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
@@ -111,6 +112,8 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
+    m_driveSubsystem.zeroFunc(startingPositions.getSelected().rot);
+
     return Autos.getSelected();
   }
   public void disabledPeriodic(){

@@ -41,7 +41,7 @@ public class AutoLaunchOnly extends Command{
         m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
 
         if(ticks >= 30){
-            m_launcherSwingSubsystem.setRoller(RollerState.RECV);
+            m_launcherSwingSubsystem.setRoller(RollerState.LAUNCH);
         } else {
             m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
         }
