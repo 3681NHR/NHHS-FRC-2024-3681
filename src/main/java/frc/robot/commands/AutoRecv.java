@@ -6,23 +6,25 @@ import frc.robot.enums.IntakeState;
 import frc.robot.enums.IntakeSwingState;
 import frc.robot.enums.RollerState;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
 
 public class AutoRecv extends Command{
     
     IntakeSubsystem m_intakeSubsystem;
     LauncherSwingSubsystem m_launcherSwingSubsystem;
+    LauncherSubsystem m_launcherSubsystem;
 
     int cutoff = 0;
 
-    public AutoRecv(IntakeSubsystem intake, LauncherSwingSubsystem launcherSwing){
+    public AutoRecv(IntakeSubsystem intake, LauncherSwingSubsystem launcherSwing, LauncherSubsystem  launcher){
         m_intakeSubsystem        = intake;
         m_launcherSwingSubsystem = launcherSwing;
-
+        m_launcherSubsystem      = launcher;
 
         addRequirements(intake);
         addRequirements(launcherSwing);
-
+        addRequirements(launcher);
     }
     @Override
     public void initialize(){
@@ -31,7 +33,7 @@ public class AutoRecv extends Command{
     @Override
     public void end(boolean e){
         m_intakeSubsystem.setIntake(IntakeState.IDLE);
-        m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+        m_launcherSubsystem.setRoller(RollerState.IDLE);
     }
 
     @Override
@@ -45,12 +47,12 @@ public class AutoRecv extends Command{
 
             if(m_intakeSubsystem.isAtSelectedPos()){
                 
-                if(!m_launcherSwingSubsystem.isHolding() || m_intakeSubsystem.isHolding()){
-                    m_launcherSwingSubsystem.setRoller(RollerState.RECV);
+                if(!m_launcherSubsystem.isHolding() || m_intakeSubsystem.isHolding()){
+                    m_launcherSubsystem.setRoller(RollerState.RECV);
                     m_intakeSubsystem.setIntake(IntakeState.REVERSE);
                 } else {
                     m_intakeSubsystem.setIntake(IntakeState.IDLE);
-                    m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+                    m_launcherSubsystem.setRoller(RollerState.IDLE);
                 }
             }
         }
@@ -59,6 +61,6 @@ public class AutoRecv extends Command{
 
     @Override
     public boolean isFinished(){
-        return (cutoff >= 1000) || (!m_intakeSubsystem.isHolding() && m_launcherSwingSubsystem.isHolding());
+        return (cutoff >= 1000) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
     }
 }

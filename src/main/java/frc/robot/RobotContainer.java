@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
@@ -84,8 +83,8 @@ public class RobotContainer {
     
      m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
     
-    m_commandASOController.povRight().onTrue(m_LauncherSwingSubsystem.runRollers());
-    m_commandASOController.povRight().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
+    m_commandASOController.povRight().onTrue(m_launcherSubsystem.runRollers());
+    m_commandASOController.povRight().onFalse(m_launcherSubsystem.setRollerCommand(RollerState.IDLE));
     
     m_commandASOController.x().onTrue(m_intakeSubsystem.runintake());
     m_commandASOController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
@@ -95,11 +94,11 @@ public class RobotContainer {
 
     m_commandASOController.povUp()   .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_DROP_POSITION  ));
     m_commandASOController.povLeft() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_RECV_POSITION  ));
-    m_commandASOController.leftStick().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem));
+    m_commandASOController.leftStick().onTrue(new AutoRecv(m_intakeSubsystem, m_LauncherSwingSubsystem, m_launcherSubsystem));
     m_commandASOController.povDown() .onTrue(m_LauncherSwingSubsystem.setPositionCommand(Constants.LAUNCHER_LAUNCH_POSITION));
   
-    m_commandASOController.start().onTrue(m_LauncherSwingSubsystem.setRollerCommand(RollerState.BACKOUT));
-    m_commandASOController.start().onFalse(m_LauncherSwingSubsystem.setRollerCommand(RollerState.IDLE));
+    m_commandASOController.start().onTrue(m_launcherSubsystem.setRollerCommand(RollerState.BACKOUT));
+    m_commandASOController.start().onFalse(m_launcherSubsystem.setRollerCommand(RollerState.IDLE));
 
     m_commandASOController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
     m_commandASOController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));

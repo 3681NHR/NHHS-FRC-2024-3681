@@ -39,7 +39,7 @@ public class Auto extends Command{
     @Override
     public void end(boolean e){
         m_launcherSubsystem     .setSpeed(LauncherState.IDLE);
-        m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+        m_launcherSubsystem.setRoller(RollerState.IDLE);
         m_DriveSubsystem        .setAutoMotion(0, 0, 0);
         m_DriveSubsystem.setFODFunc(startingFOD);
     }
@@ -51,9 +51,9 @@ public class Auto extends Command{
         m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
 
         if(ticks >= 30 && ticks <= 300){
-            m_launcherSwingSubsystem.setRoller(RollerState.LAUNCH);
+            m_launcherSubsystem.setRoller(RollerState.LAUNCH);
         } else {
-            m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+            m_launcherSubsystem.setRoller(RollerState.IDLE);
         }
         if(ticks >= 300 && ticks <= 350){
             m_DriveSubsystem.setAutoMotion(-0.4, 0, 0);

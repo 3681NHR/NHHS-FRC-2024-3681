@@ -36,6 +36,9 @@ public final class Constants {
   public static final double LAUNCHER_DROP_SPEED              = 0.3;
   public static final double LAUNCHER_IN_SPEED                = -0.075;
 
+  public static final double LAUNCHER_LAUNCH_SPEED_RPM        = 4000;
+  public static final double LAUNCHER_DROP_SPEED_RPM          = 1000;
+
   public static final double LAUNCHER_SWING_SPEED             = 1;
   public static final double LAUNCHER_ROLLER_RECV_SPEED       = -1;
   public static final double LAUNCHER_ROLLER_BACKOUT_SPEED    = 0.75; 
@@ -76,15 +79,15 @@ public final class Constants {
 
   public static final double INTAKE_SWING_PID_SWITCH          =0.2;
 
-  public static final double INTAKE_SWING_P_GAIN              =5;
+  public static final double INTAKE_SWING_P_GAIN              =2;
   public static final double INTAKE_SWING_I_GAIN              =0.0;
   public static final double INTAKE_SWING_D_GAIN              =0.1;
 
   public static final double LAUNCHER_SWING_P_GAIN            =25;
   public static final double LAUNCHER_SWING_I_GAIN            =0.0;
-  public static final double LAUNCHER_SWING_D_GAIN            =0.05;
+  public static final double LAUNCHER_SWING_D_GAIN            =0.5;
 
-  public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.01;
-  public static final double INTAKE_SWING_PID_VELOCITY_TOLERANCE  =0.01;
+  public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.02;
+  public static final double INTAKE_SWING_PID_VELOCITY_TOLERANCE  =0.02;
 
 }
