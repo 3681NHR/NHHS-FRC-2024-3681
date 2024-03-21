@@ -31,8 +31,6 @@ public class LauncherSubsystem extends SubsystemBase {
   private RollerState rollerState = RollerState.IDLE;
 
   public LauncherSubsystem() {
-    
-   
   }
 
   public void setRoller(RollerState state){
@@ -45,7 +43,7 @@ public class LauncherSubsystem extends SubsystemBase {
     });
   }
 
-  public Command runRollers() {
+  public Command runRollersCommand() {
     return runOnce(
     () -> {
     if(holding){

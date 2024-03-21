@@ -50,7 +50,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     
     m_LauncherSwingSubsystem.setDefaultCommand(
-      m_LauncherSwingSubsystem.manualSwingControl()
+      m_LauncherSwingSubsystem.manualSwingControlCommand()
     );
     
     configureBindings();
@@ -81,12 +81,12 @@ public class RobotContainer {
     m_commandASOController.a().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
     m_commandASOController.b().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
     
-     m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwing());
+     m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwingCommand());
     
-    m_commandASOController.povRight().onTrue(m_launcherSubsystem.runRollers());
+    m_commandASOController.povRight().onTrue(m_launcherSubsystem.runRollersCommand());
     m_commandASOController.povRight().onFalse(m_launcherSubsystem.setRollerCommand(RollerState.IDLE));
     
-    m_commandASOController.x().onTrue(m_intakeSubsystem.runintake());
+    m_commandASOController.x().onTrue(m_intakeSubsystem.runintakeCommand());
     m_commandASOController.y().onTrue(m_intakeSubsystem.setIntakeCommand(IntakeState.REVERSE));
 
     m_commandASOController.x().onFalse(m_intakeSubsystem.setIntakeCommand(IntakeState.IDLE));
@@ -103,15 +103,15 @@ public class RobotContainer {
     m_commandASOController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
     m_commandASOController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
 
-    m_commandDriverController.a().onTrue(m_driveSubsystem.toggleFOD());
-    m_commandDriverController.b().onTrue(m_driveSubsystem.zero());
-    m_commandDriverController.x().onTrue(m_driveSubsystem.toggleModeChanging());
-    m_commandDriverController.y().onTrue(m_driveSubsystem.togglesquaring());
+    m_commandDriverController.a().onTrue(m_driveSubsystem.toggleFODCommand());
+    m_commandDriverController.b().onTrue(m_driveSubsystem.zeroCommand());
+    m_commandDriverController.x().onTrue(m_driveSubsystem.toggleModeChangingCommand());
+    m_commandDriverController.y().onTrue(m_driveSubsystem.togglesquaringCommand());
   }
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    m_driveSubsystem.zeroFunc(startingPositions.getSelected().rot);
+    m_driveSubsystem.zeroCommand(startingPositions.getSelected().rot);
 
     return Autos.getSelected();
   }

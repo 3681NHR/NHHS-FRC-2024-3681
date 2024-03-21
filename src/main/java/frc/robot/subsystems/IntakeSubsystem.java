@@ -100,8 +100,7 @@ public class IntakeSubsystem extends SubsystemBase {
     );
   }
   
-
-  public Command toggleSwing() {
+  public Command toggleSwingCommand() {
     return runOnce(
       () -> {
       if(swingState == IntakeSwingState.UP){
@@ -117,7 +116,7 @@ public class IntakeSubsystem extends SubsystemBase {
       });
     }
     
-    public Command toggleIntake() {
+    public Command toggleIntakeCommand() {
     return runOnce(
     () -> {
     if(state == IntakeState.INTAKE){
@@ -129,7 +128,7 @@ public class IntakeSubsystem extends SubsystemBase {
   
   }
 
-  public Command runintake() {
+  public Command runintakeCommand() {
     return runOnce(
     () -> {
     if(holding){
@@ -140,7 +139,7 @@ public class IntakeSubsystem extends SubsystemBase {
     });
   }
 
-  public Command toggleReverse() {
+  public Command toggleReverseCommand() {
     return runOnce(
     () -> {
     if(state == IntakeState.REVERSE){
@@ -154,7 +153,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return holding;
   }
  
-
   @Override
   public void periodic() {
 

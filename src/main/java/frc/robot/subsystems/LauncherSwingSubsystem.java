@@ -74,7 +74,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     }
   }
 
-  public Command manualSwingControl(){
+  public Command manualSwingControlCommand(){
     return run(() -> {
       selectedPosition += (m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING_MAN_CTRL_SENS;
 

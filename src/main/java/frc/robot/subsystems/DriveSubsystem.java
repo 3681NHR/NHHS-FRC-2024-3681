@@ -64,7 +64,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -127,7 +126,7 @@ public class DriveSubsystem extends SubsystemBase {
    * sets Field-Oriented-Driving(FOD)
    * @param enabled - set FOD enabled
    */
-  public Command setFOD(boolean enabled){
+  public Command setFODCommand(boolean enabled){
     return runOnce(() -> {
       this.FOD = enabled;
     });
@@ -138,7 +137,7 @@ public class DriveSubsystem extends SubsystemBase {
   public boolean getFOD(){
     return this.FOD;
   }
-  public Command toggleFOD(){
+  public Command toggleFODCommand(){
     return runOnce(() -> {
       this.FOD = !this.FOD;
     });
@@ -146,7 +145,7 @@ public class DriveSubsystem extends SubsystemBase {
   /** toggle input squaring 
    * <p>{@link https://docs.wpilib.org/en/stable/docs/software/hardware-apis/motors/wpi-drive-classes.html#squaring-inputs}
   */
-  public Command togglesquaring(){
+  public Command togglesquaringCommand(){
     return runOnce(() -> {
       this.squaringEnabled = !this.squaringEnabled;
     });
@@ -156,13 +155,13 @@ public class DriveSubsystem extends SubsystemBase {
    * bumpers can be used to change to high and low sensitivity modes
    * <p> when off, input is a full sensitivity the whole time, recomended if using input squaring
    */
-  public Command toggleModeChanging(){
+  public Command toggleModeChangingCommand(){
     return runOnce(() -> {
       this.modeChangeEnabled = !this.modeChangeEnabled;
     });
   }
   /** sets current headding to absolute forward when using FOD */
-  public Command zero(){
+  public Command zeroCommand(){
     return runOnce(() -> {
       this.offset = -gyro.getGyroAngleZ();
     });
@@ -171,12 +170,12 @@ public class DriveSubsystem extends SubsystemBase {
    * zeros with current angle set to offset
    * @param offset
    */
-  public Command zero(double offset){
+  public Command zeroCommand(double offset){
     return runOnce(() -> {
       this.offset = -gyro.getGyroAngleZ() + offset;
     });
   }
-  public void zeroFunc(double offset){
+  public void zero(double offset){
       this.offset = -gyro.getGyroAngleZ() + offset;
   }
   /** recalibrate the gyro, requires 10 seconds of absolutly no motion */
