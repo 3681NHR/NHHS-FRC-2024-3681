@@ -39,7 +39,7 @@ public class AutoRecv extends Command{
     @Override
     public void execute(){
 
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
+        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
         
         if(m_launcherSwingSubsystem.isAtSelectedPos()){
 

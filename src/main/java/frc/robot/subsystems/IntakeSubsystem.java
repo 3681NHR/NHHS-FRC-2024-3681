@@ -25,18 +25,18 @@ import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-   private VictorSPX m_intakeBottom = new VictorSPX(Constants.INTAKE_BOTTOM_MOTOR_ID);
-   private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE_TOP_MOTOR_ID   );
-   private CANSparkMax m_rotate       = new CANSparkMax(Constants.INTAKE_SWING_MOTOR_ID, MotorType.kBrushless);
+   private VictorSPX m_intakeBottom = new VictorSPX(Constants.INTAKE.BOTTOM_MOTOR_ID);
+   private VictorSPX m_intakeTop    = new VictorSPX(Constants.INTAKE.TOP_MOTOR_ID   );
+   private CANSparkMax m_rotate       = new CANSparkMax(Constants.INTAKE_SWING.MOTOR_ID, MotorType.kBrushless);
 
-   private DigitalInput holdSwitch = new DigitalInput(Constants.INTAKE_DETECTOR_DIO_PIN);
+   private DigitalInput holdSwitch = new DigitalInput(Constants.INTAKE.DETECTOR_DIO_PIN);
 
    private double pidOut = 0.0;
   
   private IntakeState state = IntakeState.IDLE;
   private IntakeSwingState swingState = IntakeSwingState.IDLE;
 
-  private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING_ENCODER_DIO_PIN);
+  private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING.ENCODER_DIO_PIN);
 
   private double position = intakeSwingEncoder.getDistance();
   private boolean holding;
@@ -46,9 +46,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private double upPos;
 
   private ProfiledPIDController swingPID = new ProfiledPIDController(
-  Constants.INTAKE_SWING_P_GAIN,
-  Constants.INTAKE_SWING_I_GAIN,
-  Constants.INTAKE_SWING_D_GAIN,
+  Constants.INTAKE_SWING.P_GAIN,
+  Constants.INTAKE_SWING.I_GAIN,
+  Constants.INTAKE_SWING.D_GAIN,
   new Constraints(10, 20)
   );
   //pids are for nerds like me
@@ -58,8 +58,6 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
 
    //set motor idle modes
-
-   swingPID.setTolerance(Constants.INTAKE_SWING_POS_AE, Constants.INTAKE_SWING_PID_VELOCITY_TOLERANCE);
   
     SmartDashboard.putBoolean("intake sensor enabled", switchEnabled);
 
@@ -83,7 +81,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public boolean isAtSelectedPos(){
-    if(Math.abs(selectedPosition - position) <= Constants.INTAKE_SWING_POS_AE){
+    if(Math.abs(selectedPosition - position) <= Constants.INTAKE_SWING.POS_AE){
       return true;
     } else {
       return false;
@@ -156,14 +154,14 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if(intakeSwingEncoder.getDistance() < Constants.INTAKE_SWING_PID_SWITCH){
-      upPos = Constants.INTAKE_SWING_UP_POSITION - 1;
-      downPos = Constants.INTAKE_SWING_DOWN_POSITION - 1;
+    if(intakeSwingEncoder.getDistance() < Constants.INTAKE_SWING.PID_SWITCH){
+      upPos = Constants.INTAKE_SWING.UP_POSITION - 1;
+      downPos = Constants.INTAKE_SWING.DOWN_POSITION - 1;
 
       m_rotate.setInverted(true);
     } else {
-      upPos = Constants.INTAKE_SWING_UP_POSITION;
-      downPos = Constants.INTAKE_SWING_DOWN_POSITION;
+      upPos = Constants.INTAKE_SWING.UP_POSITION;
+      downPos = Constants.INTAKE_SWING.DOWN_POSITION;
 
       m_rotate.setInverted(true);
     }
@@ -185,9 +183,9 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("intake swing PID value"    , pidOut                          );
     SmartDashboard.putBoolean("IntakeIsHolding", holding);
 
-    swingPID.setP(SmartDashboard.getNumber("intake pid P gain", Constants.INTAKE_SWING_P_GAIN));
-    swingPID.setI(SmartDashboard.getNumber("intake pid I gain", Constants.INTAKE_SWING_I_GAIN));
-    swingPID.setD(SmartDashboard.getNumber("intake pid D gain", Constants.INTAKE_SWING_D_GAIN));
+    swingPID.setP(SmartDashboard.getNumber("intake pid P gain", Constants.INTAKE_SWING.P_GAIN));
+    swingPID.setI(SmartDashboard.getNumber("intake pid I gain", Constants.INTAKE_SWING.I_GAIN));
+    swingPID.setD(SmartDashboard.getNumber("intake pid D gain", Constants.INTAKE_SWING.D_GAIN));
 
     if(swingState == IntakeSwingState.UP){
       selectedPosition = upPos;
@@ -206,22 +204,22 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     //pid controller
-    pidOut = clamp(swingPID.calculate(position, selectedPosition), -Constants.INTAKE_SWING_SPEED, Constants.INTAKE_SWING_SPEED);
+    pidOut = clamp(swingPID.calculate(position, selectedPosition), -Constants.INTAKE_SWING.SPEED, Constants.INTAKE_SWING.SPEED);
 
     m_rotate.set(pidOut);
 
 
   if(state == IntakeState.INTAKE && (!holding || !switchEnabled)){
-    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
-    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
   }
   if(state == IntakeState.COMPRESS){
-    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
-    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
   }
   if(state == IntakeState.REVERSE){
-    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE_REVERSE_SPEED);
-    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE_REVERSE_SPEED);    
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.REVERSE_SPEED);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.REVERSE_SPEED);    
   } 
   if(state == IntakeState.IDLE){
     m_intakeBottom.set(ControlMode.PercentOutput, 0);

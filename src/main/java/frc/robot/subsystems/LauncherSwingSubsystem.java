@@ -18,15 +18,15 @@ import frc.robot.Constants;
 
 public class LauncherSwingSubsystem extends SubsystemBase {
 
-  private CANSparkMax swingMotor  = new CANSparkMax(Constants.LAUNCHER_SWING_MOTOR_ID, MotorType.kBrushless);
+  private CANSparkMax swingMotor  = new CANSparkMax(Constants.LAUNCHER_SWING.MOTOR_ID, MotorType.kBrushless);
 
   private double PIDOut;
 
-  private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
+  private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING.ENCODER_DIO_PIN);
   private ProfiledPIDController swingPID = new ProfiledPIDController(
-    Constants.LAUNCHER_SWING_P_GAIN,
-    Constants.LAUNCHER_SWING_I_GAIN,
-    Constants.LAUNCHER_SWING_D_GAIN,
+    Constants.LAUNCHER_SWING.P_GAIN,
+    Constants.LAUNCHER_SWING.I_GAIN,
+    Constants.LAUNCHER_SWING.D_GAIN,
     new Constraints(10, 20)
   );
 
@@ -38,8 +38,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
   public LauncherSwingSubsystem() 
   {
-
-    swingPID.setTolerance(Constants.LAUNCHER_SWING_POS_AE, Constants.LAUNCHER_SWING_PID_VELOCITY_TOLERANCE);
 
     swingPID.setIntegratorRange(-1, 1);
 
@@ -67,7 +65,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   }
 
   public boolean isAtSelectedPos(){
-    if(Math.abs(selectedPosition - swingEncoder.getDistance()) <= Constants.LAUNCHER_SWING_POS_AE){
+    if(Math.abs(selectedPosition - swingEncoder.getDistance()) <= Constants.LAUNCHER_SWING.POS_AE){
       return true;
     } else {
       return false;
@@ -76,7 +74,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
   public Command manualSwingControlCommand(){
     return run(() -> {
-      selectedPosition += (m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING_MAN_CTRL_SENS;
+      selectedPosition += (m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING.MAN_CTRL_SENS;
 
     });
   }
@@ -90,18 +88,18 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     this.swingMotor.setIdleMode(IdleMode.kBrake);
 
 
-    selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING_LOWER_BOUND, Constants.LAUNCHER_SWING_UPPER_BOUND);
+    selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING.LOWER_BOUND, Constants.LAUNCHER_SWING.UPPER_BOUND);
 
-    PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED);
+    PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING.SPEED, Constants.LAUNCHER_SWING.SPEED);
 
     SmartDashboard.putNumber ("launcher swing selected pos"     , selectedPosition          );
     SmartDashboard.putNumber ("launcher swing current pos"      , swingEncoder.getDistance());
     SmartDashboard.putBoolean("launcher swing encoder connected", swingEncoder.isConnected());
     SmartDashboard.putNumber ("pid out", PIDOut);
 
-    swingPID.setP(SmartDashboard.getNumber("pid P gain", Constants.LAUNCHER_SWING_P_GAIN));
-    swingPID.setI(SmartDashboard.getNumber("pid I gain", Constants.LAUNCHER_SWING_I_GAIN));
-    swingPID.setD(SmartDashboard.getNumber("pid D gain", Constants.LAUNCHER_SWING_D_GAIN));
+    swingPID.setP(SmartDashboard.getNumber("pid P gain", Constants.LAUNCHER_SWING.P_GAIN));
+    swingPID.setI(SmartDashboard.getNumber("pid I gain", Constants.LAUNCHER_SWING.I_GAIN));
+    swingPID.setD(SmartDashboard.getNumber("pid D gain", Constants.LAUNCHER_SWING.D_GAIN));
 
     
     //PID controller

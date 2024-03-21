@@ -16,10 +16,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
 
-  private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
-  private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
-  private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
-  private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
+  private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE.BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
+  private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE.BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
+  private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE.FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
+  private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
   private double forward;
   private double right; 
@@ -87,15 +87,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
-      forward = Math.pow(deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE), 3);
-      right   = Math.pow(deadzone(m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE) , 3);
-      rotate  = Math.pow(deadzone(m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE) , 3);
+      forward = Math.pow(deadzone(-m_driverController.getLeftY() , Constants.DRIVE.INPUT_DEADZONE), 3);
+      right   = Math.pow(deadzone(m_driverController.getLeftX() , Constants.DRIVE.INPUT_DEADZONE) , 3);
+      rotate  = Math.pow(deadzone(m_driverController.getRightX(), Constants.DRIVE.INPUT_DEADZONE) , 3);
     } //square the value, then reaply the sign using the normalize function
     else 
     {
-      forward = deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE);
-      right   = deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE);
-      rotate  = deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE);
+      forward = deadzone(-m_driverController.getLeftY() , Constants.DRIVE.INPUT_DEADZONE);
+      right   = deadzone( m_driverController.getLeftX() , Constants.DRIVE.INPUT_DEADZONE);
+      rotate  = deadzone( m_driverController.getRightX(), Constants.DRIVE.INPUT_DEADZONE);
     }
     if(m_driverController.getRightBumper()){//set mode(only does anything if mode change is enabled)
       mode = DriveMode.FAST;
@@ -106,13 +106,13 @@ public class DriveSubsystem extends SubsystemBase {
     }
     if(modeChangeEnabled){//remap if mode change is enabled
       if(mode == DriveMode.MEDIUM){
-        forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
-        right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
-        rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+        forward = remap(forward, -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
+        right   = remap(right  , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
+        rotate  = remap(rotate , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
       } else if (mode == DriveMode.SLOW){
-        forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
-        right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
-        rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+        forward = remap(forward, -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.SLOW_SPEED_MAX_INPUT, Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
+        right   = remap(right  , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.SLOW_SPEED_MAX_INPUT, Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
+        rotate  = remap(rotate , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.SLOW_SPEED_MAX_INPUT, Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
       }
     }
   }
