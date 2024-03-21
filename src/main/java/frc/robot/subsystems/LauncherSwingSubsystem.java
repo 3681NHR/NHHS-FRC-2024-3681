@@ -10,8 +10,8 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
@@ -33,10 +33,11 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private double PIDOut;
 
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING_ENCODER_DIO_PIN);
-  private PIDController swingPID = new PIDController(
+  private ProfiledPIDController swingPID = new ProfiledPIDController(
     Constants.LAUNCHER_SWING_P_GAIN,
     Constants.LAUNCHER_SWING_I_GAIN,
-    Constants.LAUNCHER_SWING_D_GAIN
+    Constants.LAUNCHER_SWING_D_GAIN,
+    new Constraints(10, 20)
   );
   //pid is eh
   private double selectedPosition;

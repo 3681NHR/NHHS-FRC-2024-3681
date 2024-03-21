@@ -12,8 +12,8 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,10 +45,11 @@ public class IntakeSubsystem extends SubsystemBase {
   private double downPos;
   private double upPos;
 
-  private PIDController swingPID = new PIDController(
+  private ProfiledPIDController swingPID = new ProfiledPIDController(
   Constants.INTAKE_SWING_P_GAIN,
   Constants.INTAKE_SWING_I_GAIN,
-  Constants.INTAKE_SWING_D_GAIN
+  Constants.INTAKE_SWING_D_GAIN,
+  new Constraints(10, 20)
   );
   //pids are for nerds like me
   private double selectedPosition;
