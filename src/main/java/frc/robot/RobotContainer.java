@@ -9,12 +9,13 @@ import frc.robot.commands.AutoLaunchOnly;
 import frc.robot.commands.AutoRecv;
 import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
-import frc.robot.enums.RobotPosition;
 import frc.robot.enums.RollerState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,12 +39,12 @@ public class RobotContainer {
   private Command m_AutoLaunchOnly = new AutoLaunchOnly(m_LauncherSwingSubsystem, m_launcherSubsystem);
 
   private SendableChooser<Command> Autos = new SendableChooser<>();
-  private SendableChooser<RobotPosition>  startingPositions = new SendableChooser<>();
+  private SendableChooser<Pose2d>  startingPositions = new SendableChooser<>();
 
-  private RobotPosition center = new RobotPosition(0.0, 0.0, 180.0);
-  private RobotPosition left   = new RobotPosition(0.0, 0.0, 180.0);
-  private RobotPosition right  = new RobotPosition(0.0, 0.0, 180.0);
-  private RobotPosition zero  = new RobotPosition(0.0, 0.0, 0.0);
+  private Pose2d center = new Pose2d(0.0, 0.0, new Rotation2d(180.0));
+  private Pose2d left   = new Pose2d(0.0, 0.0, new Rotation2d(180.0));
+  private Pose2d right  = new Pose2d(0.0, 0.0, new Rotation2d(180.0));
+  private Pose2d zero  =  new Pose2d(0.0, 0.0, new Rotation2d(0.0));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -111,7 +112,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    m_driveSubsystem.zeroCommand(startingPositions.getSelected().rot);
+    m_driveSubsystem.zeroCommand(startingPositions.getSelected().getRotation().getDegrees());
 
     return Autos.getSelected();
   }
