@@ -52,9 +52,9 @@ public final class Constants {
   public static final class LAUNCHER_SWING{
     public static final double SPEED             = 1;
 
-    public static final double POS_AE            = 0.02;
+    public static final double POS_AE            = 0.01;
 
-    public static final double RECV_POSITION           = 0.491;
+    public static final double RECV_POSITION           = 0.493;
     public static final double LAUNCH_POSITION         = 0.55;
     public static final double DROP_POSITION           = 0.275;
     
@@ -88,7 +88,7 @@ public final class Constants {
     public static final double PID_SWITCH          =0.2;
 
     public static final double P_GAIN              =2;
-    public static final double I_GAIN              =0.0;
+    public static final double I_GAIN              =0.1;
     public static final double D_GAIN              =0.0;
 
     public static final double POS_AE              = 0.01;

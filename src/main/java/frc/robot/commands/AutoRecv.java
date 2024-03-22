@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.enums.IntakeState;
@@ -15,6 +16,9 @@ public class AutoRecv extends Command{
     LauncherSwingSubsystem m_launcherSwingSubsystem;
     LauncherSubsystem m_launcherSubsystem;
 
+    int waitTimer = 0;
+    int upTrig = 0;
+
     int cutoff = 0;
 
     public AutoRecv(IntakeSubsystem intake, LauncherSwingSubsystem launcherSwing, LauncherSubsystem  launcher){
@@ -28,6 +32,11 @@ public class AutoRecv extends Command{
     }
     @Override
     public void initialize(){
+        waitTimer = 0;
+        upTrig = 0;
+        cutoff = 0;
+        m_intakeSubsystem.setIntake(IntakeState.IDLE);
+        m_launcherSubsystem.setRoller(RollerState.IDLE);
     }
 
     @Override
@@ -46,8 +55,16 @@ public class AutoRecv extends Command{
             m_intakeSubsystem.setPosition(IntakeSwingState.UP);
 
             if(m_intakeSubsystem.isAtSelectedPos()){
-                
-                if(!m_launcherSubsystem.isHolding() || m_intakeSubsystem.isHolding()){
+                if(upTrig == 1){
+                    waitTimer = cutoff;
+                    upTrig = 2;
+                } else {
+                    if(upTrig == 0){
+                        upTrig = 1;
+                    }
+                }
+                if((!m_launcherSubsystem.isHolding() || m_intakeSubsystem.isHolding()) && cutoff-waitTimer >= 25){
+
                     m_launcherSubsystem.setRoller(RollerState.RECV);
                     m_intakeSubsystem.setIntake(IntakeState.REVERSE);
                 } else {
@@ -64,6 +81,6 @@ public class AutoRecv extends Command{
 
     @Override
     public boolean isFinished(){
-        return (cutoff >= 250) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
+        return (cutoff >= 500) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
     }
 }
