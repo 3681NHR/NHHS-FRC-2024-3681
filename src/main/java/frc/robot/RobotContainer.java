@@ -41,10 +41,10 @@ public class RobotContainer {
   private SendableChooser<Command> Autos = new SendableChooser<>();
   private SendableChooser<Pose2d>  startingPositions = new SendableChooser<>();
 
-  private Pose2d center = new Pose2d(0.0, 0.0, new Rotation2d(180.0));
-  private Pose2d left   = new Pose2d(0.0, 0.0, new Rotation2d(135.0));
-  private Pose2d right  = new Pose2d(0.0, 0.0, new Rotation2d(-135.0));
-  private Pose2d zero  =  new Pose2d(0.0, 0.0, new Rotation2d(0.0));
+  private Pose2d center = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180.0)));
+  private Pose2d left   = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(150.0)));
+  private Pose2d right  = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(210.0)));  
+  private Pose2d zero  =  new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(0.0)));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

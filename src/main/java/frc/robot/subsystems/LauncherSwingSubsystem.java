@@ -59,7 +59,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   }
 
   public Command setPositionCommand(double pos){
-    return run(() -> {
+    return runOnce(() -> {
       selectedPosition = pos;
     });
   }

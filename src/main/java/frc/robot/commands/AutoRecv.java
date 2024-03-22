@@ -39,7 +39,7 @@ public class AutoRecv extends Command{
     @Override
     public void execute(){
 
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
+        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.RECV_POSITION);
         
         if(m_launcherSwingSubsystem.isAtSelectedPos()){
 
@@ -54,6 +54,9 @@ public class AutoRecv extends Command{
                     m_intakeSubsystem.setIntake(IntakeState.IDLE);
                     m_launcherSubsystem.setRoller(RollerState.IDLE);
                 }
+            } else {
+                m_intakeSubsystem.setIntake(IntakeState.IDLE);
+                m_launcherSubsystem.setRoller(RollerState.IDLE);
             }
         }
         cutoff++;
@@ -61,6 +64,6 @@ public class AutoRecv extends Command{
 
     @Override
     public boolean isFinished(){
-        return (cutoff >= 1500) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
+        return (cutoff >= 250) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
     }
 }

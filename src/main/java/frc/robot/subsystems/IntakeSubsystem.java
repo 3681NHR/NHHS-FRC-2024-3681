@@ -209,9 +209,13 @@ public class IntakeSubsystem extends SubsystemBase {
     m_rotate.set(pidOut);
 
 
-  if(state == IntakeState.INTAKE && (!holding || !switchEnabled)){
-    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
-    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
+  if(state == IntakeState.INTAKE){
+    if(!holding || !switchEnabled){
+      m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
+      m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
+    } else {
+      setIntake(IntakeState.IDLE);
+    }
   }
   if(state == IntakeState.COMPRESS){
     m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);

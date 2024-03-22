@@ -131,7 +131,7 @@ public class DriveSubsystem extends SubsystemBase {
       this.FOD = enabled;
     });
   }
-  public void setFODFunc(boolean enabled){
+  public void setFOD(boolean enabled){
       this.FOD = enabled;
   }
   public boolean getFOD(){

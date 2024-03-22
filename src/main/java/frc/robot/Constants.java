@@ -52,7 +52,7 @@ public final class Constants {
   public static final class LAUNCHER_SWING{
     public static final double SPEED             = 1;
 
-    public static final double POS_AE            = 0.005;
+    public static final double POS_AE            = 0.02;
 
     public static final double RECV_POSITION           = 0.491;
     public static final double LAUNCH_POSITION         = 0.55;
@@ -62,7 +62,7 @@ public final class Constants {
     public static final double LOWER_BOUND       = 0.275;
     public static final double P_GAIN            =25;
     public static final double I_GAIN            =0.0;
-    public static final double D_GAIN            =0.5;
+    public static final double D_GAIN            =0.0;
     public static final int    MOTOR_ID             = 19;
     public static final int    ENCODER_DIO_PIN      = 9;
     public static final double MAN_CTRL_SENS     = 0.01;
@@ -79,7 +79,7 @@ public final class Constants {
 
   public static final class INTAKE_SWING{
     public static final int    MOTOR_ID               =9;
-    public static final double SPEED               =0.4;//WARNING: DO NOT SET TO 1!
+    public static final double SPEED               =0.3;//WARNING: DO NOT SET TO 1!
 
     public static final int    ENCODER_DIO_PIN        =8;
     public static final double DOWN_POSITION       =0.68;
@@ -89,7 +89,7 @@ public final class Constants {
 
     public static final double P_GAIN              =2;
     public static final double I_GAIN              =0.0;
-    public static final double D_GAIN              =0.1;
+    public static final double D_GAIN              =0.0;
 
     public static final double POS_AE              = 0.01;
 

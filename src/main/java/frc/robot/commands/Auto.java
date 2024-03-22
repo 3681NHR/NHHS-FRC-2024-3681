@@ -32,16 +32,16 @@ public class Auto extends Command{
     @Override
     public void initialize(){
         ticks = 0;
-        startingFOD = m_DriveSubsystem.getFOD();
-        m_DriveSubsystem.setFODFunc(false);
+        //startingFOD = m_DriveSubsystem.getFOD();
+        //m_DriveSubsystem.setFODFunc(false);
     }
 
     @Override
     public void end(boolean e){
-        m_launcherSubsystem     .setSpeed(LauncherState.IDLE);
+        m_launcherSubsystem.setSpeed(LauncherState.IDLE);
         m_launcherSubsystem.setRoller(RollerState.IDLE);
-        m_DriveSubsystem        .setAutoMotion(0, 0, 0);
-        m_DriveSubsystem.setFODFunc(startingFOD);
+        m_DriveSubsystem   .setAutoMotion(0, 0, 0);
+        //m_DriveSubsystem.setFODFunc(startingFOD);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Auto extends Command{
             m_launcherSubsystem.setRoller(RollerState.IDLE);
         }
         if(ticks >= 300 && ticks <= 350){
-            m_DriveSubsystem.setAutoMotion(-0.4, 0, 0);
+            m_DriveSubsystem.setAutoMotion(0.4, 0, 0);
         } else {
             m_DriveSubsystem.setAutoMotion(0, 0, 0);
         }
