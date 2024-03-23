@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,10 +24,6 @@ public class DriveSubsystem extends SubsystemBase {
   private double forward;
   private double right; 
   private double rotate;
-
-  private SlewRateLimiter forwardLim = new SlewRateLimiter(1);
-  private SlewRateLimiter rightLim   = new SlewRateLimiter(0.5);
-  private SlewRateLimiter rotateLim  = new SlewRateLimiter(0.5);
 
   private Rotation2d angle = new Rotation2d();
   private boolean FOD = true;
@@ -92,9 +87,9 @@ public class DriveSubsystem extends SubsystemBase {
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
-      forward = Math.pow(deadzone(-forwardLim.calculate(m_driverController.getLeftY()), Constants.DRIVE.INPUT_DEADZONE), 3);
-      right   = Math.pow(deadzone( rightLim.calculate(m_driverController.getLeftX()  ), Constants.DRIVE.INPUT_DEADZONE) , 3);
-      rotate  = Math.pow(deadzone( rotateLim.calculate(m_driverController.getRightX()), Constants.DRIVE.INPUT_DEADZONE) , 3);
+      forward = Math.pow(deadzone(-m_driverController.getLeftY(), Constants.DRIVE.INPUT_DEADZONE), 3);
+      right   = Math.pow(deadzone( m_driverController.getLeftX()  , Constants.DRIVE.INPUT_DEADZONE) , 3);
+      rotate  = Math.pow(deadzone( m_driverController.getRightX(), Constants.DRIVE.INPUT_DEADZONE) , 3);
     } //square the value, then reaply the sign using the normalize function
     else 
     {

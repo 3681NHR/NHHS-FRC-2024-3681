@@ -56,7 +56,7 @@ public class Auto extends Command{
         m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
         m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
 
-        if(ticks >= 30 && ticks <= 300){
+        if(ticks >= 30 && ticks <= 150){
             m_launcherSubsystem.setRoller(RollerState.LAUNCH);
         } else {
             m_launcherSubsystem.setRoller(RollerState.IDLE);
@@ -72,6 +72,6 @@ public class Auto extends Command{
 
     @Override
     public boolean isFinished(){
-        return ticks >= 450;//50ticks = 1sec
+        return ticks >= 200 + driveStop;//50ticks = 1sec
     }
 }

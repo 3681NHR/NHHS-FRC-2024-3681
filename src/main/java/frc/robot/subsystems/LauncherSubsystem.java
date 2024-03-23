@@ -26,11 +26,14 @@ public class LauncherSubsystem extends SubsystemBase {
   private boolean holding = false;
 
   private boolean LaunchLock = true;
+  private boolean switchEnabled = true;
 
   public LauncherState state = LauncherState.IDLE;
   private RollerState rollerState = RollerState.IDLE;
 
   public LauncherSubsystem() {
+    SmartDashboard.putBoolean("launchLock", LaunchLock);
+    SmartDashboard.putBoolean("launcher switch Enabled", switchEnabled);
   }
 
   public void setRoller(RollerState state){
@@ -95,6 +98,11 @@ public class LauncherSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("L launcher speed", m_left.getEncoder().getVelocity());
     SmartDashboard.putNumber("R launcher speed", m_right.getEncoder().getVelocity());
     SmartDashboard.putBoolean("LauncherIsHolding", holding); 
+    SmartDashboard.putString("launcher roller state", rollerState.toString());
+
+    LaunchLock    = SmartDashboard.getBoolean("launchLock", false);
+    switchEnabled = SmartDashboard.getBoolean("launcher switch Enabled", false);
+
 
     switch(state){
       case LAUNCHING:
@@ -115,7 +123,7 @@ public class LauncherSubsystem extends SubsystemBase {
     }
     switch(rollerState){
       case RECV:
-        if(!holding){
+        if(!holding || !switchEnabled){
           roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_RECV_SPEED);
         } else {
           rollerState = RollerState.IDLE;
