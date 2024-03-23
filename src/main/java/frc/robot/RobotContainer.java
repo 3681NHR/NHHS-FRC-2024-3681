@@ -64,13 +64,8 @@ public class RobotContainer {
     startingPositions.addOption("right", right);
     startingPositions.addOption("forward", zero);
 
-    SmartDashboard.putData(m_driveSubsystem);
-    SmartDashboard.putData(m_intakeSubsystem);
-    SmartDashboard.putData(m_launcherSubsystem);
-    SmartDashboard.putData(m_LauncherSwingSubsystem);
-
-    SmartDashboard.putData(Autos);  
-    SmartDashboard.putData(startingPositions);
+    SmartDashboard.putData("auto", Autos);  
+    SmartDashboard.putData("starting pos", startingPositions);
   }
   
   private void configureBindings() {//keybindings
