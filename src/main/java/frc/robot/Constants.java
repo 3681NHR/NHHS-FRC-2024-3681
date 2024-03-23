@@ -52,7 +52,7 @@ public final class Constants {
   public static final class LAUNCHER_SWING{
     public static final double SPEED             = 1;
 
-    public static final double POS_AE            = 0.01;
+    public static final double POS_AE            = 0.015;
 
     public static final double RECV_POSITION           = 0.493;
     public static final double LAUNCH_POSITION         = 0.55;

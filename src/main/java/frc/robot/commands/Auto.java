@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.enums.LauncherState;
@@ -19,7 +20,10 @@ public class Auto extends Command{
 
     int ticks = 0;
 
-    public Auto(LauncherSwingSubsystem launcherSwing, LauncherSubsystem launcher, DriveSubsystem drive){
+    SendableChooser<Pose2d> startingPoses;
+    int driveStop = 250;
+
+    public Auto(LauncherSwingSubsystem launcherSwing, LauncherSubsystem launcher, DriveSubsystem drive, SendableChooser<Pose2d> startingPoses){
         m_launcherSubsystem      = launcher;
         m_launcherSwingSubsystem = launcherSwing;
         m_DriveSubsystem         = drive;
@@ -28,12 +32,14 @@ public class Auto extends Command{
         addRequirements(launcherSwing);
         addRequirements(m_DriveSubsystem);
 
+        this.startingPoses = startingPoses;
     }
     @Override
     public void initialize(){
         ticks = 0;
-        //startingFOD = m_DriveSubsystem.getFOD();
-        //m_DriveSubsystem.setFODFunc(false);
+        m_DriveSubsystem.zero(startingPoses.getSelected().getRotation().getDegrees());
+
+        driveStop = (int)startingPoses.getSelected().getX();
     }
 
     @Override
@@ -55,13 +61,12 @@ public class Auto extends Command{
         } else {
             m_launcherSubsystem.setRoller(RollerState.IDLE);
         }
-        if(ticks >= 300 && ticks <= 350){
-            m_DriveSubsystem.setAutoMotion(0.4, 0, 0);
+        if(ticks >= 150 && ticks <= driveStop){
+            m_DriveSubsystem.setAutoMotion(0.5, 0, 0);
         } else {
             m_DriveSubsystem.setAutoMotion(0, 0, 0);
         }
 
-        SmartDashboard.putNumber("auto ticks", ticks);
         ticks++;
     }
 

@@ -34,17 +34,16 @@ public class RobotContainer {
   private final CommandXboxController m_commandASOController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
   private final CommandXboxController m_commandDriverController = new CommandXboxController(Constants.DRIVER_CONTROLLER_PORT);
 
-
-  private Command m_fullAuto       = new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem, m_driveSubsystem);
-  private Command m_AutoLaunchOnly = new AutoLaunchOnly(m_LauncherSwingSubsystem, m_launcherSubsystem);
-
   private SendableChooser<Command> Autos = new SendableChooser<>();
   private SendableChooser<Pose2d>  startingPositions = new SendableChooser<>();
 
-  private Pose2d center = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(180.0)));
-  private Pose2d left   = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(150.0)));
-  private Pose2d right  = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(210.0)));  
-  private Pose2d zero  =  new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(0.0)));
+  private Command m_fullAuto       = new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem, m_driveSubsystem, startingPositions);
+  private Command m_AutoLaunchOnly = new AutoLaunchOnly(m_LauncherSwingSubsystem, m_launcherSubsystem);
+
+  private Pose2d center = new Pose2d(200.0, 0.0, new Rotation2d(Math.toRadians(180.0)));
+  private Pose2d left   = new Pose2d(250.0, 0.0, new Rotation2d(Math.toRadians(120.0)));
+  private Pose2d right  = new Pose2d(250.0, 0.0, new Rotation2d(Math.toRadians(240.0)));  
+  private Pose2d zero  =  new Pose2d(150.0, 0.0, new Rotation2d(Math.toRadians(0.0)));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -112,7 +111,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    m_driveSubsystem.zeroCommand(startingPositions.getSelected().getRotation().getDegrees());
+    
 
     return Autos.getSelected();
   }

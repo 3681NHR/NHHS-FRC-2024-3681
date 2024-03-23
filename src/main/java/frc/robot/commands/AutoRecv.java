@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.enums.IntakeState;
@@ -81,6 +80,6 @@ public class AutoRecv extends Command{
 
     @Override
     public boolean isFinished(){
-        return (cutoff >= 500) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
+        return (cutoff >= 1000) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
     }
 }
