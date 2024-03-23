@@ -92,8 +92,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     SmartDashboard.putNumber ("launcher swing selected pos"     , selectedPosition          );
     SmartDashboard.putNumber ("launcher swing current pos"      , swingEncoder.getDistance());
     SmartDashboard.putNumber ("pid out", PIDOut);
-
-    SmartDashboard.putData("launcher swing pid", swingPID);
     
     //PID controller
     swingMotor.set(PIDOut);

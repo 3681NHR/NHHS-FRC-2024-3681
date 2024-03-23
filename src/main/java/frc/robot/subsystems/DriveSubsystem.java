@@ -26,12 +26,12 @@ public class DriveSubsystem extends SubsystemBase {
   private double rotate;
 
   private Rotation2d angle = new Rotation2d();
-  private boolean FOD = true;
+  private boolean FOD = false;
   private ADIS16448_IMU gyro = new ADIS16448_IMU();
   private double offset = 0.0;
 
   private boolean squaringEnabled = true;
-  private boolean modeChangeEnabled = false;
+  private boolean modeChangeEnabled = true;
 
   private DriveMode mode;
   private Drive drive;

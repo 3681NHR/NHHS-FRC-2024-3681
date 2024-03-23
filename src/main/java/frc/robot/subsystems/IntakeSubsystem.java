@@ -179,8 +179,6 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("intake swing PID value"    , pidOut                          );
     SmartDashboard.putBoolean("IntakeIsHolding", holding);
 
-    SmartDashboard.putData("intake swing pid", swingPID);
-
     if(swingState == IntakeSwingState.UP){
       selectedPosition = upPos;
     }
