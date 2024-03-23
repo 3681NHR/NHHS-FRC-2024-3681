@@ -52,16 +52,22 @@ public class Auto extends Command{
 
     @Override
     public void execute(){
+        if(m_launcherSubsystem.isHolding()){
+            m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
+        } else {
+            m_launcherSubsystem.setSpeed(LauncherState.IDLE);
+        }
 
-        m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
         m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
 
-        if(ticks >= 30 && ticks <= 150){
-            m_launcherSubsystem.setRoller(RollerState.LAUNCH);
-        } else {
-            m_launcherSubsystem.setRoller(RollerState.IDLE);
+        if(m_launcherSubsystem.atspeed()){
+            if(m_launcherSubsystem.isHolding()){
+                m_launcherSubsystem.setRoller(RollerState.LAUNCH);
+            } else {
+                m_launcherSubsystem.setRoller(RollerState.IDLE);
+            }
         }
-        if(ticks >= 150 && ticks <= driveStop){
+        if(m_launcherSubsystem.switchEnabled() ? (!m_launcherSubsystem.isHolding()  && ticks <= driveStop) : (ticks >= 150 && ticks <= driveStop)){
             m_DriveSubsystem.setAutoMotion(0.5, 0, 0);
         } else {
             m_DriveSubsystem.setAutoMotion(0, 0, 0);

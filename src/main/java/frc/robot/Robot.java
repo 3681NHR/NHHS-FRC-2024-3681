@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(CommandScheduler.getInstance());
 
     CameraServer.startAutomaticCapture("cam1", 0);
-    CameraServer.startAutomaticCapture("cam2", 1);
+    //CameraServer.startAutomaticCapture("cam2", 1);
 
     //m_robotContainer.init();
   }

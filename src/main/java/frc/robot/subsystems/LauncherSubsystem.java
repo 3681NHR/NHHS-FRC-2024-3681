@@ -58,7 +58,14 @@ public class LauncherSubsystem extends SubsystemBase {
   }  
 
   public boolean isHolding(){
-    return holding;
+    if(switchEnabled){
+      return holding;
+    } else {
+      return true;
+    }
+  }
+  public boolean switchEnabled(){
+    return switchEnabled;
   }
 
   public LauncherState getState(){
@@ -77,12 +84,16 @@ public class LauncherSubsystem extends SubsystemBase {
     state = s;
   }
   public boolean atspeed(){
-    if(state == LauncherState.LAUNCHING){
-      return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.LAUNCH_SPEED_RPM;
-    } else if(state == LauncherState.DROPPING){
-      return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.DROP_SPEED_RPM;
+    if(LaunchLock){
+      if(state == LauncherState.LAUNCHING){
+        return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.LAUNCH_SPEED_RPM;
+      } else if(state == LauncherState.DROPPING){
+        return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.DROP_SPEED_RPM;
+      } else {
+        return false;
+      }
     } else {
-      return false;
+      return true;
     }
   }
   @Override
