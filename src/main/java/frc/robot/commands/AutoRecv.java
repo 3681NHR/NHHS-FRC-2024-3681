@@ -71,8 +71,8 @@ public class AutoRecv extends Command{
                     m_launcherSubsystem.setRoller(RollerState.IDLE);
                 }
             } else {
-                m_intakeSubsystem.setIntake(IntakeState.IDLE);
-                m_launcherSubsystem.setRoller(RollerState.IDLE);
+                //m_intakeSubsystem.setIntake(IntakeState.IDLE);
+                //m_launcherSubsystem.setRoller(RollerState.IDLE);
             }
         }
         cutoff++;
