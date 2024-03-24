@@ -13,82 +13,87 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final class DRIVE{
+    public static final int FRONT_LEFT_MOTOR_ID           = 13;
+    public static final int FRONT_RIGHT_MOTOR_ID          = 14;
+    public static final int BACK_LEFT_MOTOR_ID            = 16;
+    public static final int BACK_RIGHT_MOTOR_ID           = 15;
+
+    public static final double INPUT_LIMITER              = 1;//limit before remap, just use 1
+    public static final double INPUT_DEADZONE             = 0.13;
+
+    public static final double FAST_SPEED_MAX_INPUT       = 1;//these will be the max after remap
+    public static final double MEDIUM_SPEED_MAX_INPUT     = 0.5;
+    public static final double SLOW_SPEED_MAX_INPUT       = 0.25;
+  }
     
   public static final int ASO_CONTROLLER_PORT                 = 0;
   public static final int DRIVER_CONTROLLER_PORT              = 1;
 
-  public static final int DRIVE_FRONT_LEFT_MOTOR_ID           = 13;
-  public static final int DRIVE_FRONT_RIGHT_MOTOR_ID          = 14;
-  public static final int DRIVE_BACK_LEFT_MOTOR_ID            = 16;
-  public static final int DRIVE_BACK_RIGHT_MOTOR_ID           = 15;
+  public static final class LAUNCHER{
+    public static final int LEFT_MOTOR_ID              = 18;
+    public static final int RIGHT_MOTOR_ID             = 17;
 
-  public static final double DRIVE_INPUT_LIMITER              = 1;//limit before remap, just use 1
-  public static final double DRIVE_INPUT_DEADZONE             = 0.13;
+    public static final double LAUNCH_SPEED            = 1;
+    public static final double DROP_SPEED              = 0.3;
+    public static final double IN_SPEED                = -0.075;
 
-  public static final double DRIVE_FAST_SPEED_MAX_INPUT       = 1;//these will be the max after remap
-  public static final double DRIVE_MEDIUM_SPEED_MAX_INPUT     = 0.5;
-  public static final double DRIVE_SLOW_SPEED_MAX_INPUT       = 0.25;
+    public static final double LAUNCH_SPEED_RPM        = 4000;
+    public static final double DROP_SPEED_RPM          = 1000;
+    
+    public static final double ROLLER_RECV_SPEED       = -1;
+    public static final double ROLLER_BACKOUT_SPEED    = 0.75; 
+    public static final int ROLLER_MOTOR_ID            = 6;
+  
+    public static final int DETECTOR_DIO_PIN           =7;
+  }
 
-  public static final int LAUNCHER_LEFT_MOTOR_ID              = 18;
-  public static final int LAUNCHER_RIGHT_MOTOR_ID             = 17;
+  public static final class LAUNCHER_SWING{
+    public static final double SPEED             = 1;
 
-  public static final double LAUNCHER_LAUNCH_SPEED            = 1;
-  public static final double LAUNCHER_DROP_SPEED              = 0.2;
-  public static final double LAUNCHER_IN_SPEED                = -0.075;
+    public static final double POS_AE            = 0.015;
 
-  public static final double LAUNCHER_SWING_SPEED             = 1;
-  public static final double LAUNCHER_ROLLER_RECV_SPEED       = -1;
-  public static final double LAUNCHER_ROLLER_BACKOUT_SPEED    = 0.75; 
+    public static final double RECV_POSITION           = 0.493;
+    public static final double LAUNCH_POSITION         = 0.55;
+    public static final double DROP_POSITION           = 0.275;
+    
+    public static final double UPPER_BOUND       = 0.578;
+    public static final double LOWER_BOUND       = 0.275;
+    public static final double P_GAIN            =25;
+    public static final double I_GAIN            =0.0;
+    public static final double D_GAIN            =0.0;
+    public static final int    MOTOR_ID             = 19;
+    public static final int    ENCODER_DIO_PIN      = 9;
+    public static final double MAN_CTRL_SENS     = 0.01;
+  }
 
-  public static final double LAUNCHER_SWING_POS_AE            = 0.005;
-  public static final double INTAKE_SWING_POS_AE              = 0.01;
+  public static final class INTAKE{
+    public static final int    TOP_MOTOR_ID                 = 7;
+    public static final int    BOTTOM_MOTOR_ID              = 8;
+    public static final double SPEED                     =1;
+    public static final double REVERSE_SPEED             =-1;
 
-  public static final double LAUNCHER_RECV_POSITION           = 0.5;
-  public static final double LAUNCHER_LAUNCH_POSITION         = 0.55;
-  public static final double LAUNCHER_DROP_POSITION           = 0.275;
- 
-  public static final double LAUNCHER_SWING_UPPER_BOUND       = 0.578;
-  public static final double LAUNCHER_SWING_LOWER_BOUND       = 0.275;
+    public static final int    DETECTOR_DIO_PIN             =6;
+  }
 
-  public static final int LAUNCHER_ROLLER_MOTOR_ID            = 6;
-  public static final int LAUNCHER_SWING_MOTOR_ID             = 19;
+  public static final class INTAKE_SWING{
+    public static final int    MOTOR_ID               =9;
+    public static final double SPEED               =0.3;//WARNING: DO NOT SET TO 1!
 
-  public static final double LAUNCHER_SWING_MAN_CTRL_SENS     = 0.01;
+    public static final int    ENCODER_DIO_PIN        =8;
+    public static final double DOWN_POSITION       =0.68;
+    public static final double UP_POSITION         =1.1;
 
-  public static final int LAUNCHER_SWING_ENCODER_DIO_PIN      = 9;
-  public static final int LAUNCHER_DETECTOR_DIO_PIN           =7;
+    public static final double PID_SWITCH          =0.2;
 
-  public static final int INTAKE_TOP_MOTOR_ID                 = 7;
-  public static final int INTAKE_BOTTOM_MOTOR_ID              = 8;
+    public static final double P_GAIN              =2;
+    public static final double I_GAIN              =0.1;
+    public static final double D_GAIN              =0.0;
 
-  public static final int INTAKE_SWING_MOTOR_ID               =5;
+    public static final double POS_AE              = 0.01;
 
-  public static final double INTAKE_SPEED                     =-1;
-  public static final double INTAKE_REVERSE_SPEED             =1;
-
-  public static final double INTAKE_SWING_UP_SPEED            =1;
-  public static final double INTAKE_SWING_DOWN_SPEED          =0.5;
-
-  public static final double INTAKE_SWING_SPEED               =1;
-
-  public static final int INTAKE_SWING_ENCODER_DIO_PIN        =8;
-  public static final int INTAKE_DETECTOR_DIO_PIN             =6;
-
-  public static final int INTAKE_SWING_UPPER_BOUND            =1;
-  public static final int INTAKE_SWING_LOWER_BOUND            =0;
-
-  public static final double INTAKE_SWING_DOWN_POSITION       =0.29;
-  public static final double INTAKE_SWING_UP_POSITION         =0.69;
-
-  public static final double INTAKE_SWING_P_GAIN              =1;
-  public static final double INTAKE_SWING_I_GAIN              =0.1;
-  public static final double INTAKE_SWING_D_GAIN              =0.1;
-
-  public static double LAUNCHER_SWING_P_GAIN                  =25;
-  public static double LAUNCHER_SWING_I_GAIN                  =0.01;
-  public static double LAUNCHER_SWING_D_GAIN                  =0.05;
-
-  public static final double LAUNCHER_SWING_PID_VELOCITY_TOLERANCE=0.01;
-  public static final double INTAKE_SWING_PID_VELOCITY_TOLERANCE  =0.01;
+  }
+  
 
 }

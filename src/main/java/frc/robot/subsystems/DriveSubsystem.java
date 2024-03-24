@@ -16,10 +16,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
 
-  private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE_BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
-  private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE_BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
-  private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE_FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
-  private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE_FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
+  private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE.BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
+  private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE.BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
+  private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE.FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
+  private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
   private double forward;
   private double right; 
@@ -64,7 +64,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -84,18 +83,19 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("field oriented driving", FOD);
     SmartDashboard.putBoolean("input squaring", squaringEnabled);
     SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
+    SmartDashboard.putNumber("angle offset", offset);
   }
   public void teleopPeriodic(){
     if(squaringEnabled){
-      forward = Math.pow(deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE), 3);
-      right   = Math.pow(deadzone(m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE) , 3);
-      rotate  = Math.pow(deadzone(m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE) , 3);
+      forward = Math.pow(deadzone(-m_driverController.getLeftY(), Constants.DRIVE.INPUT_DEADZONE), 3);
+      right   = Math.pow(deadzone( m_driverController.getLeftX()  , Constants.DRIVE.INPUT_DEADZONE) , 3);
+      rotate  = Math.pow(deadzone( m_driverController.getRightX(), Constants.DRIVE.INPUT_DEADZONE) , 3);
     } //square the value, then reaply the sign using the normalize function
     else 
     {
-      forward = deadzone(-m_driverController.getLeftY() , Constants.DRIVE_INPUT_DEADZONE);
-      right   = deadzone( m_driverController.getLeftX() , Constants.DRIVE_INPUT_DEADZONE);
-      rotate  = deadzone( m_driverController.getRightX(), Constants.DRIVE_INPUT_DEADZONE);
+      forward = deadzone(-m_driverController.getLeftY() , Constants.DRIVE.INPUT_DEADZONE);
+      right   = deadzone( m_driverController.getLeftX() , Constants.DRIVE.INPUT_DEADZONE);
+      rotate  = deadzone( m_driverController.getRightX(), Constants.DRIVE.INPUT_DEADZONE);
     }
     if(m_driverController.getRightBumper()){//set mode(only does anything if mode change is enabled)
       mode = DriveMode.FAST;
@@ -106,13 +106,13 @@ public class DriveSubsystem extends SubsystemBase {
     }
     if(modeChangeEnabled){//remap if mode change is enabled
       if(mode == DriveMode.MEDIUM){
-        forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
-        right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
-        rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE_MEDIUM_SPEED_MAX_INPUT);
+        forward = remap(forward, -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
+        right   = remap(right  , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
+        rotate  = remap(rotate , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT, Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
       } else if (mode == DriveMode.SLOW){
-        forward = remap(forward, -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
-        right   = remap(right  , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
-        rotate  = remap(rotate , -Constants.DRIVE_INPUT_LIMITER, Constants.DRIVE_INPUT_LIMITER, -Constants.DRIVE_SLOW_SPEED_MAX_INPUT, Constants.DRIVE_SLOW_SPEED_MAX_INPUT);
+        forward = remap(forward, -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.SLOW_SPEED_MAX_INPUT, Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
+        right   = remap(right  , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.SLOW_SPEED_MAX_INPUT, Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
+        rotate  = remap(rotate , -Constants.DRIVE.INPUT_LIMITER, Constants.DRIVE.INPUT_LIMITER, -Constants.DRIVE.SLOW_SPEED_MAX_INPUT, Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
       }
     }
   }
@@ -126,12 +126,18 @@ public class DriveSubsystem extends SubsystemBase {
    * sets Field-Oriented-Driving(FOD)
    * @param enabled - set FOD enabled
    */
-  public Command setFOD(boolean enabled){
+  public Command setFODCommand(boolean enabled){
     return runOnce(() -> {
       this.FOD = enabled;
     });
   }
-  public Command toggleFOD(){
+  public void setFOD(boolean enabled){
+      this.FOD = enabled;
+  }
+  public boolean getFOD(){
+    return this.FOD;
+  }
+  public Command toggleFODCommand(){
     return runOnce(() -> {
       this.FOD = !this.FOD;
     });
@@ -139,7 +145,7 @@ public class DriveSubsystem extends SubsystemBase {
   /** toggle input squaring 
    * <p>{@link https://docs.wpilib.org/en/stable/docs/software/hardware-apis/motors/wpi-drive-classes.html#squaring-inputs}
   */
-  public Command togglesquaring(){
+  public Command togglesquaringCommand(){
     return runOnce(() -> {
       this.squaringEnabled = !this.squaringEnabled;
     });
@@ -149,13 +155,13 @@ public class DriveSubsystem extends SubsystemBase {
    * bumpers can be used to change to high and low sensitivity modes
    * <p> when off, input is a full sensitivity the whole time, recomended if using input squaring
    */
-  public Command toggleModeChanging(){
+  public Command toggleModeChangingCommand(){
     return runOnce(() -> {
       this.modeChangeEnabled = !this.modeChangeEnabled;
     });
   }
   /** sets current headding to absolute forward when using FOD */
-  public Command zero(){
+  public Command zeroCommand(){
     return runOnce(() -> {
       this.offset = -gyro.getGyroAngleZ();
     });
@@ -164,10 +170,13 @@ public class DriveSubsystem extends SubsystemBase {
    * zeros with current angle set to offset
    * @param offset
    */
-  public Command zero(double offset){
+  public Command zeroCommand(double offset){
     return runOnce(() -> {
       this.offset = -gyro.getGyroAngleZ() + offset;
     });
+  }
+  public void zero(double offset){
+      this.offset = -gyro.getGyroAngleZ() + offset;
   }
   /** recalibrate the gyro, requires 10 seconds of absolutly no motion */
   public Command resetGyro(){

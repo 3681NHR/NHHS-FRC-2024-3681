@@ -4,4 +4,5 @@ public enum RollerState {
     IDLE,
     RECV,
     BACKOUT,
+    LAUNCH,
 }

@@ -31,19 +31,21 @@ public class AutoLaunchOnly extends Command{
     @Override
     public void end(boolean e){
         m_launcherSubsystem     .setSpeed(LauncherState.IDLE);
-        m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+        m_launcherSubsystem.setRoller(RollerState.IDLE);
     }
 
     @Override
     public void execute(){
 
         m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
+        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
 
-        if(ticks >= 30){
-            m_launcherSwingSubsystem.setRoller(RollerState.RECV);
-        } else {
-            m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+        if(m_launcherSubsystem.atspeed()){
+            if(m_launcherSubsystem.isHolding()){
+                m_launcherSubsystem.setRoller(RollerState.LAUNCH);
+            } else {
+                m_launcherSubsystem.setRoller(RollerState.IDLE);
+            }
         }
 
         SmartDashboard.putNumber("auto ticks", ticks);
@@ -52,6 +54,6 @@ public class AutoLaunchOnly extends Command{
 
     @Override
     public boolean isFinished(){
-        return ticks >= 450;//50ticks = 1sec
+        return ticks >= 450 || !m_launcherSubsystem.isHolding();//50ticks = 1sec
     }
 }

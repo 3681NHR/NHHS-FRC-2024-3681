@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.enums.LauncherState;
@@ -15,9 +16,14 @@ public class Auto extends Command{
     LauncherSwingSubsystem m_launcherSwingSubsystem;
     DriveSubsystem m_DriveSubsystem;
 
+    boolean startingFOD;
+
     int ticks = 0;
 
-    public Auto(LauncherSwingSubsystem launcherSwing, LauncherSubsystem launcher, DriveSubsystem drive){
+    SendableChooser<Pose2d> startingPoses;
+    int driveStop = 250;
+
+    public Auto(LauncherSwingSubsystem launcherSwing, LauncherSubsystem launcher, DriveSubsystem drive, SendableChooser<Pose2d> startingPoses){
         m_launcherSubsystem      = launcher;
         m_launcherSwingSubsystem = launcherSwing;
         m_DriveSubsystem         = drive;
@@ -26,42 +32,52 @@ public class Auto extends Command{
         addRequirements(launcherSwing);
         addRequirements(m_DriveSubsystem);
 
+        this.startingPoses = startingPoses;
     }
     @Override
     public void initialize(){
         ticks = 0;
+        m_DriveSubsystem.zero(startingPoses.getSelected().getRotation().getDegrees());
+
+        driveStop = (int)startingPoses.getSelected().getX();
     }
 
     @Override
     public void end(boolean e){
-        m_launcherSubsystem     .setSpeed(LauncherState.IDLE);
-        m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
-        m_DriveSubsystem        .setAutoMotion(0, 0, 0);
+        m_launcherSubsystem.setSpeed(LauncherState.IDLE);
+        m_launcherSubsystem.setRoller(RollerState.IDLE);
+        m_DriveSubsystem   .setAutoMotion(0, 0, 0);
+        //m_DriveSubsystem.setFODFunc(startingFOD);
     }
 
     @Override
     public void execute(){
-
-        m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_LAUNCH_POSITION);
-
-        if(ticks >= 30 && ticks <= 300){
-            m_launcherSwingSubsystem.setRoller(RollerState.RECV);
+        if(m_launcherSubsystem.isHolding()){
+            m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
         } else {
-            m_launcherSwingSubsystem.setRoller(RollerState.IDLE);
+            m_launcherSubsystem.setSpeed(LauncherState.IDLE);
         }
-        if(ticks >= 300 && ticks <= 350){
-            m_DriveSubsystem.setAutoMotion(-0.4, 0, 0);
+
+        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
+
+        if(m_launcherSubsystem.atspeed()){
+            if(m_launcherSubsystem.isHolding()){
+                m_launcherSubsystem.setRoller(RollerState.LAUNCH);
+            } else {
+                m_launcherSubsystem.setRoller(RollerState.IDLE);
+            }
+        }
+        if(m_launcherSubsystem.switchEnabled() ? (!m_launcherSubsystem.isHolding()  && ticks <= driveStop) : (ticks >= 150 && ticks <= driveStop)){
+            m_DriveSubsystem.setAutoMotion(0.5, 0, 0);
         } else {
             m_DriveSubsystem.setAutoMotion(0, 0, 0);
         }
 
-        SmartDashboard.putNumber("auto ticks", ticks);
         ticks++;
     }
 
     @Override
     public boolean isFinished(){
-        return ticks >= 450;//50ticks = 1sec
+        return ticks >= 200 + driveStop;//50ticks = 1sec
     }
 }

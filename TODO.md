@@ -19,3 +19,5 @@
   * kinematics/odometry - Sam H.
   * fix pathplanning - Sam H.
 
+ * logging
+ * shuffleboard
