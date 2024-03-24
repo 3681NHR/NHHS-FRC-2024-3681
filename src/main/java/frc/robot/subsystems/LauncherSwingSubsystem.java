@@ -95,9 +95,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     
     //PID controller
     swingMotor.set(PIDOut);
-    //P controller
-    //swingMotor.set(clamp(3 * (selectedPosition - swingEncoder.getDistance()), -Constants.LAUNCHER_SWING_SPEED, Constants.LAUNCHER_SWING_SPEED));
-
   
   }
   
