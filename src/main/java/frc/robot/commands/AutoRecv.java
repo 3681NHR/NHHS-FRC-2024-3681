@@ -80,6 +80,6 @@ public class AutoRecv extends Command{
 
     @Override
     public boolean isFinished(){
-        return (cutoff >= 1000) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding());
+        return (cutoff >= 500) || (!m_intakeSubsystem.isHolding() && m_launcherSubsystem.isHolding()) || !m_launcherSubsystem.switchEnabled();
     }
 }

@@ -84,8 +84,11 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     this.swingMotor.setIdleMode(IdleMode.kBrake);
 
-
+  if(swingEncoder.getDistance() > Constants.LAUNCHER_SWING.PID_SWITCH){
     selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING.LOWER_BOUND, Constants.LAUNCHER_SWING.UPPER_BOUND);
+  } else {
+    selectedPosition = selectedPosition;// + 1;
+  }
 
     PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING.SPEED, Constants.LAUNCHER_SWING.SPEED);
 

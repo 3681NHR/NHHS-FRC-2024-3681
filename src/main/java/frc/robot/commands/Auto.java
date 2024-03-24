@@ -39,6 +39,9 @@ public class Auto extends Command{
         ticks = 0;
         m_DriveSubsystem.zero(startingPoses.getSelected().getRotation().getDegrees());
 
+        startingFOD = m_DriveSubsystem.getFOD();
+        m_DriveSubsystem.setFOD(true);
+
         driveStop = (int)startingPoses.getSelected().getX();
     }
 
@@ -47,7 +50,8 @@ public class Auto extends Command{
         m_launcherSubsystem.setSpeed(LauncherState.IDLE);
         m_launcherSubsystem.setRoller(RollerState.IDLE);
         m_DriveSubsystem   .setAutoMotion(0, 0, 0);
-        //m_DriveSubsystem.setFODFunc(startingFOD);
+        
+        m_DriveSubsystem.setFOD(startingFOD);
     }
 
     @Override

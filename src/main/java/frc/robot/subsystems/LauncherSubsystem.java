@@ -2,6 +2,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -150,10 +151,9 @@ public class LauncherSubsystem extends SubsystemBase {
         if(!LaunchLock || atspeed()){
           roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_RECV_SPEED);
         } else {
-          rollerState = RollerState.IDLE;
+          roller.set(ControlMode.PercentOutput, 0);
         }
         break;
     }
   }
-
 }
