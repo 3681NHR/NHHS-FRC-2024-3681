@@ -61,10 +61,6 @@ public class IntakeSubsystem extends SubsystemBase {
   
     SmartDashboard.putBoolean("intake sensor enabled", switchEnabled);
 
-    SmartDashboard.putNumber ("intake pid P gain", swingPID.getP());
-    SmartDashboard.putNumber ("intake pid I gain", swingPID.getI());
-    SmartDashboard.putNumber ("intake pid D gain", swingPID.getD()); 
-
     //m_rotate.setInverted(true);
   }
 
@@ -182,10 +178,6 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putString("intake state"              , state.toString()                );
     SmartDashboard.putNumber("intake swing PID value"    , pidOut                          );
     SmartDashboard.putBoolean("IntakeIsHolding", holding);
-
-    swingPID.setP(SmartDashboard.getNumber("intake pid P gain", Constants.INTAKE_SWING.P_GAIN));
-    swingPID.setI(SmartDashboard.getNumber("intake pid I gain", Constants.INTAKE_SWING.I_GAIN));
-    swingPID.setD(SmartDashboard.getNumber("intake pid D gain", Constants.INTAKE_SWING.D_GAIN));
 
     if(swingState == IntakeSwingState.UP){
       selectedPosition = upPos;

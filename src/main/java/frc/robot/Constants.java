@@ -39,7 +39,7 @@ public final class Constants {
     public static final double DROP_SPEED              = 0.3;
     public static final double IN_SPEED                = -0.075;
 
-    public static final double LAUNCH_SPEED_RPM        = 4000;
+    public static final double LAUNCH_SPEED_RPM        = 4200;
     public static final double DROP_SPEED_RPM          = 1000;
     
     public static final double ROLLER_RECV_SPEED       = -1;
@@ -54,9 +54,11 @@ public final class Constants {
 
     public static final double POS_AE            = 0.015;
 
-    public static final double RECV_POSITION           = 0.493;
+    public static final double RECV_POSITION           = 0.502;
     public static final double LAUNCH_POSITION         = 0.55;
     public static final double DROP_POSITION           = 0.275;
+
+    public static final double PID_SWITCH               = 0.6;
     
     public static final double UPPER_BOUND       = 0.578;
     public static final double LOWER_BOUND       = 0.275;
@@ -79,16 +81,16 @@ public final class Constants {
 
   public static final class INTAKE_SWING{
     public static final int    MOTOR_ID               =9;
-    public static final double SPEED               =0.3;//WARNING: DO NOT SET TO 1!
+    public static final double SPEED               =0.5;//0.3
 
     public static final int    ENCODER_DIO_PIN        =8;
-    public static final double DOWN_POSITION       =0.68;
-    public static final double UP_POSITION         =1.1;
+    public static final double DOWN_POSITION       =0.685;
+    public static final double UP_POSITION         =1.116;
 
     public static final double PID_SWITCH          =0.2;
 
-    public static final double P_GAIN              =2;
-    public static final double I_GAIN              =0.1;
+    public static final double P_GAIN              =4;//2
+    public static final double I_GAIN              =0.0;//0.1
     public static final double D_GAIN              =0.0;
 
     public static final double POS_AE              = 0.01;

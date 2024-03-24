@@ -1,0 +1,480 @@
+{
+  "tabPane": [
+    {
+      "title": "SmartDashboard",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "SmartDashboard/",
+      "widgetPane": {
+        "gridSize": 75.0,
+        "showGrid": true,
+        "hgap": 5.0,
+        "vgap": 10.0,
+        "titleType": 1,
+        "tiles": {
+          "3,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/launcher state",
+              "_title": "Launcher",
+              "_glyph": 0,
+              "_showGlyph": false
+            }
+          },
+          "3,1": {
+            "size": [
+              1,
+              3
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/L launcher speed",
+              "_title": "L launcher",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Range/Min": -5000.0,
+              "Range/Max": 5000.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "VERTICAL"
+            }
+          },
+          "4,1": {
+            "size": [
+              1,
+              3
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/R launcher speed",
+              "_title": "R launcher",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Range/Min": -5000.0,
+              "Range/Max": 5000.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "VERTICAL"
+            }
+          },
+          "1,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/intake swing selected pos",
+              "_title": "I-arm sel",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/intake swing current pos",
+              "_title": "I-arm pos",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/intake swing state",
+              "_title": "I-arm state",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/intake state",
+              "_title": "intake state",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/intake swing PID value",
+              "_title": "I_arm out",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/pid out",
+              "_title": "L-arm out",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/intake sensor enabled",
+              "_title": "I sw",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/launchLock",
+              "_title": "launchLock",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/launcher switch Enabled",
+              "_title": "L sw",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/gyro offset",
+              "_title": "gyro offset",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/launcher roller state",
+              "_title": "Rollers",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/field oriented driving",
+              "_title": "FOD",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
+            }
+          },
+          "4,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/input squaring",
+              "_title": "squaring",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
+            }
+          },
+          "2,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/input sensitivity buttons",
+              "_title": "turbo",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
+            }
+          },
+          "2,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/LauncherIsHolding",
+              "_title": "L hold",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
+            }
+          },
+          "1,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/IntakeIsHolding",
+              "_title": "I hold",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
+            }
+          },
+          "2,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/launcher swing selected pos",
+              "_title": "L-arm sel",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/launcher swing current pos",
+              "_title": "L-arm pos",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,2": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Gyro",
+              "_source0": "network_table:///SmartDashboard/gyro",
+              "_title": "gyro",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Visuals/Major tick spacing": 45.0,
+              "Visuals/Starting angle": 180.0,
+              "Visuals/Show tick mark ring": true,
+              "Visuals/Counter clockwise": false
+            }
+          },
+          "8,0": {
+            "size": [
+              6,
+              5
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://cam1",
+              "_title": "cam1",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": false,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": 45.0,
+              "fps": 35,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "0,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/auto ticks",
+              "_title": "auto ticks",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "19,0": {
+            "size": [
+              4,
+              7
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_source0": "network_table:///SmartDashboard/Scheduler/Cancel",
+              "_title": "Scheduler/Cancel",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": []
+            }
+          },
+          "23,0": {
+            "size": [
+              4,
+              7
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_source0": "network_table:///SmartDashboard/Scheduler/Ids",
+              "_title": "Scheduler/Ids",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": []
+            }
+          },
+          "5,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/auto",
+              "_title": "auto",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/starting pos",
+              "_title": "starting pos",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,5": {
+            "size": [
+              6,
+              2
+            ],
+            "content": {
+              "_type": "Basic FMS Info",
+              "_title": "Basic FMS Info",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,5": {
+            "size": [
+              8,
+              3
+            ],
+            "content": {
+              "_type": "Field",
+              "_title": "Field",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Game/Game": "k2024Crescendo",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false
+            }
+          },
+          "14,0": {
+            "size": [
+              4,
+              6
+            ],
+            "content": {
+              "_type": "PDP",
+              "_source0": "network_table:///SmartDashboard/PDP",
+              "_title": "PDP",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Visuals/Show voltage and current values": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "LiveWindow",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": -8.800000190734863,
+    "y": 6.400000095367432,
+    "width": 1547.199951171875,
+    "height": 618.4000244140625
+  }
+}
