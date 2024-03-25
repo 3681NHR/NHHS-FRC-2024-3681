@@ -42,7 +42,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     Constants.LAUNCHER_SWING.FEEDFORWARD_V_GAIN
     );
 
-  private MutableMeasure<Angle> selectedAngle;
+  private Measure<Angle> selectedAngle;
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 
@@ -97,7 +97,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     this.swingMotor.setIdleMode(IdleMode.kBrake);
     
-    selectedAngle.mut_setMagnitude(clamp(selectedAngle.magnitude(), Constants.LAUNCHER_SWING.LOWER_BOUND, Constants.LAUNCHER_SWING.UPPER_BOUND));
+    selectedAngle.mut_replace(clamp(selectedAngle, Constants.LAUNCHER_SWING.LOWER_BOUND, Constants.LAUNCHER_SWING.UPPER_BOUND));
 
 
     PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedAngle.magnitude()), -Constants.LAUNCHER_SWING.SPEED, Constants.LAUNCHER_SWING.SPEED);
@@ -115,4 +115,17 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private double clamp(double val, double min, double max) {
     return Math.max(min, Math.min(max, val));
   }
+
+  private Measure<Angle> clamp(Measure<Angle> val, Measure<Angle> min, Measure<Angle> max) {
+    if(val.magnitude() > min.magnitude()){
+      if(val.magnitude() < max.magnitude()){
+        return val;
+      } else {
+        return max;
+      }
+    } else {
+      return min;
+    }
+  }
+
 }

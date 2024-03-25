@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.*;
 import edu.wpi.first.units.Measure;
 import static edu.wpi.first.units.Units.*;
 
@@ -38,18 +38,18 @@ public final class Constants {
   public static final class LAUNCHER{
     public static final int LEFT_MOTOR_ID              = 18;
     public static final int RIGHT_MOTOR_ID             = 17;
-
-    public static final double LAUNCH_SPEED            = 1;
-    public static final double DROP_SPEED              = 0.3;
-    public static final double IN_SPEED                = -0.075;
-
-    public static final double LAUNCH_SPEED_RPM        = 4200;
-    public static final double DROP_SPEED_RPM          = 1000;
-    
-    public static final double ROLLER_RECV_SPEED       = -1;
-    public static final double ROLLER_BACKOUT_SPEED    = 0.75; 
     public static final int ROLLER_MOTOR_ID            = 6;
-  
+
+    public static final double LAUNCH_OUTPUT            = 1;
+    public static final double DROP_OUTPUT              = 0.3;
+    public static final double IN_OUTPUT                = -0.075;
+
+    public static final Measure<Velocity<Angle>> LAUNCH_SPEED_RPM= RPM.of(4200);
+    public static final Measure<Velocity<Angle>> DROP_SPEED_RPM  = RPM.of(1000);
+    
+    public static final double ROLLER_RECV_OUTPUT       = -1;
+    public static final double ROLLER_BACKOUT_OUTPUT    = 0.75;
+     
     public static final int DETECTOR_DIO_PIN           =7;
   }
 
@@ -58,12 +58,12 @@ public final class Constants {
 
     public static final double POS_AE            = 0.015;
 
-    public static final Measure<Angle> RECV_POSITION  = Radians.of(0.502);
-    public static final Measure<Angle> LAUNCH_POSITION= Radians.of(0.55);
-    public static final Measure<Angle> DROP_POSITION  = Radians.of(0.275);
+    public static final Measure<Angle> RECV_POSITION  = Rotation.of(0.502);
+    public static final Measure<Angle> LAUNCH_POSITION= Rotation.of(0.55);
+    public static final Measure<Angle> DROP_POSITION  = Rotation.of(0.275);
 
-    public static final double UPPER_BOUND       = 0.578;
-    public static final double LOWER_BOUND       = 0.275;
+    public static final Measure<Angle> UPPER_BOUND       = Rotation.of(0.578);
+    public static final Measure<Angle> LOWER_BOUND       = Rotation.of(0.275);
 
     public static final double P_GAIN            =25;
     public static final double I_GAIN            =0.0;
@@ -81,21 +81,24 @@ public final class Constants {
   public static final class INTAKE{
     public static final int    TOP_MOTOR_ID                 = 7;
     public static final int    BOTTOM_MOTOR_ID              = 8;
-    public static final double SPEED                     =1;
-    public static final double REVERSE_SPEED             =-1;
+
+    public static final double INTAKE_OUTPUT                     =1;
+    public static final double REVERSE_OUTPUT             =-1;
 
     public static final int    DETECTOR_DIO_PIN             =6;
   }
 
   public static final class INTAKE_SWING{
     public static final int    MOTOR_ID               =9;
-    public static final double SPEED               =0.5;//0.3
+
+    public static final double MAX_OUTPUT               =0.5;
 
     public static final int    ENCODER_DIO_PIN        =8;
-    public static final double DOWN_POSITION       =0.685;
-    public static final double UP_POSITION         =1.116;
+    
+    public static final Measure<Angle> DOWN_POSITION       = Rotation.of(0.685);
+    public static final Measure<Angle> UP_POSITION         = Rotation.of(1.116);
 
-    public static final double PID_SWITCH          =0.2;
+    public static final Measure<Angle> PID_SWITCH          =Rotation.of(0.2);
 
     public static final double P_GAIN              =4;//2
     public static final double I_GAIN              =0.0;//0.1

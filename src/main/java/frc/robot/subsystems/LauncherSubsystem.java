@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,8 +29,6 @@ public class LauncherSubsystem extends SubsystemBase {
   private boolean switchEnabled = true;
 
   public LauncherState state = LauncherState.IDLE;
-  private RollerState rollerState = RollerState.IDLE;
-
   public LauncherSubsystem() {
     SmartDashboard.putBoolean("launchLock", LaunchLock);
     SmartDashboard.putBoolean("launcher switch Enabled", switchEnabled);
@@ -87,9 +84,9 @@ public class LauncherSubsystem extends SubsystemBase {
   public boolean atspeed(){
     if(LaunchLock){
       if(state == LauncherState.LAUNCHING){
-        return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.LAUNCH_SPEED_RPM;
+        return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.LAUNCH_SPEED_RPM.magnitude();
       } else if(state == LauncherState.DROPPING){
-        return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.DROP_SPEED_RPM;
+        return m_left.getEncoder().getVelocity() >= Constants.LAUNCHER.DROP_SPEED_RPM.magnitude();
       } else {
         return false;
       }
@@ -118,38 +115,38 @@ public class LauncherSubsystem extends SubsystemBase {
 
     switch(state){
       case LAUNCHING:
-        m_left  .set(Constants.LAUNCHER.LAUNCH_SPEED);
-        m_right .set(-Constants.LAUNCHER.LAUNCH_SPEED);
+        m_left  .set(Constants.LAUNCHER.LAUNCH_OUTPUT);
+        m_right .set(-Constants.LAUNCHER.LAUNCH_OUTPUT);
         break;
       case DROPPING:
-        m_left  .set(Constants.LAUNCHER.DROP_SPEED);
-        m_right .set(-Constants.LAUNCHER.DROP_SPEED);
+        m_left  .set(Constants.LAUNCHER.DROP_OUTPUT);
+        m_right .set(-Constants.LAUNCHER.DROP_OUTPUT);
         break;
       case IDLE:
         m_left  .set(0);
         m_right .set(0);
         break;
       case IN:
-        m_left .set(Constants.LAUNCHER.IN_SPEED);
-        m_right.set(-Constants.LAUNCHER.IN_SPEED);
+        m_left .set(Constants.LAUNCHER.IN_OUTPUT);
+        m_right.set(-Constants.LAUNCHER.IN_OUTPUT);
     }
     switch(rollerState){
       case RECV:
         if(!holding || !switchEnabled){
-          roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_RECV_SPEED);
+          roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_RECV_OUTPUT);
         } else {
           rollerState = RollerState.IDLE;
         }
         break;
       case BACKOUT:
-        roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_BACKOUT_SPEED);
+        roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_BACKOUT_OUTPUT);
         break;
       case IDLE:
         roller.set(ControlMode.PercentOutput, 0);
         break;
       case LAUNCH:
         if(!LaunchLock || atspeed()){
-          roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_RECV_SPEED);
+          roller.set(ControlMode.PercentOutput, Constants.LAUNCHER.ROLLER_RECV_OUTPUT);
         } else {
           roller.set(ControlMode.PercentOutput, 0);
         }

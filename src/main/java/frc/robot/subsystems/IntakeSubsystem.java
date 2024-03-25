@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Radian;
+import static edu.wpi.first.units.Units.Rotation;
+
 // import com.revrobotics.CANSparkMax.IdleMode;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -14,6 +17,9 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,12 +44,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private DutyCycleEncoder intakeSwingEncoder = new DutyCycleEncoder(Constants.INTAKE_SWING.ENCODER_DIO_PIN);
 
-  private double position = intakeSwingEncoder.getDistance();
+  private Measure<Angle> position;
   private boolean holding;
   private boolean switchEnabled = true;
 
-  private double downPos;
-  private double upPos;
+  private Measure<Angle> downPos;
+  private Measure<Angle> upPos;
 
   private ProfiledPIDController swingPID = new ProfiledPIDController(
   Constants.INTAKE_SWING.P_GAIN,
@@ -52,7 +58,7 @@ public class IntakeSubsystem extends SubsystemBase {
   new Constraints(10, 20)
   );
   //pids are for nerds like me
-  private double selectedPosition;
+  private Measure<Angle> selectedAngle;
 
   /** Creates a new Subsystem. */
   public IntakeSubsystem() {
@@ -65,9 +71,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   
-  public double getPosition(boolean selectedPos){
+  public Measure<Angle> getPosition(boolean selectedPos){
     if(selectedPos){
-      return selectedPosition;
+      return selectedAngle;
     } else{
     return position;
     }
@@ -77,7 +83,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public boolean isAtSelectedPos(){
-    if(Math.abs(selectedPosition - position) <= Constants.INTAKE_SWING.POS_AE){
+    if(Math.abs(selectedAngle.minus(position).in(Radian)) <= Constants.INTAKE_SWING.POS_AE){
       return true;
     } else {
       return false;
@@ -150,21 +156,21 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if(intakeSwingEncoder.getDistance() < Constants.INTAKE_SWING.PID_SWITCH){
-      upPos = Constants.INTAKE_SWING.UP_POSITION - 1;
-      downPos = Constants.INTAKE_SWING.DOWN_POSITION - 1;
+    if(intakeSwingEncoder.getDistance() < Constants.INTAKE_SWING.PID_SWITCH.in(Radian)){
+      upPos  = (MutableMeasure<Angle>) Constants.INTAKE_SWING.UP_POSITION.minus(Rotation.of(1));
+      downPos = (MutableMeasure<Angle>) Constants.INTAKE_SWING.DOWN_POSITION.minus(Rotation.of(1));
 
       m_rotate.setInverted(true);
     } else {
-      upPos = Constants.INTAKE_SWING.UP_POSITION;
-      downPos = Constants.INTAKE_SWING.DOWN_POSITION;
+      upPos = (MutableMeasure<Angle>)Constants.INTAKE_SWING.UP_POSITION;
+      downPos = (MutableMeasure<Angle>)Constants.INTAKE_SWING.DOWN_POSITION;
 
       m_rotate.setInverted(true);
     }
 
     switchEnabled = SmartDashboard.getBoolean("intake sensor enabled", true);
     
-    position = intakeSwingEncoder.getDistance();
+    position = (MutableMeasure<Angle>) Radian.of(intakeSwingEncoder.getDistance());
 
     holding = !holdSwitch.get();
       
@@ -172,50 +178,50 @@ public class IntakeSubsystem extends SubsystemBase {
    this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
    this.m_rotate      .setIdleMode(IdleMode.kBrake);
 
-    SmartDashboard.putNumber("intake swing selected pos" , selectedPosition                );
-    SmartDashboard.putNumber("intake swing current pos"  , position);
-    SmartDashboard.putString("intake swing state"        , swingState.toString()           );
-    SmartDashboard.putString("intake state"              , state.toString()                );
-    SmartDashboard.putNumber("intake swing PID value"    , pidOut                          );
+    SmartDashboard.putNumber("intake swing selected pos" , selectedAngle.in(Radian));
+    SmartDashboard.putNumber("intake swing current pos"  , position     .in(Radian));
+    SmartDashboard.putString("intake swing state"        , swingState.toString()    );
+    SmartDashboard.putString("intake state"              , state.toString()         );
+    SmartDashboard.putNumber("intake swing PID value"    , pidOut                   );
     SmartDashboard.putBoolean("IntakeIsHolding", holding);
 
     if(swingState == IntakeSwingState.UP){
-      selectedPosition = upPos;
+      selectedAngle = upPos;
     }
     if(swingState == IntakeSwingState.DOWN){
-      selectedPosition = downPos;
+      selectedAngle = downPos;
       if(holding && switchEnabled){
         swingState = IntakeSwingState.UP;
       }
     }
     if(swingState == IntakeSwingState.DOWN_HOLDING){
-      selectedPosition = downPos;
+      selectedAngle = downPos;
     }
     if(swingState == IntakeSwingState.IDLE){
-      selectedPosition = position;
+      selectedAngle = position;
     }
 
     //pid controller
-    pidOut = clamp(swingPID.calculate(position, selectedPosition), -Constants.INTAKE_SWING.SPEED, Constants.INTAKE_SWING.SPEED);
+    pidOut = clamp(swingPID.calculate(position.in(Radian), selectedAngle.in(Radian)), -Constants.INTAKE_SWING.MAX_OUTPUT, Constants.INTAKE_SWING.MAX_OUTPUT);
 
     m_rotate.set(pidOut);
 
 
   if(state == IntakeState.INTAKE){
     if(!holding || !switchEnabled){
-      m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
-      m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
+      m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.INTAKE_OUTPUT);
+      m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.INTAKE_OUTPUT);
     } else {
       setIntake(IntakeState.IDLE);
     }
   }
   if(state == IntakeState.COMPRESS){
-    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
-    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.SPEED);
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.INTAKE_OUTPUT);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.INTAKE_OUTPUT);
   }
   if(state == IntakeState.REVERSE){
-    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.REVERSE_SPEED);
-    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.REVERSE_SPEED);    
+    m_intakeBottom.set(ControlMode.PercentOutput, Constants.INTAKE.REVERSE_OUTPUT);
+    m_intakeTop   .set(ControlMode.PercentOutput, Constants.INTAKE.REVERSE_OUTPUT);    
   } 
   if(state == IntakeState.IDLE){
     m_intakeBottom.set(ControlMode.PercentOutput, 0);

@@ -1,6 +1,9 @@
 // done
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Radian;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -9,6 +12,9 @@ import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,19 +22,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriveSubsystem extends SubsystemBase {
 
-  private CANSparkMax m_back_left   = new CANSparkMax(Constants.DRIVE.BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
-  private CANSparkMax m_back_right  = new CANSparkMax(Constants.DRIVE.BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
-  private CANSparkMax m_front_left  = new CANSparkMax(Constants.DRIVE.FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
-  private CANSparkMax m_front_right = new CANSparkMax(Constants.DRIVE.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
+  private CANSparkMax m_back_left  ;
+  private CANSparkMax m_back_right ;
+  private CANSparkMax m_front_left ;
+  private CANSparkMax m_front_right;
 
   private double forward;
   private double right; 
   private double rotate;
 
-  private Rotation2d angle = new Rotation2d();
+  private Measure<Angle> angle = Radian.of(0);
   private boolean FOD = false;
   private ADIS16448_IMU gyro = new ADIS16448_IMU();
-  private double offset = 0.0;
+  private Measure<Angle> offset = Degree.of(0.0);
 
   private boolean squaringEnabled = true;
   private boolean modeChangeEnabled = true;
@@ -40,28 +46,25 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new Subsystem. */
   public DriveSubsystem() {
-    System.out.println("drive initalized");
 
-    setMotorIdleMode();//idfk why i need this but it works
-   
-   this.m_back_right .setInverted(true);
-   this.m_front_right.setInverted(true);
+    this.m_back_left   = new CANSparkMax(Constants.DRIVE.BACK_LEFT_MOTOR_ID,   MotorType.kBrushless);
+    this.m_back_right  = new CANSparkMax(Constants.DRIVE.BACK_RIGHT_MOTOR_ID,  MotorType.kBrushless);
+    this.m_front_left  = new CANSparkMax(Constants.DRIVE.FRONT_LEFT_MOTOR_ID,  MotorType.kBrushless);
+    this.m_front_right = new CANSparkMax(Constants.DRIVE.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless);
 
-   drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
+    this.m_back_right .setInverted(true);
+    this.m_front_right.setInverted(true);
 
+    m_back_left  .setIdleMode(IdleMode.kBrake);
+    m_back_right .setIdleMode(IdleMode.kBrake);
+    m_front_left .setIdleMode(IdleMode.kBrake);
+    m_front_right.setIdleMode(IdleMode.kBrake);
+
+    drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
 
     SmartDashboard.putBoolean("field oriented driving", FOD);
     SmartDashboard.putBoolean("input squaring", squaringEnabled);
     SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
-  }
-
-  private void setMotorIdleMode(){
-
-   m_back_left  .setIdleMode(IdleMode.kBrake);
-   m_back_right .setIdleMode(IdleMode.kBrake);
-   m_front_left .setIdleMode(IdleMode.kBrake);
-   m_front_right.setIdleMode(IdleMode.kBrake);
-
   }
 
   @Override
@@ -69,7 +72,7 @@ public class DriveSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     if(FOD){
-      angle = new Rotation2d(Math.toRadians(gyro.getGyroAngleZ()+offset));
+      angle.mut_replace(gyro.getGyroAngleZ()+offset.in(Degree));
     } else {
       angle = new Rotation2d(0);
     }
