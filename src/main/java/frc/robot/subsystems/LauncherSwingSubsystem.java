@@ -30,7 +30,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     new Constraints(10, 20)
   );
 
-  //pid is eh
   private double selectedPosition;
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
@@ -40,6 +39,9 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   {
 
     swingPID.setIntegratorRange(-1, 1);
+
+    swingEncoder.setDistancePerRotation(360);
+    swingEncoder.setPositionOffset(0);
 
   }
   
@@ -83,12 +85,9 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   public void periodic() {
 
     this.swingMotor.setIdleMode(IdleMode.kBrake);
-
-  if(swingEncoder.getDistance() > Constants.LAUNCHER_SWING.PID_SWITCH){
+    
     selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING.LOWER_BOUND, Constants.LAUNCHER_SWING.UPPER_BOUND);
-  } else {
-    selectedPosition = selectedPosition;// + 1;
-  }
+
 
     PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING.SPEED, Constants.LAUNCHER_SWING.SPEED);
 

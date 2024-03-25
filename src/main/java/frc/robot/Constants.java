@@ -58,8 +58,6 @@ public final class Constants {
     public static final double LAUNCH_POSITION         = 0.55;
     public static final double DROP_POSITION           = 0.275;
 
-    public static final double PID_SWITCH               = 0.6;
-    
     public static final double UPPER_BOUND       = 0.578;
     public static final double LOWER_BOUND       = 0.275;
     public static final double P_GAIN            =25;
