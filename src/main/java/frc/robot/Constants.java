@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import static edu.wpi.first.units.Units.*;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -54,15 +58,21 @@ public final class Constants {
 
     public static final double POS_AE            = 0.015;
 
-    public static final double RECV_POSITION           = 0.502;
-    public static final double LAUNCH_POSITION         = 0.55;
-    public static final double DROP_POSITION           = 0.275;
+    public static final Measure<Angle> RECV_POSITION  = Radians.of(0.502);
+    public static final Measure<Angle> LAUNCH_POSITION= Radians.of(0.55);
+    public static final Measure<Angle> DROP_POSITION  = Radians.of(0.275);
 
     public static final double UPPER_BOUND       = 0.578;
     public static final double LOWER_BOUND       = 0.275;
+
     public static final double P_GAIN            =25;
     public static final double I_GAIN            =0.0;
     public static final double D_GAIN            =0.0;
+
+    public static final double FEEDFORWARD_S_GAIN = 0.0;
+    public static final double FEEDFORWARD_G_GAIN = 0.0;
+    public static final double FEEDFORWARD_V_GAIN = 0.0;
+
     public static final int    MOTOR_ID             = 19;
     public static final int    ENCODER_DIO_PIN      = 9;
     public static final double MAN_CTRL_SENS     = 0.01;

@@ -7,8 +7,14 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,6 +27,7 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   private CANSparkMax swingMotor  = new CANSparkMax(Constants.LAUNCHER_SWING.MOTOR_ID, MotorType.kBrushless);
 
   private double PIDOut;
+  private double feedforwardOut;
 
   private DutyCycleEncoder swingEncoder = new DutyCycleEncoder(Constants.LAUNCHER_SWING.ENCODER_DIO_PIN);
   private ProfiledPIDController swingPID = new ProfiledPIDController(
@@ -29,8 +36,13 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     Constants.LAUNCHER_SWING.D_GAIN,
     new Constraints(10, 20)
   );
+  private ArmFeedforward feedforward = new ArmFeedforward(
+    Constants.LAUNCHER_SWING.FEEDFORWARD_S_GAIN, 
+    Constants.LAUNCHER_SWING.FEEDFORWARD_G_GAIN, 
+    Constants.LAUNCHER_SWING.FEEDFORWARD_V_GAIN
+    );
 
-  private double selectedPosition;
+  private MutableMeasure<Angle> selectedAngle;
 
   private XboxController m_driverController = new XboxController(Constants.ASO_CONTROLLER_PORT);
 
@@ -40,31 +52,31 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
     swingPID.setIntegratorRange(-1, 1);
 
-    swingEncoder.setDistancePerRotation(360);
+    swingEncoder.setDistancePerRotation(2*Math.PI);
     swingEncoder.setPositionOffset(0);
 
   }
   
-  public double getPosition(boolean selectedPos){
-    if(selectedPos){
-      return selectedPosition;
+  public Measure<Angle> getPosition(boolean selectedAngle){
+    if(selectedAngle){
+      return this.selectedAngle;
     } else{
-    return swingEncoder.getDistance();
+    return Radians.of(swingEncoder.getDistance());
     }
   }
 
-  public void setPosition(double pos){
-    selectedPosition = pos;
+  public void setAngle(Measure<Angle> pos){
+    selectedAngle = (MutableMeasure<Angle>) pos;
   }
 
-  public Command setPositionCommand(double pos){
+  public Command setAngleCommand(Measure<Angle> pos){
     return runOnce(() -> {
-      selectedPosition = pos;
+      selectedAngle = (MutableMeasure<Angle>) pos;
     });
   }
 
   public boolean isAtSelectedPos(){
-    if(Math.abs(selectedPosition - swingEncoder.getDistance()) <= Constants.LAUNCHER_SWING.POS_AE){
+    if(Math.abs(selectedAngle.magnitude() - swingEncoder.getDistance()) <= Constants.LAUNCHER_SWING.POS_AE){
       return true;
     } else {
       return false;
@@ -73,30 +85,30 @@ public class LauncherSwingSubsystem extends SubsystemBase {
 
   public Command manualSwingControlCommand(){
     return run(() -> {
-      selectedPosition += (m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING.MAN_CTRL_SENS;
-
+      selectedAngle.mut_acc((m_driverController.getLeftTriggerAxis()-m_driverController.getRightTriggerAxis())*Constants.LAUNCHER_SWING.MAN_CTRL_SENS);
     });
   }
 
   public void disabledPeriodic(){
-    selectedPosition = swingEncoder.getDistance();
+    selectedAngle = (MutableMeasure<Angle>) Radians.of(swingEncoder.getDistance());
   }
   @Override
   public void periodic() {
 
     this.swingMotor.setIdleMode(IdleMode.kBrake);
     
-    selectedPosition = clamp(selectedPosition, Constants.LAUNCHER_SWING.LOWER_BOUND, Constants.LAUNCHER_SWING.UPPER_BOUND);
+    selectedAngle.mut_setMagnitude(clamp(selectedAngle.magnitude(), Constants.LAUNCHER_SWING.LOWER_BOUND, Constants.LAUNCHER_SWING.UPPER_BOUND));
 
 
-    PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedPosition), -Constants.LAUNCHER_SWING.SPEED, Constants.LAUNCHER_SWING.SPEED);
+    PIDOut = clamp(swingPID.calculate(swingEncoder.getDistance(), selectedAngle.magnitude()), -Constants.LAUNCHER_SWING.SPEED, Constants.LAUNCHER_SWING.SPEED);
+    feedforwardOut = feedforward.calculate(swingPID.getSetpoint().position, swingPID.getSetpoint().velocity);
 
-    SmartDashboard.putNumber ("launcher swing selected pos"     , selectedPosition          );
+    SmartDashboard.putNumber ("launcher swing selected pos"     , selectedAngle.magnitude() );
     SmartDashboard.putNumber ("launcher swing current pos"      , swingEncoder.getDistance());
     SmartDashboard.putNumber ("pid out", PIDOut);
     
     //PID controller
-    swingMotor.set(PIDOut);
+    swingMotor.setVoltage(PIDOut + feedforwardOut);
   
   }
   

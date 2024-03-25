@@ -12,3 +12,5 @@ this is a list of notes about the code/interesting things in said code
         * the blue is after cubing the input
     * when you square(or cube) the input from the joystick, your drive will have better percision at low speeds, without loosing your top speed
     
+ * use pathplanner tool made by team 3015
+  * https://photonvision.org/  apriltag software

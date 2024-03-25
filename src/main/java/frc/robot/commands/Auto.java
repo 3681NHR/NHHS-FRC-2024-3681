@@ -62,7 +62,7 @@ public class Auto extends Command{
             m_launcherSubsystem.setSpeed(LauncherState.IDLE);
         }
 
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
+        m_launcherSwingSubsystem.setAngle(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
 
         if(m_launcherSubsystem.atspeed()){
             if(m_launcherSubsystem.isHolding()){

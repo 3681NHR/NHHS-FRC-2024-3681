@@ -47,7 +47,7 @@ public class AutoRecv extends Command{
     @Override
     public void execute(){
 
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.RECV_POSITION);
+        m_launcherSwingSubsystem.setAngle(Constants.LAUNCHER_SWING.RECV_POSITION);
         
         if(m_launcherSwingSubsystem.isAtSelectedPos()){
 

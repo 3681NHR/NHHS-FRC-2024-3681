@@ -38,7 +38,7 @@ public class AutoLaunchOnly extends Command{
     public void execute(){
 
         m_launcherSubsystem.setSpeed(LauncherState.LAUNCHING);
-        m_launcherSwingSubsystem.setPosition(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
+        m_launcherSwingSubsystem.setAngle(Constants.LAUNCHER_SWING.LAUNCH_POSITION);
 
         if(m_launcherSubsystem.atspeed()){
             if(m_launcherSubsystem.isHolding()){
