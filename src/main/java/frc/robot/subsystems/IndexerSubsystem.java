@@ -11,8 +11,8 @@ import frc.robot.Constants;
 
 public class IndexerSubsystem extends SubsystemBase {
 
-  private VictorSPX roller = new VictorSPX(Constants.LAUNCHER.ROLLER_MOTOR_ID);
-  private DigitalInput holdingSwitch = new DigitalInput(Constants.LAUNCHER.DETECTOR_DIO_PIN);
+  private VictorSPX roller = new VictorSPX(Constants.INDEXER.MOTOR_ID);
+  private DigitalInput holdingSwitch = new DigitalInput(Constants.INDEXER.DETECTOR_DIO_PIN);
 
   private boolean holding = false;
   private boolean switchEnabled = true;

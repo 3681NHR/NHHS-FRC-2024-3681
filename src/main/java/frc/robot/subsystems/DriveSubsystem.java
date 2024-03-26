@@ -11,7 +11,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Drive;
+import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Angle;
@@ -39,6 +41,11 @@ public class DriveSubsystem extends SubsystemBase {
   private ADIS16448_IMU gyro = new ADIS16448_IMU();
   private Measure<Angle> offset = Degree.of(0.0);
 
+  private DriveMode drivemode;
+  private boolean modeChangeEnabled = false;
+  
+  private int squaringvalue;
+
   private Drive drive;
 
   /** Creates a new Subsystem. */
@@ -64,12 +71,50 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
       angle = Degree.of(gyro.getGyroAngleZ()+offset.in(Degree)); 
   }
+  public void setMode(DriveMode mode){
+    drivemode = mode;
+  }
+  public void setInputSquaring(int squaring){
+    if(squaring > 0){
+      squaringvalue = squaring;
+    } else {
+      squaringvalue = 1;
+    }
+  }
+  public void setInputmodes(boolean turboButton){
+    modeChangeEnabled = turboButton;
+  }
 
   public void drive(Vector leftStick, Vector rightStick, boolean FOD, boolean altRotate){
+    Vector prossesedLeftStick = leftStick;
+    Vector prossesedRightStick = rightStick;
+
+    prossesedLeftStick  = prossesedLeftStick .deadband(Constants.DRIVE.INPUT_DEADZONE);
+    prossesedRightStick = prossesedRightStick.deadband(Constants.DRIVE.INPUT_DEADZONE);
+  
+    //uses math.pow to raise to pow, the reapply sign using signum, raise sgn to pow+1 to negate is when pow is odd, as odd pow does not need sgn
+    prossesedLeftStick  = new Vector(Math.pow(prossesedLeftStick .x(), squaringvalue) * Math.pow(Math.signum(prossesedLeftStick .x()), squaringvalue+1), Math.pow(prossesedLeftStick .y(), squaringvalue) * Math.pow(Math.signum(prossesedLeftStick .y()), squaringvalue+1));
+    prossesedRightStick = new Vector(Math.pow(prossesedRightStick.x(), squaringvalue) * Math.pow(Math.signum(prossesedRightStick.x()), squaringvalue+1), Math.pow(prossesedRightStick.y(), squaringvalue) * Math.pow(Math.signum(prossesedRightStick.y()), squaringvalue+1));
+
+    if(modeChangeEnabled){
+      if(drivemode == DriveMode.FAST){
+        prossesedLeftStick = prossesedLeftStick.mult(Constants.DRIVE.FAST_SPEED_MAX_INPUT);
+        prossesedRightStick = prossesedRightStick.mult(Constants.DRIVE.FAST_SPEED_MAX_INPUT);
+      }
+      if(drivemode == DriveMode.MEDIUM){
+        prossesedLeftStick = prossesedLeftStick.mult(Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
+        prossesedRightStick = prossesedRightStick.mult(Constants.DRIVE.MEDIUM_SPEED_MAX_INPUT);
+      }
+      if(drivemode == DriveMode.SLOW){
+        prossesedLeftStick = prossesedLeftStick.mult(Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
+        prossesedRightStick = prossesedRightStick.mult(Constants.DRIVE.SLOW_SPEED_MAX_INPUT);
+      }
+    }
+    
     if(altRotate){
-      driveMain(leftStick, DegreesPerSecond.of(rightStick.x()), FOD);
+      driveMain(prossesedLeftStick, DegreesPerSecond.of(prossesedRightStick.x()), FOD);
     } else {
-      driveAltRotate(leftStick, Degree.of(rightStick.angle()), FOD);
+      driveAltRotate(prossesedLeftStick, Degree.of(prossesedRightStick.angle()), FOD);
     }
   }
 

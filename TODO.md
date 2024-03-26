@@ -11,3 +11,6 @@
  * slew rate lim(if clicking)
  * neo 550 on rollers
  * faster indexer
+ * drive mode swaping 
+ * telem IO class for telem in and out
+ * smart shuffleboard

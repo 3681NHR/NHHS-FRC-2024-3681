@@ -42,7 +42,6 @@ public final class Constants {
   public static final class LAUNCHER{
     public static final int LEFT_MOTOR_ID              = 18;
     public static final int RIGHT_MOTOR_ID             = 17;
-    public static final int ROLLER_MOTOR_ID            = 6;
 
     public static final double LAUNCH_OUTPUT            = 1;
     public static final double DROP_OUTPUT              = 0.3;
@@ -50,17 +49,21 @@ public final class Constants {
 
     public static final Measure<Velocity<Angle>> LAUNCH_SPEED_RPM= RPM.of(4200);
     public static final Measure<Velocity<Angle>> DROP_SPEED_RPM  = RPM.of(1000);
-    
-    public static final double ROLLER_RECV_OUTPUT       = -1;
-    public static final double ROLLER_BACKOUT_OUTPUT    = 0.75;
+  }
+  
+  public static final class INDEXER{
+    public static final int MOTOR_ID            = 6;
+
+    public static final double RECV_OUTPUT       = -1;
+    public static final double BACKOUT_OUTPUT    = 0.75;
      
     public static final int DETECTOR_DIO_PIN           =7;
   }
 
   public static final class LAUNCHER_SWING{
-    public static final double SPEED             = 1;
+    public static final Measure<Voltage> MAX_OUTPUT     = Volt.of(15);
 
-    public static final double POS_AE            = 0.015;
+    public static final Measure<Angle> POS_AE            = Rotation.of(0.015);
 
     public static final Measure<Angle> RECV_POSITION  = Rotation.of(0.502);
     public static final Measure<Angle> LAUNCH_POSITION= Rotation.of(0.55);

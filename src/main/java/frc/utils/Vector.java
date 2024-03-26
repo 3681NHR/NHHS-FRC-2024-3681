@@ -528,6 +528,13 @@ public class Vector {
     return Math.atan2(y(), x());
   }
 
+  public Vector deadband(double band){
+    if(Math.abs(mag()) < band){
+      return new Vector(0, 0);
+    } else {
+      return this;
+    }
+  }
   /**
    * returns whether this Vector is within the given minimum and maximum bounds
    *

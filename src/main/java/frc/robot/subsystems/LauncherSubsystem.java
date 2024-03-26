@@ -1,13 +1,18 @@
 // done
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.RPM;
 import com.revrobotics.CANSparkMax;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.enums.LauncherState;
 import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
@@ -15,50 +20,45 @@ public class LauncherSubsystem extends SubsystemBase {
   private CANSparkMax m_left  = new CANSparkMax(Constants.LAUNCHER.LEFT_MOTOR_ID, MotorType.kBrushless);
   private CANSparkMax m_right = new CANSparkMax(Constants.LAUNCHER.RIGHT_MOTOR_ID, MotorType.kBrushless);
 
-  public LauncherState state = LauncherState.IDLE;
-  public LauncherSubsystem() {
-  }
+  private Measure<Velocity<Angle>> m_left_target = RPM.of(0);
+  private Measure<Velocity<Angle>> m_right_target =RPM.of(0);
 
-  public LauncherState getState(){
-    return state;
+  private PIDController m_left_PID  = new PIDController(0, 0, 0);
+  private PIDController m_right_PID = new PIDController(0, 0, 0);
+
+  public LauncherSubsystem() {
+    this.m_left.setIdleMode(IdleMode.kCoast);
+    this.m_right.setIdleMode(IdleMode.kCoast);
   }
   
-  public double getSpeed(boolean right){
+  public Measure<Velocity<Angle>> getSpeed(boolean right){
     if(right){
-      return m_right.getEncoder().getVelocity();
+      return RPM.of(m_right.getEncoder().getVelocity());
     } else {
-      return m_left.getEncoder().getVelocity();
+      return RPM.of(m_left.getEncoder().getVelocity());
     }
   }
 
-  public void setState(LauncherState s){
-    state = s;
+  public void setSpeed(Measure<Velocity<Angle>> speed){
+    setSpeed(speed, speed);
   }
+
+  public void setSpeed(Measure<Velocity<Angle>> right, Measure<Velocity<Angle>> left){
+    m_left_target = left;
+    m_right_target = right;
+  }
+
   @Override
   public void periodic() {
-    
-    this.m_left  .setIdleMode(IdleMode.kCoast);
-    this.m_right  .setIdleMode(IdleMode.kCoast);
-    SmartDashboard.putString("launcher state", state.toString());
+
+    updateMotors();
+
     SmartDashboard.putNumber("L launcher speed", m_left.getEncoder().getVelocity());
     SmartDashboard.putNumber("R launcher speed", m_right.getEncoder().getVelocity());
-
-    switch(state){
-      case LAUNCHING:
-        m_left  .set(Constants.LAUNCHER.LAUNCH_OUTPUT);
-        m_right .set(-Constants.LAUNCHER.LAUNCH_OUTPUT);
-        break;
-      case DROPPING:
-        m_left  .set(Constants.LAUNCHER.DROP_OUTPUT);
-        m_right .set(-Constants.LAUNCHER.DROP_OUTPUT);
-        break;
-      case IDLE:
-        m_left  .set(0);
-        m_right .set(0);
-        break;
-      case IN:
-        m_left .set(Constants.LAUNCHER.IN_OUTPUT);
-        m_right.set(-Constants.LAUNCHER.IN_OUTPUT);
-    }
+  }
+  private void updateMotors(){
+    m_left  .set(m_left_PID.calculate(getSpeed(false).in(RPM), m_left_target.in(RPM)));
+    m_right .set(m_right_PID.calculate(getSpeed(true).in(RPM), m_right_target.in(RPM)));
   }
 }
+
