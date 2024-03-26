@@ -30,6 +30,10 @@ public final class Constants {
     public static final double FAST_SPEED_MAX_INPUT       = 1;//these will be the max after remap
     public static final double MEDIUM_SPEED_MAX_INPUT     = 0.5;
     public static final double SLOW_SPEED_MAX_INPUT       = 0.25;
+
+    public static final double ROTATE_P_GAIN              = 0.0;
+    public static final double ROTATE_I_GAIN              = 0.0;
+    public static final double ROTATE_D_GAIN              = 0.0;
   }
     
   public static final int ASO_CONTROLLER_PORT                 = 0;

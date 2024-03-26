@@ -6,8 +6,7 @@
   * LEDs
   * computer tray on robot cart
   * kinematics/odometry
-  * V-SLAM
-  * pose estimation
+  * pose estimation (cams)
  * logging
  * slew rate lim(if clicking)
  * neo 550 on rollers

@@ -14,6 +14,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
+import frc.utils.Vector;
 /**
  * A class for driving Mecanum drive platforms.
  *
@@ -195,6 +196,46 @@ public class Drive extends RobotDriveBase implements Sendable, AutoCloseable {
 
     driveCartesian(
         magnitude * angle.getCos(), magnitude * angle.getSin(), zRotation, new Rotation2d());
+  }
+  /**
+   * Drive method for Mecanum platform.
+   *
+   * <p>Angles are measured counterclockwise from straight ahead. The speed at which the robot
+   * drives (translation) is independent of its angle or rotation rate.
+   *
+   * @param magnitude The robot's speed at a given angle [-1.0..1.0]. Forward is positive.
+   * @param angle The gyro heading around the Z axis at which the robot drives.
+   * @param zRotation The robot's rotation rate around the Z axis [-1.0..1.0]. Counterclockwise is
+   *     positive.
+   */
+  public void drivePolar(Vector translate, double zRotation) {
+    if (!m_reported) {
+      HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDrive2_MecanumPolar, 4);
+      m_reported = true;
+    }
+
+    driveCartesian(
+        translate.x(), translate.y(), zRotation, new Rotation2d());
+  }
+  /**
+   * Drive method for Mecanum platform.
+   *
+   * <p>Angles are measured counterclockwise from straight ahead. The speed at which the robot
+   * drives (translation) is independent of its angle or rotation rate.
+   *
+   * @param magnitude The robot's speed at a given angle [-1.0..1.0]. Forward is positive.
+   * @param angle The gyro heading around the Z axis at which the robot drives.
+   * @param zRotation The robot's rotation rate around the Z axis [-1.0..1.0]. Counterclockwise is
+   *     positive.
+   */
+  public void drivePolar(Vector translate, double zRotation, Rotation2d gyroAngle) {
+    if (!m_reported) {
+      HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDrive2_MecanumPolar, 4);
+      m_reported = true;
+    }
+
+    driveCartesian(
+        translate.x(), translate.y(), zRotation, gyroAngle);
   }
 
   /**
