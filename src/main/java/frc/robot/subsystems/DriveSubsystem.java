@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Rotation;
-
 import frc.utils.Vector;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -38,7 +37,7 @@ public class DriveSubsystem extends SubsystemBase {
     );
 
   private Measure<Angle> angle = Radian.of(0);
-  private ADIS16448_IMU gyro = new ADIS16448_IMU();
+  private ADIS16448_IMU IMU = new ADIS16448_IMU();
   private Measure<Angle> offset = Degree.of(0.0);
 
   private DriveMode drivemode;
@@ -67,6 +66,8 @@ public class DriveSubsystem extends SubsystemBase {
     drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
     
     SmartDashboard.putData("drivetrain", drive);
+    SmartDashboard.putData("PID/drivetrain rotation", rotatePID);
+    SmartDashboard.putData("IMU", IMU);
   }
 
   @Override
@@ -74,25 +75,24 @@ public class DriveSubsystem extends SubsystemBase {
 
     sendTelemetry(false);
 
-    angle = Degree.of(gyro.getGyroAngleZ()+offset.in(Degree)); 
+    angle = Degree.of(IMU.getGyroAngleZ()+offset.in(Degree)); 
 
   }
-  public void setMode(DriveMode mode){
-    drivemode = mode;
-  }
-  public void setInputSquaring(int squaring){
+  public void setMode(DriveMode mode){drivemode = mode;}
+  public void setInputSquaring(long squaring){
     if(squaring > 0){
-      squaringvalue = squaring;
+      squaringvalue = (int) squaring;
     } else {
       squaringvalue = 1;
     }
   }
-  public void setInputmodes(boolean turboButton){
-    modeChangeEnabled = turboButton;
-  }
+  public int getSquaring(){return squaringvalue;}
+  public void setInputmodes(boolean enabled){modeChangeEnabled = enabled;}
+  public boolean getInputModes(){return modeChangeEnabled;}
 
-  public boolean getInputModes(){
-    return inp
+  public void zero(){offset = Degree.of(-IMU.getGyroAngleY());}
+  public void zero(Measure<Angle> offset){
+    this.offset = Degree.of(-IMU.getGyroAngleY()).plus(offset);
   }
 
   public void drive(Vector leftStick, Vector rightStick, boolean FOD, boolean altRotate){
@@ -145,21 +145,27 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
-  public void stop(){
-    drive.stopMotor();
-  }
+  public void stop(){drive.stopMotor();}
 
   public void sendTelemetry(boolean useLogs){
-    SmartDashboard.putNumber("gyro", angle.in(Degree));
-    SmartDashboard.putNumber("gyro offset", offset.in(Degree));
-    
-
     if(useLogs){
 
     }
   }
+  
+  public double getAngle(){return angle.in(Degree);}
+  public double getAngleRaw(){return IMU.getGyroAngleZ();}
+  public double getAngleOffset(){return offset.in(Degree);}
+  public void setAngleOffset(double offset){this.offset = Degree.of(offset);}
+
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("input modes enabled", this::getInputModes, null);
+    builder.addBooleanProperty("input modes enabled", this::getInputModes, this::setInputmodes);
+    builder.addIntegerProperty("squaring value", this::getSquaring, this::setInputSquaring);
+
+    builder.addDoubleProperty("gyro prossesed", this::getAngle, null);
+    builder.addDoubleProperty("gyro raw"      , this::getAngleRaw, null);
+    builder.addDoubleProperty("gyro offset"   , this::getAngleOffset, this::setAngleOffset);
+
   }
 }

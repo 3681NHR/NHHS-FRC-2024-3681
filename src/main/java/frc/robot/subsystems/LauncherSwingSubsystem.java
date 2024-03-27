@@ -16,6 +16,7 @@ import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Degree;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,6 +59,9 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     swingEncoder.setDistancePerRotation(2*Math.PI);
     swingEncoder.setPositionOffset(0);
 
+    SmartDashboard.putData("launcher swing PID", swingPID);
+    //SmartDashboard.putData("launcher swing feedforward", feedforward);
+
   }
   
   public Measure<Angle> getPosition(boolean selectedAngle){
@@ -66,6 +70,13 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     } else{
     return Radians.of(swingEncoder.getDistance());
     }
+  }
+
+  public double getpositionDeg(){
+    return this.angle.in(Degree);
+  }
+  public double getSelectedPositionDeg(){
+    return this.selectedAngle.in(Degree);
   }
 
   public void setAngle(Measure<Angle> pos){
@@ -113,10 +124,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
   
   }
   private void updateTelemetry(){
-    SmartDashboard.putNumber ("launcher swing selected pos", selectedAngle.in(Degree));
-    SmartDashboard.putNumber ("launcher swing current pos" , angle.in(Degree));
-    SmartDashboard.putNumber ("PID voltage", PIDOut.in(Volt));
-    
   }
   private double clamp(double val, double min, double max) {
     return Math.max(min, Math.min(max, val));
@@ -134,4 +141,13 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     }
   }
 
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty ("launcher swing angle"         , this::getpositionDeg        , null);
+    builder.addDoubleProperty ("launcher swing selected"      , this::getSelectedPositionDeg, null);
+    builder.addDoubleProperty ("launcher swing output percent", swingMotor::get             , null);
+    builder.addDoubleProperty ("launcher swing output current", swingMotor::getOutputCurrent, null);
+    builder.addDoubleProperty ("launcher swing bus voltage"   , swingMotor::getBusVoltage   , null);
+    builder.addBooleanProperty("launcher swing at position"   , this::isAtSelectedPos       , null);
+  }
 }

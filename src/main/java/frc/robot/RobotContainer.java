@@ -16,9 +16,12 @@ import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -66,15 +69,21 @@ public class RobotContainer {
 
     SmartDashboard.putData("auto", Autos);  
     SmartDashboard.putData("starting pos", startingPositions);
+
+    // This is really annoying so it's disabled
+    DriverStation.silenceJoystickConnectionWarning(true);
+
+    LiveWindow.disableAllTelemetry();
+    LiveWindow.setEnabled(false);
   }
   
   private void configureBindings() {//keybindings
 
-    m_commandASOController.a().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.LAUNCHING));
-    m_commandASOController.b().onTrue(m_launcherSubsystem.setSpeedCommand(LauncherState.DROPPING));
+    m_commandASOController.a().onTrue(new RunCommand(() -> {m_launcherSubsystem.setSpeed(Constants.LAUNCHER.LAUNCH_SPEED_RPM);}));
+    m_commandASOController.b().onTrue(new RunCommand(() -> {m_launcherSubsystem.setSpeed(Constants.LAUNCHER.DROP_SPEED_RPM);}));
 
-    m_commandASOController.a().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
-    m_commandASOController.b().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
+    m_commandASOController.a().onFalse(new RunCommand(() -> {m_launcherSubsystem.stopMotors();}));
+    m_commandASOController.b().onFalse(new RunCommand(() -> {m_launcherSubsystem.stopMotors();}));
     
      m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwingCommand());
     
@@ -98,10 +107,10 @@ public class RobotContainer {
     m_commandASOController.back().onTrue (m_launcherSubsystem.setSpeedCommand(LauncherState.IN));
     m_commandASOController.back().onFalse(m_launcherSubsystem.setSpeedCommand(LauncherState.IDLE));
 
-    m_commandDriverController.a().onTrue(m_driveSubsystem.toggleFODCommand());
-    m_commandDriverController.b().onTrue(m_driveSubsystem.zeroCommand());
-    m_commandDriverController.x().onTrue(m_driveSubsystem.toggleModeChangingCommand());
-    m_commandDriverController.y().onTrue(m_driveSubsystem.togglesquaringCommand());
+    m_commandDriverController.a().onTrue(m_driveSubsystem.toggleFOD());
+    m_commandDriverController.b().onTrue(m_driveSubsystem.zero());
+    m_commandDriverController.x().onTrue(m_driveSubsystem.toggleModeChanging());
+    m_commandDriverController.y().onTrue(m_driveSubsystem.togglesquaring());
   }
 
   public Command getAutonomousCommand() {

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Rotation;
 
@@ -20,9 +21,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.enums.IntakeState;
@@ -65,18 +66,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
    //set motor idle modes
   
-    SmartDashboard.putBoolean("intake sensor enabled", switchEnabled);
-
-    //m_rotate.setInverted(true);
   }
 
   
-  public Measure<Angle> getPosition(boolean selectedPos){
-    if(selectedPos){
-      return selectedAngle;
-    } else{
-    return position;
-    }
+  public double getAngleDeg(){
+    return position.in(Degree);
+  }
+  public double getSelectedAngleDeg(){
+    return selectedAngle.in(Degree);
   }
   public void setPosition(IntakeSwingState s){
     swingState = s;
@@ -152,6 +149,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean isHolding(){
     return holding;
   }
+  public String getSwingState(){return swingState.toString();}
+  public String getState() {return state.toString();}
+  public boolean getSwitchEnabled(){return switchEnabled;}
+  public void setSwitchEnabled(boolean enabled){switchEnabled = enabled;}
  
   @Override
   public void periodic() {
@@ -167,9 +168,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
       m_rotate.setInverted(true);
     }
-
-    switchEnabled = SmartDashboard.getBoolean("intake sensor enabled", true);
-    
     position = (MutableMeasure<Angle>) Radian.of(intakeSwingEncoder.getDistance());
 
     holding = !holdSwitch.get();
@@ -177,13 +175,6 @@ public class IntakeSubsystem extends SubsystemBase {
    this.m_intakeBottom.setNeutralMode(NeutralMode.Brake);
    this.m_intakeTop   .setNeutralMode(NeutralMode.Brake);
    this.m_rotate      .setIdleMode(IdleMode.kBrake);
-
-    SmartDashboard.putNumber("intake swing selected pos" , selectedAngle.in(Radian));
-    SmartDashboard.putNumber("intake swing current pos"  , position     .in(Radian));
-    SmartDashboard.putString("intake swing state"        , swingState.toString()    );
-    SmartDashboard.putString("intake state"              , state.toString()         );
-    SmartDashboard.putNumber("intake swing PID value"    , pidOut                   );
-    SmartDashboard.putBoolean("IntakeIsHolding", holding);
 
     if(swingState == IntakeSwingState.UP){
       selectedAngle = upPos;
@@ -231,5 +222,17 @@ public class IntakeSubsystem extends SubsystemBase {
   
   private double clamp(double val, double min, double max)  {
     return Math.max(min, Math.min(max,val));
+  }
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("intake swing angle"      , this::getAngleDeg                    , null);
+    builder.addDoubleProperty("intake swing selected"   , this::getSelectedAngleDeg            , null);
+    builder.addDoubleProperty("intake swing output"     , m_rotate::get                        , null);
+    builder.addDoubleProperty("intake top roller out"   , m_intakeTop::getMotorOutputPercent   , null);
+    builder.addDoubleProperty("intake bottom roller out", m_intakeBottom::getMotorOutputPercent, null);
+    builder.addStringProperty("intake swing state"      , this::getSwingState                  , null);
+    builder.addStringProperty("intake state"            , this::getState                       , null);
+    builder.addBooleanProperty("intake switch"          , this::isHolding                      , null);
+    builder.addBooleanProperty("intake switch enabled"  , this::getSwitchEnabled               , this::setSwitchEnabled);
   }
 }
