@@ -13,12 +13,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Drive;
 import frc.robot.enums.DriveMode;
 import frc.robot.Constants;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Velocity;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -65,11 +65,17 @@ public class DriveSubsystem extends SubsystemBase {
     m_front_right.setIdleMode(IdleMode.kBrake);
 
     drive = new Drive(m_front_left, m_back_left, m_front_right, m_back_right);
+    
+    SmartDashboard.putData("drivetrain", drive);
   }
 
   @Override
   public void periodic() {
-      angle = Degree.of(gyro.getGyroAngleZ()+offset.in(Degree)); 
+
+    sendTelemetry(false);
+
+    angle = Degree.of(gyro.getGyroAngleZ()+offset.in(Degree)); 
+
   }
   public void setMode(DriveMode mode){
     drivemode = mode;
@@ -83,6 +89,10 @@ public class DriveSubsystem extends SubsystemBase {
   }
   public void setInputmodes(boolean turboButton){
     modeChangeEnabled = turboButton;
+  }
+
+  public boolean getInputModes(){
+    return inp
   }
 
   public void drive(Vector leftStick, Vector rightStick, boolean FOD, boolean altRotate){
@@ -111,7 +121,7 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
     
-    if(altRotate){
+    if(!altRotate){
       driveMain(prossesedLeftStick, DegreesPerSecond.of(prossesedRightStick.x()), FOD);
     } else {
       driveAltRotate(prossesedLeftStick, Degree.of(prossesedRightStick.angle()), FOD);
@@ -141,13 +151,15 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void sendTelemetry(boolean useLogs){
     SmartDashboard.putNumber("gyro", angle.in(Degree));
-    //SmartDashboard.putBoolean("field oriented driving", FOD);
-    //SmartDashboard.putBoolean("input squaring", squaringEnabled);
-    //SmartDashboard.putBoolean("input sensitivity buttons", modeChangeEnabled);
     SmartDashboard.putNumber("gyro offset", offset.in(Degree));
+    
 
     if(useLogs){
 
     }
+  }
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addBooleanProperty("input modes enabled", this::getInputModes, null);
   }
 }
