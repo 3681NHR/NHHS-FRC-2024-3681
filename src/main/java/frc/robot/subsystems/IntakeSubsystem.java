@@ -68,87 +68,34 @@ public class IntakeSubsystem extends SubsystemBase {
   
   }
 
-  
   public double getAngleDeg(){
     return position.in(Degree);
   }
   public double getSelectedAngleDeg(){
     return selectedAngle.in(Degree);
   }
-  public void setPosition(IntakeSwingState s){
-    swingState = s;
-  }
-
-  public boolean isAtSelectedPos(){
-    if(Math.abs(selectedAngle.minus(position).in(Radian)) <= Constants.INTAKE_SWING.POS_AE){
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public void setIntake(IntakeState state){
-    this.state = state;
-  }
-  public Command setIntakeCommand(IntakeState s){
-    return runOnce(() -> {
-      state = s;
-    }
-    );
-  }
   
-  public Command toggleSwingCommand() {
-    return runOnce(
-      () -> {
-      if(swingState == IntakeSwingState.UP){
-        if(!holding)
-        {
-          swingState = IntakeSwingState.DOWN;
-        } else {
-          swingState = IntakeSwingState.DOWN_HOLDING;
-        }
-      } else {
-        swingState = IntakeSwingState.UP;
-      }
-      });
-    }
-    
-    public Command toggleIntakeCommand() {
-    return runOnce(
-    () -> {
-    if(state == IntakeState.INTAKE){
-       state = IntakeState.IDLE;
-     } else{
-        state = IntakeState.INTAKE; 
-      } 
-    });
-  
+  public void setspeed(double val){
+    m_intakeBottom.set(ControlMode.PercentOutput, val);
+    m_intakeTop.set(ControlMode.PercentOutput, val);
   }
 
-  public Command runintakeCommand() {
-    return runOnce(
-    () -> {
-    if(holding){
-        setIntake(IntakeState.COMPRESS);
-     } else{
-        setIntake(IntakeState.INTAKE);
-      } 
-    });
-  }
+  public double getbottomspeed(){return m_intakeBottom.getMotorOutputPercent();}
+  public double gettopspeed(){return m_intakeTop.getMotorOutputPercent();}
 
-  public Command toggleReverseCommand() {
-    return runOnce(
-    () -> {
-    if(state == IntakeState.REVERSE){
-       state = IntakeState.IDLE;
-     } else{
-        state = IntakeState.REVERSE;
-      } 
-    });
-  }  
+
   public boolean isHolding(){
-    return holding;
+    if(switchEnabled){
+      return holding;
+    } else {
+      return true;
+    }
   }
+
+  public boolean getSwitchEnabled(){return switchEnabled;}
+
+  public void setSwitchEnabled(boolean enabled){switchEnabled = enabled;}
+
   public String getSwingState(){return swingState.toString();}
   public String getState() {return state.toString();}
   public boolean getSwitchEnabled(){return switchEnabled;}

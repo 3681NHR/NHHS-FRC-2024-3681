@@ -11,6 +11,7 @@ import frc.robot.enums.IntakeState;
 import frc.robot.enums.LauncherState;
 import frc.robot.enums.RollerState;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LauncherSwingSubsystem;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -28,10 +30,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final LauncherSubsystem m_launcherSubsystem = new LauncherSubsystem();
-
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-
   private final LauncherSwingSubsystem m_LauncherSwingSubsystem = new LauncherSwingSubsystem();
+  private final FeederSubsystem m_FeederSubsystem = new FeederSubsystem();
 
   
   private final CommandXboxController m_commandASOController = new CommandXboxController(Constants.ASO_CONTROLLER_PORT);
@@ -40,7 +41,7 @@ public class RobotContainer {
   private SendableChooser<Command> Autos = new SendableChooser<>();
   private SendableChooser<Pose2d>  startingPositions = new SendableChooser<>();
 
-  private Command m_fullAuto       = new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem, m_driveSubsystem, startingPositions);
+  private Command m_fullAuto       = new Auto(m_LauncherSwingSubsystem, m_launcherSubsystem, m_driveSubsystem, m_FeederSubsystem, startingPositions);
   private Command m_AutoLaunchOnly = new AutoLaunchOnly(m_LauncherSwingSubsystem, m_launcherSubsystem);
 
   private Pose2d center = new Pose2d(200.0, 0.0, new Rotation2d(Math.toRadians(180.0)));
@@ -79,11 +80,11 @@ public class RobotContainer {
   
   private void configureBindings() {//keybindings
 
-    m_commandASOController.a().onTrue(new RunCommand(() -> {m_launcherSubsystem.setSpeed(Constants.LAUNCHER.LAUNCH_SPEED_RPM);}));
-    m_commandASOController.b().onTrue(new RunCommand(() -> {m_launcherSubsystem.setSpeed(Constants.LAUNCHER.DROP_SPEED_RPM);}));
+    m_commandASOController.a().onTrue(new InstantCommand(() -> {m_launcherSubsystem.setSpeed(Constants.LAUNCHER.LAUNCH_SPEED_RPM);}));
+    m_commandASOController.b().onTrue(new InstantCommand(() -> {m_launcherSubsystem.setSpeed(Constants.LAUNCHER.DROP_SPEED_RPM);}));
 
-    m_commandASOController.a().onFalse(new RunCommand(() -> {m_launcherSubsystem.stopMotors();}));
-    m_commandASOController.b().onFalse(new RunCommand(() -> {m_launcherSubsystem.stopMotors();}));
+    m_commandASOController.a().onFalse(new InstantCommand(() -> {m_launcherSubsystem.stopMotors();}));
+    m_commandASOController.b().onFalse(new InstantCommand(() -> {m_launcherSubsystem.stopMotors();}));
     
      m_commandASOController.rightBumper().onTrue(m_intakeSubsystem.toggleSwingCommand());
     
