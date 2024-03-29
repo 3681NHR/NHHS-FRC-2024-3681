@@ -92,10 +92,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  public boolean getSwitchEnabled(){return switchEnabled;}
-
-  public void setSwitchEnabled(boolean enabled){switchEnabled = enabled;}
-
   public String getSwingState(){return swingState.toString();}
   public String getState() {return state.toString();}
   public boolean getSwitchEnabled(){return switchEnabled;}
