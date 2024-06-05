@@ -14,3 +14,4 @@ this is a list of notes about the code/interesting things in said code
     
  * use pathplanner tool made by team 3015
   * https://photonvision.org/  apriltag software
+  * swerve drive mk4i is gud

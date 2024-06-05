@@ -83,12 +83,6 @@ public class LauncherSwingSubsystem extends SubsystemBase {
     selectedAngle = pos;
   }
 
-  public Command setAngleCommand(Measure<Angle> pos){
-    return runOnce(() -> {
-      selectedAngle = pos;
-    });
-  }
-
   public boolean isAtSelectedPos(){
     if(Math.abs(selectedAngle.minus(angle).in(Degree)) <= Constants.LAUNCHER_SWING.POS_AE.in(Degree)){
       return true;
